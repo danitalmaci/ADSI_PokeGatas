@@ -1,0 +1,20 @@
+<!DOCTYPE html>
+<html lang="en">
+<!-- este va a ser el rpedeterminado para las demas paginas (lo que esta debajo de block content)-->
+<head>
+    <meta charset="UTF-8">
+    <title>PokeGatas Pokedex</title>
+    <link href="{{ url_for('static', filename='css/style.css') }}" rel="stylesheet">
+</head>
+<body>
+    <nav>
+        <a href="/">Inicio</a> |
+        <a href="/lista_pokemons">Pokedex</a> |
+        <a href="/login">Login</a>
+    </nav>
+    <hr>
+    {% block content %}
+    <h1>Bienvenida pokegatita</h1>
+    {% endblock %}
+</body>
+</html>
