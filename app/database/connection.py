@@ -11,7 +11,6 @@ class Connection:
             check_same_thread=False
         )
         self.connection.row_factory = sqlite3.Row
-        self.__initialized = True
 
 
     def select(self, sentence, parameters=None):
