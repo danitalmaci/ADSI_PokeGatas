@@ -1,6 +1,6 @@
 # Biblioteca MVC con Flask y SQLite
 
-Un pequeño ejemplo sobre como aplicar el patrón MVC taly como se ha visto en clase. 
+Un pequeño ejemplo sobre como aplicar el patrón MVC tal y como se ha visto en clase. 
 El proyecto consiste en un sistema simple de biblioteca que permite:
 
 - Gestionar usuarios y libros
