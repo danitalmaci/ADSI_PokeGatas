@@ -1,0 +1,40 @@
+{% extends "base.html" %}
+
+{% block content %}
+
+<div class="chat-container">
+    <div class="chat-header">
+        <div class="bot-info">
+            <div class="bot-avatar">foto</div> <div>
+                <h3>Service-Ball</h3>
+            </div>
+        </div>
+    </div>
+
+    <div class="chat-messages" id="chatMessages">
+        <div class="message bot">
+            <div class="message-content">
+                ¡Hola! Me llamo Service-Ball, ¡y estoy aquí para ayudarte con tu aventura Pokemon!
+                <br>
+                Ahora mismo dispongo de las siguientes funcionalidades:
+                <br>
+                   1 - Dime un Pokemon y te digo sus debilidades y fortalezas.
+                <br>
+                   2 - ¿Te interesa la evolución de tu Pokemon? Dime el Pokemon del que quieras saber sus evoluciones.
+                <br>
+                   3 - Dime el Pokemon del que quieras saber su región.
+                <br>
+                   4 - El amor está en el aire... Dime dos Pokemon y te digo su compatibilidad amorosa.
+            </div>
+        </div>
+    </div>
+
+    <div class="chat-input-container">
+        <input type="text"id="messageInput" placeholder="Escribe tu mensaje..." class="chat-input"
+        />
+        
+        <button id="sendButton" class="send-button">
+            Send ➤ </button>
+    </div>
+</div>
+{% endblock %}

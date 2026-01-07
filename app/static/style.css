@@ -104,3 +104,122 @@ body {
     width: 350px;
     text-align: center;
 }
+
+/* --- ESTILOS CHATBOT --- */
+.chat-container {
+    display: flex;
+    flex-direction: column;
+    height: 100vh;
+    max-width: 700px;
+    margin: 20px auto;
+    background: #fff;
+    border-radius: 12px;
+    box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+    overflow: hidden;
+}
+
+.chat-header {
+    background-color: #f9a1b4;
+    padding: 15px;
+    color: white;
+    display: flex;
+    align-items: center;
+}
+
+.bot-info {
+    display: flex;
+    align-items: center;
+    gap: 15px;
+}
+
+.bot-avatar {
+    background: #f9a1b4;
+    width: 60px;
+    height: 60px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.2rem;
+    border: 2px solid white;
+}
+
+/* ZONA DE MENSAJES CHATBOT */
+.chat-messages {
+    flex: 1;
+    padding: 20px;
+    overflow-y: auto; /* Permite hacer scroll */
+    background-color: #f4f4f9;
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+}
+
+/* Burbujas de mensaje */
+.message {
+    display: flex;
+    max-width: 80%;
+}
+
+.message.bot {
+    align-self: flex-start; /* Izquierda */
+}
+
+.message.user {
+    align-self: flex-end; /* Derecha */
+    flex-direction: row-reverse; /* Para alinear avatar si lo hubiera */
+}
+
+.message-content {
+    padding: 12px 16px;
+    border-radius: 15px;
+    font-size: 0.95rem;
+    line-height: 1.4;
+    position: relative;
+}
+
+.message.bot .message-content {
+    background-color: #f9a1b4;
+    color: #ffffff;
+    border-bottom-left-radius: 2px; /* Efecto bocadillo */
+    box-shadow: 0 1px 2px rgba(0,0,0,0.1);
+}
+
+.message.user .message-content {
+    background-color: #f057bd;
+    color: white;
+    border-bottom-right-radius: 2px;
+}
+
+/* Input y Botón */
+.chat-input-container {
+    padding: 15px;
+    background: white;
+    border-top: 1px solid #ddd;
+    display: flex;
+    gap: 10px;
+}
+
+.chat-input {
+    flex: 1;
+    padding: 12px;
+    border: 1px solid #ddd;
+    border-radius: 25px;
+    outline: none;
+    font-size: 1rem;
+}
+
+.send-button {
+    background: #f9a1b4;
+    color: white;
+    border: none;
+    padding: 0 20px;
+    border-radius: 25px;
+    cursor: pointer;
+    font-weight: bold;
+    transition: background 0.2s;
+}
+
+.send-button:hover {
+    background: #ff4de7;
+}
