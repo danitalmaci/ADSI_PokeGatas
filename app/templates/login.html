@@ -1,0 +1,18 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="login-container">
+    <div class="login-box">
+        <h1>Inicio Sesión</h1>
+        <form action="/dashboard" method="GET">
+            <input type="text" placeholder="Usuario" style="width: 100%; padding: 10px; margin-bottom: 10px;">
+            <input type="password" placeholder="Contraseña" style="width: 100%; padding: 10px; margin-bottom: 10px;">
+            <button type="submit" class="menu-btn" style="width: 100%; border: none; cursor: pointer;">Entrar</button>
+        </form>
+        
+        <p style="margin-top: 15px; font-size: 0.9em;">
+            <a href="#">Crear PokeCuenta</a>
+        </p>
+    </div>
+</div>
+{% endblock %}

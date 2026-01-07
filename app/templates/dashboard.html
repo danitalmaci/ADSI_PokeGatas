@@ -1,0 +1,34 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="app-interface">
+    
+    <aside class="side-menu"> <!-- Menú lateral con los botones del menu principal -->
+        <div class="brand-title">PokeGatas</div>
+        <!-- En estos 3 habría que modificar # para definir las rutas al pinchar el boton -->
+        <a href="#" class="menu-btn">Perfil</a>
+        <a href="#" class="menu-btn">Equipos</a>
+        <a href="#" class="menu-btn">Notificaciones</a>
+        
+        <a href="/admin/users" class="menu-btn admin">Admin</a>
+        
+        <a href="/" class="menu-btn" style="background:none; margin-top: 10px;">Cerrar Sesión</a>
+    </aside>
+
+    <!--  El resto de la pantalla, aqui ira la pokedex, por ahora hay un grid para simularlo  -->
+    <main class="main-viewport">
+        <div class="view-header">
+            <h2>Pokedex</h2>
+        </div>
+
+        <div class="sprite-grid">
+            {% for i in range(1, 21) %}
+            <div class="pokemon-placeholder">
+                Pokegata #{{ i }}
+            </div>
+            {% endfor %}
+        </div>
+    </main>
+
+</div>
+{% endblock %}
