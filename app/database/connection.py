@@ -52,3 +52,13 @@ class Connection:
             cursor.execute(sentence)
         self.connection.commit()
         cursor.close()
+
+    def init_schema(self, schema_path='app/database/schema.sql'):
+        # metodo para inicializar la base de datos
+        with open(schema_path, 'r', encoding='utf-8') as f:
+            sql_script = f.read()
+        
+        cursor = self.connection.cursor()
+        cursor.executescript(sql_script) # executescript permite correr varias sentencias a la vez
+        self.connection.commit()
+        cursor.close()
