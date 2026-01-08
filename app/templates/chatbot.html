@@ -1,5 +1,6 @@
 {% extends "base.html" %}
 
+
 {% block content %}
 
 <div class="chat-container">
@@ -12,22 +13,19 @@
     </div>
 
     <div class="chat-messages" id="chatMessages">
-        <div class="message bot">
-            <div class="message-content">
-                ¡Hola! Me llamo Service-Ball, ¡y estoy aquí para ayudarte con tu aventura Pokemon!
-                <br>
-                Ahora mismo dispongo de las siguientes funcionalidades:
-                <br>
-                   1 - Dime un Pokemon y te digo sus debilidades y fortalezas.
-                <br>
-                   2 - ¿Te interesa la evolución de tu Pokemon? Dime el Pokemon del que quieras saber sus evoluciones.
-                <br>
-                   3 - Dime el Pokemon del que quieras saber su región.
-                <br>
-                   4 - El amor está en el aire... Dime dos Pokemon y te digo su compatibilidad amorosa.
-            </div>
-        </div>
+        <!-- Vacio para que se pongan dinamicamente -->
     </div>
+
+    <script>
+    console.log("--- DEBUG DIRECTO DESDE HTML ---");
+    const testDiv = document.getElementById('chatMessages');
+    if (testDiv) {
+        console.log("✅ ¡El DIV existe! El navegador lo ve.");
+        console.log(testDiv);
+    } else {
+        console.error("❌ El DIV no existe en este punto exacto.");
+    }
+</script>
 
     <div class="chat-input-container">
         <input type="text"id="messageInput" placeholder="Escribe tu mensaje..." class="chat-input"
@@ -37,4 +35,6 @@
             Send ➤ </button>
     </div>
 </div>
+
+<script src="{{ url_for('static', filename='js/chatbot.js') }}?v=2"></script>
 {% endblock %}
