@@ -1,3 +1,4 @@
+/*esta tabla habria que revisar, es un  boceto */
 CREATE TABLE IF NOT EXISTS users (
     id INTEGER PRIMARY KEY AUTOINCREMENT,
     nombre_usuario TEXT UNIQUE NOT NULL,
@@ -13,9 +14,34 @@ CREATE TABLE IF NOT EXISTS users (
     estado TEXT DEFAULT 'PENDIENTE' -- en el diagrama es un bool pero igual mejor asi para poder diferenciar entre aprobado, rechazado, pendiente
 );
 
-CREATE TABLE IF NOT EXISTS pokemon_pokedex (
-    pokedex_id INTEGER PRIMARY KEY, --el oficial
-    nombre_pokemon TEXT NOT NULL,
+/* Tablas de la Pokedex */
+/* -----------------------------------*/
+CREATE TABLE IF NOT EXISTS RegionPokemon (
+    nombreRegion TEXT PRIMARY KEY,
+    descripcion TEXT,
+    imagen TEXT
+);
+
+CREATE TABLE IF NOT EXISTS TipoPokemon (
+    nombreTipo TEXT PRIMARY KEY,
+    descripcion TEXT,
+    imagenTipo TEXT,
+    debilidades TEXT
+);
+
+CREATE TABLE IF NOT EXISTS Categoria (
+    nombreCategoria TEXT PRIMARY KEY,
+    descripcion TEXT
+);
+
+CREATE TABLE IF NOT EXISTS PokemonPokedex (
+    pokedexID INTEGER PRIMARY KEY,
+
+    nombreRegion TEXT,
+    nombreCategoria TEXT,
+    
+    /* Atributos */
+    nombrePokemon TEXT, 
     imagen TEXT,
     altura REAL,
     peso REAL,
@@ -23,11 +49,21 @@ CREATE TABLE IF NOT EXISTS pokemon_pokedex (
     ps INTEGER,
     ataque INTEGER,
     defensa INTEGER,
-    ataque_especial INTEGER,
-    defensa_especial INTEGER,
+    ataqueEspecial INTEGER,
+    defensaEspecial INTEGER,
     velocidad INTEGER,
-    tipos TEXT,
-    region TEXT
+    nombrePokemonPrevolucion TEXT,
+    
+    FOREIGN KEY(nombreRegion) REFERENCES RegionPokemon(nombreRegion)
+);
+
+/* Relación Pokemon <-> Tipo) */
+CREATE TABLE IF NOT EXISTS Contiene (
+    nombrePokemon TEXT,
+    nombreTipo TEXT,
+    PRIMARY KEY (nombrePokemon, nombreTipo),
+    FOREIGN KEY(nombrePokemon) REFERENCES PokemonPokedex(nombrePokemon),
+    FOREIGN KEY(nombreTipo) REFERENCES TipoPokemon(nombreTipo)
 );
 
 CREATE TABLE IF NOT EXISTS equipos (
@@ -36,8 +72,11 @@ CREATE TABLE IF NOT EXISTS equipos (
     nombre_equipo TEXT NOT NULL,
     FOREIGN KEY(user_id) REFERENCES users(id) ON DELETE CASCADE
 );
+/* -----------------------------------*/
 
-CREATE TABLE IF NOT EXISTS pokemon_equipo (
+
+/*esta tabla habria que revisar, es un  boceto */
+CREATE TABLE IF NOT EXISTS PokemonEquipo (
     id INTEGER PRIMARY KEY AUTOINCREMENT,
     equipo_id INTEGER NOT NULL,
     pokedex_id INTEGER NOT NULL,
@@ -54,5 +93,5 @@ CREATE TABLE IF NOT EXISTS pokemon_equipo (
     velocidad INTEGER,
     nivel INTEGER, -- no se si vamos a guardarlo, imagino que si
     FOREIGN KEY(equipo_id) REFERENCES equipos(id) ON DELETE CASCADE,
-    FOREIGN KEY(pokedex_id) REFERENCES pokemon_pokedex(pokedex_id)
+    FOREIGN KEY(pokedex_id) REFERENCES Pokemon(pokedex_id)
 );
