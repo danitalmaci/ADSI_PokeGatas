@@ -59,7 +59,10 @@ CREATE TABLE IF NOT EXISTS PokemonPokedex (
     velocidad INTEGER,
     nombrePokemonPrevolucion TEXT,
     
-    FOREIGN KEY(nombreRegion) REFERENCES RegionPokemon(nombreRegion)
+    FOREIGN KEY(nombreRegion) REFERENCES RegionPokemon(nombreRegion),
+    FOREIGN KEY(nombreCategoria) REFERENCES CategoriaPokemon(nombreCategoria),
+    FOREIGN KEY(nombrePokemonPrevolucion) REFERENCES PokemonPokedex(nombrePokemon)
+
 );
 
 /* Relación Pokemon <-> Tipo) */
@@ -69,12 +72,6 @@ CREATE TABLE IF NOT EXISTS Contiene (
     PRIMARY KEY (nombrePokemon, nombreTipo),
     FOREIGN KEY(nombrePokemon) REFERENCES PokemonPokedex(nombrePokemon),
     FOREIGN KEY(nombreTipo) REFERENCES TipoPokemon(nombreTipo)
-);
-
-/* Tabla con todas las habilidades */
-CREATE TABLE IF NOT EXISTS HabilidadPokemon (
-    nombreHabilidad TEXT PRIMARY KEY,
-    descripcion TEXT
 );
 
 /* Relación Pokemon <-> Habilidad */
@@ -90,9 +87,9 @@ CREATE TABLE IF NOT EXISTS Posee (
 CREATE TABLE IF NOT EXISTS AtaquePokemon (
     nombreAtaque TEXT PRIMARY KEY,
     descripcion TEXT,
-    poder INTEGER,       /* Opcional: suele ser útil */
-    precision INTEGER,   /* Opcional */
-    pp INTEGER           /* Opcional */
+    poder INTEGER,
+    precision INTEGER,
+    pp INTEGER
 );
 
 /* Relación Pokemon <-> Ataque */
