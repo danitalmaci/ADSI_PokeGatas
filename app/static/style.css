@@ -112,7 +112,7 @@ body {
     flex-direction: column;
     height: 100vh;
     width: 100%;
-    max-width: 700px;
+    max-width: 1000px;
     margin: 20px auto;
     background: rgba(255, 255, 255, 0.0);
     border-radius: 12px;
@@ -132,6 +132,7 @@ body {
     display: flex;
     align-items: center;
     gap: 15px;
+    font-size: 2rem;
 }
 
 .bot-avatar {
@@ -163,6 +164,7 @@ body {
 .message {
     display: flex;
     max-width: 80%;
+    width: fit-content;
 }
 
 .message.bot {
@@ -171,7 +173,8 @@ body {
 
 .message.user {
     align-self: flex-end; /* Derecha */
-    flex-direction: row-reverse; /* Para alinear avatar si lo hubiera */
+    flex-direction: row-reverse;
+
 }
 
 .message-content {
@@ -180,6 +183,8 @@ body {
     font-size: 0.95rem;
     line-height: 1.4;
     position: relative;
+    overflow-wrap: break-word; 
+    word-break: break-word;
 }
 
 .message.bot .message-content {
