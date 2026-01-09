@@ -209,8 +209,7 @@ def seed_pokedex():
                     habilidades_regs.add(nombre_habilidad)
                 
                 # insertar relacion Posee
-                db.insert("INSERT INTO Posee (nombrePokemon, nombreHabilidad) VALUES (?, ?)", (nombre, nombre_habilidad))
-
+                db.insert("INSERT OR IGNORE INTO Posee (nombrePokemon, nombreHabilidad) VALUES (?, ?)", (nombre, nombre_habilidad))
 
             # --- ATAQUES (AtacaCon) ----------------------------------------
             for move in data['moves']:
@@ -233,7 +232,7 @@ def seed_pokedex():
                     ataques_regs.add(nombre_ataque)
 
                 # insertar relacion AtacaCon
-                db.insert("INSERT INTO AtacaCon (nombrePokemon, nombreAtaque) VALUES (?, ?)", (nombre, nombre_ataque))
+                db.insert("INSERT OR IGNORE INTO AtacaCon (nombrePokemon, nombreAtaque) VALUES (?, ?)", (nombre, nombre_ataque))
 
 
             count += 1
