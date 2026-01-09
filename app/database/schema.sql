@@ -29,7 +29,12 @@ CREATE TABLE IF NOT EXISTS TipoPokemon (
     debilidades TEXT
 );
 
-CREATE TABLE IF NOT EXISTS Categoria (
+CREATE TABLE IF NOT EXISTS HabilidadPokemon (
+    nombreHabilidad TEXT PRIMARY KEY,
+    descripcion TEXT
+);
+
+CREATE TABLE IF NOT EXISTS CategoriaPokemon (
     nombreCategoria TEXT PRIMARY KEY,
     descripcion TEXT
 );
@@ -65,6 +70,41 @@ CREATE TABLE IF NOT EXISTS Contiene (
     FOREIGN KEY(nombrePokemon) REFERENCES PokemonPokedex(nombrePokemon),
     FOREIGN KEY(nombreTipo) REFERENCES TipoPokemon(nombreTipo)
 );
+
+/* Tabla con todas las habilidades */
+CREATE TABLE IF NOT EXISTS HabilidadPokemon (
+    nombreHabilidad TEXT PRIMARY KEY,
+    descripcion TEXT
+);
+
+/* Relación Pokemon <-> Habilidad */
+CREATE TABLE IF NOT EXISTS Posee (
+    nombrePokemon TEXT,
+    nombreHabilidad TEXT,
+    PRIMARY KEY (nombrePokemon, nombreHabilidad),
+    FOREIGN KEY(nombrePokemon) REFERENCES PokemonPokedex(nombrePokemon),
+    FOREIGN KEY(nombreHabilidad) REFERENCES HabilidadPokemon(nombreHabilidad)
+);
+
+/* Tabla con todos los ataques */
+CREATE TABLE IF NOT EXISTS AtaquePokemon (
+    nombreAtaque TEXT PRIMARY KEY,
+    descripcion TEXT,
+    poder INTEGER,       /* Opcional: suele ser útil */
+    precision INTEGER,   /* Opcional */
+    pp INTEGER           /* Opcional */
+);
+
+/* Relación Pokemon <-> Ataque */
+CREATE TABLE IF NOT EXISTS AtacaCon (
+    nombrePokemon TEXT,
+    nombreAtaque TEXT,
+    PRIMARY KEY (nombrePokemon, nombreAtaque),
+    FOREIGN KEY(nombrePokemon) REFERENCES PokemonPokedex(nombrePokemon),
+    FOREIGN KEY(nombreAtaque) REFERENCES AtaquePokemon(nombreAtaque)
+);
+
+/* -----------------------------------*/
 
 CREATE TABLE IF NOT EXISTS equipos (
     id INTEGER PRIMARY KEY AUTOINCREMENT,
