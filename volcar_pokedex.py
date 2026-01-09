@@ -1,9 +1,8 @@
 import requests
 import time
-import pokebase as pb
 from app.database.connection import Connection 
 
-TOTAL_POKEMONS = 1026
+TOTAL_POKEMONS = 1025 #todos
 
 def obtener_region(generacion):
     region_map = {
@@ -45,34 +44,50 @@ def seed_pokedex():
     except Exception as e:
         print(f"Nota: {e}")
 
+    session = requests.Session()
     count = 0
     
     for poke_id in range(1, TOTAL_POKEMONS + 1):
         try:
-            p = pb.pokemon(poke_id)
-            s = pb.pokemon_species(poke_id)
+            url_poke = f"https://pokeapi.co/api/v2/pokemon/{poke_id}/"
+            r = session.get(url_poke)
+            if r.status_code != 200:
+                print(f"Error del ID {poke_id}: {r.status_code}")
+                continue
 
-            nombre = p.name.capitalize()
+            data = r.json()
 
-            try:
-                imagen = p.sprites.other.official_artwork.front_default
-            except:
-                imagen = p.sprites.front_default
+            url_species = data['species']['url']
+            r_spec = session.get(url_species)
+            s_data = r_spec.json() if r_spec.status_code == 200 else {}
 
-            altura = p.height / 10  # decímetros a metros
-            peso = p.weight / 10    # hectogramos a kilogramos
+            nombre = data['name'].capitalize()
 
-            tipos_list = [t.type.name.capitalize() for t in p.types]
-            tipos_str = "/".join(tipos_list)  # por ejemplo "Grass/Poison"
-
-            stats = {s.stat.name: s.base_stat for s in p.stats} # Diccionario de stats, para no ir de uno en uno
-
-            generacion = s.generation.name
-            region = obtener_region(generacion)
-
-            gender_rate = s.gender_rate
-            sexo = obtener_sexo(gender_rate)
+            sprites = data['sprites']
+            other = sprites.get('other', {})
+            official = other.get('official-artwork', {})
+            imagen = official.get('front_default')
             
+            if not imagen:
+                imagen = sprites.get('front_default')
+
+            altura = data['height'] / 10 
+            peso = data['weight'] / 10 
+
+            tipos_list = [t['type']['name'].capitalize() for t in data['types']]
+            tipos_str = "/".join(tipos_list)
+
+            # Stats: Lista de diccionarios -> Pasamos a Diccionario Clave:Valor
+            # data['stats'] es [{'base_stat': 45, 'stat': {'name': 'hp'}}, ...]
+            stats = {s['stat']['name']: s['base_stat'] for s in data['stats']}
+
+
+            generacion_name = s_data.get('generation', {}).get('name', '')
+            region = obtener_region(generacion_name)
+
+            gender_rate = s_data.get('gender_rate', -1)
+            sexo = obtener_sexo(gender_rate)
+
   
             query = """
                 INSERT INTO pokemon_pokedex (
