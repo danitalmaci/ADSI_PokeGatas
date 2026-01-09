@@ -3,7 +3,7 @@ import time
 import pokebase as pb
 from app.database.connection import Connection 
 
-TOTAL_POKEMONS = 151
+TOTAL_POKEMONS = 1026
 
 def obtener_region(generacion):
     region_map = {
