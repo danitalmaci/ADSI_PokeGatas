@@ -18,48 +18,57 @@ body {
 
 /* 1. MENÚ LATERAL (IZQUIERDA) del dashboard */
 .side-menu {
-    width: 250px;
-    background-color: #c95db7; /* Habria que poner el degradado de la foto */
-    color: white;
+    width: 300px;
+    background-image: url('img/fondos/fondo_degradado_vertical.png');
+    background-size: cover;
+    background-position: center;
     padding: 20px;
     display: flex;
     flex-direction: column;
-    gap: 70px;
-    flex-shrink: 0; /* Que no se encoja */
-}
-
-.brand-title {
-    font-size: 1.5rem;
-    font-weight: bold;
-    margin-bottom: 20px;
-    text-align: center;
-    color: #ecf0f1;
 }
 
 /* Botones del menú */
-.menu-btn {
-    display: block;
-    padding: 12px 15px;
-    background-color: #d27df48a;
-    color: white;
-    text-decoration: none;
-    border-radius: 8px;
-    transition: background 0.3s;
-    text-align: center;
+.menu-buttons {
+    margin-top: 190px;
+    display: flex;
+    flex-direction: column;
+    gap: 25px; /* espacio entre botones */
 }
 
+
+.menu-btn {
+    width: 200px;
+    height: 60px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    background-color: #f9a1b4d1;
+    color: white;
+    text-decoration: none;
+    font-size: 18px;
+    font-weight: 500;
+
+    border-radius: 999px;/* forma */
+    margin: 0 auto;
+    transition: background 0.3s, transform 0.2s;
+}
+
+
 .menu-btn:hover {
-    background-color: #e74c3c; /* Rojo al pasar el ratón */
+    background-color: #ff4de7;
+    transform: scale(1.05);
 }
 
 
 .menu-btn.admin:hover {
-    background-color: #e74c3c;
+    background-color: #ff4de7;
     color: white;
 }
 
 /* 2. PARTE DERECHA DE LA PANTALLA: Pokedex */
 .main-viewport {
+    background-image: url('img/fondos/fondo_1.png');
     flex-grow: 1; /* Ocupa el resto del espacio */
     padding: 30px;
     overflow-y: auto; /* Si hay muchos pokemon, hace scroll solo aquí */
