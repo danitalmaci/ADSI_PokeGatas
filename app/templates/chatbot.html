@@ -3,11 +3,25 @@
 
 {% block content %}
 
+<style>
+    body {
+        background-image: url("{{ url_for('static', filename='img/fondos/fondo_3.png') }}");
+        background-size: cover;       /* Ajusta la imagen para cubrir todo */
+        background-position: center;  /* Centra la imagen */
+        background-repeat: no-repeat; /* No la repitas como un mosaico */
+        background-attachment: fixed; /* Efecto: la imagen se queda quieta al hacer scroll */
+    }
+
+</style>
+
 <div class="chat-container">
     <div class="chat-header">
         <div class="bot-info">
-            <div class="bot-avatar">foto</div> <div>
-                <h3>Service-Ball</h3>
+            <div class="bot-avatar">
+                <img src="{{ url_for('static', filename='img/iconos/simbolo_ChatBot.png') }}">
+            </div> 
+            <div>
+                <h3>SERVICE-BALL</h3>
             </div>
         </div>
     </div>
@@ -17,14 +31,7 @@
     </div>
 
     <script>
-    console.log("--- DEBUG DIRECTO DESDE HTML ---");
     const testDiv = document.getElementById('chatMessages');
-    if (testDiv) {
-        console.log("✅ ¡El DIV existe! El navegador lo ve.");
-        console.log(testDiv);
-    } else {
-        console.error("❌ El DIV no existe en este punto exacto.");
-    }
 </script>
 
     <div class="chat-input-container">
