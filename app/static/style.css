@@ -56,13 +56,13 @@ body {
 
 
 .menu-btn:hover {
-    background-color: #ff4de7;
+    background-color: #ff6b81;
     transform: scale(1.05);
 }
 
 
 .menu-btn.admin:hover {
-    background-color: #ff4de7;
+    background-color: #ff6b81;
     color: white;
 }
 
@@ -239,7 +239,7 @@ body {
 }
 
 .send-button:hover {
-    background: #ff4de7;
+    background-color: #ff6b81;
 }
 
 /* ----- ANIMACIONES CHATBOT ----- */
@@ -289,4 +289,181 @@ body {
 @keyframes blink {
     0%, 80%, 100% { opacity: 0.2; transform: scale(0.8); }
     40% { opacity: 1; transform: scale(1.1); }
+}
+
+
+/* -------------------------------------------------*/
+/* -------------------------------------------------*/
+/* -------------------------------------------------*/
+/* -------------------------------------------------*/
+/* --- ESTILOS ADMIN DASHBOARD --- */
+
+/* container rosa grande */
+.admin-container {
+    width: 90%;
+    max-width: 900px;
+    height: 85vh;
+    margin: 40px auto;
+    background-color: rgba(249, 161, 180, 0.9);
+    border-radius: 30px; /* Bordes muy redondeados */
+    padding: 30px;
+    box-shadow: 0 10px 25px rgba(0,0,0,0.1);
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+}
+
+/* cabecera de 3 columnas */
+.admin-header-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 15px;
+    margin-bottom: 10px;
+}
+
+.header-pill {
+    background-color: white;
+    padding: 12px 25px;
+    border-radius: 50px; /* Forma de píldora */
+    color: #ff9eb5; /* Color del texto rosa suave */
+    font-weight: bold;
+    font-family: 'Verdana', sans-serif;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    box-shadow: 0 4px 6px rgba(0,0,0,0.05);
+}
+
+/* Ajustes específicos */
+.title-pill {
+    flex: 1; /* Ocupa espacio */
+    justify-content: flex-start; /* Texto a la izquierda */
+    color: #ff8fab;
+}
+
+.search-pill {
+    flex: 2; /* El buscador es más ancho */
+    padding: 5px 20px; /* Menos padding para el input */
+}
+
+.search-input {
+    width: 100%;
+    border: none;
+    outline: none;
+    font-size: 1rem;
+    color: #ff8fab;
+    background: transparent;
+    text-align: center; /* Texto centrado como en el diseño */
+}
+.search-input::placeholder {
+    color: #ffc2d1;
+}
+
+.link-pill {
+    flex: 1;
+    text-decoration: none;
+    color: #ff8fab;
+    transition: transform 0.2s;
+}
+.link-pill:hover {
+    transform: scale(1.05);
+}
+
+/* --- LISTA DE USUARIOS --- */
+.user-list-wrapper {
+    flex: 1; /* Ocupa el resto del espacio vertical */
+    overflow-y: auto; /* Scroll activado */
+    padding-right: 15px; /* Espacio para el scrollbar */
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+}
+
+/* Tarjeta individual de usuario (Rectángulo blanco) */
+.user-card {
+    background-color: white;
+    border-radius: 25px; /* Bordes redondeados */
+    padding: 10px 20px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    height: 80px; /* Altura fija para uniformidad */
+    box-shadow: 0 4px 6px rgba(0,0,0,0.05);
+}
+
+/* Avatar */
+.avatar-container img {
+    width: 60px;
+    height: 60px;
+    object-fit: cover;
+}
+
+/* nickname */
+.user-info {
+    flex-grow: 1;
+    text-align: center; /* Centrado como en la imagen */
+}
+
+.nickname {
+    color: #ff9eb5; /* Rosa claro */
+    font-size: 1.2rem;
+    font-weight: bold;
+    font-family: 'Verdana', sans-serif;
+}
+
+/* --- botones borrar y modificar --- */
+.action-buttons {
+    display: flex;
+    flex-direction: row;
+    gap: 15px;
+    align-items: center;
+    flex-shrink: 0;
+}
+
+/* CLASE CORRECTA QUE CONTROLA EL TAMAÑO */
+.btn-img {
+    display: flex;
+    align-items: center;
+    justify-content: center; /* Centra la imagen */
+    
+    /* TAMAÑO FIJO: Aquí controlas lo grande que es el icono */
+    width: 45px; 
+    height: 45px;
+    
+    overflow: hidden; /* OBLIGATORIO: Corta la imagen si se pasa */
+    border-radius: 10px;
+    transition: transform 0.2s, filter 0.2s;
+    /* Sin background-color para que se vea tu PNG transparente */
+}
+
+.btn-img img {
+    /* Estas reglas obligan a la imagen a entrar en la caja de 45px */
+    max-width: 100%;
+    max-height: 100%;
+    width: auto;
+    height: auto;
+    object-fit: contain;
+    display: block;
+}
+
+.btn-img:hover {
+    transform: scale(1.15);
+    filter: brightness(1.1);
+}
+
+/* --- SCROLLBAR PERSONALIZADO (Estilo de la imagen) --- */
+.user-list-wrapper::-webkit-scrollbar {
+    width: 10px;
+}
+
+.user-list-wrapper::-webkit-scrollbar-track {
+    background: rgba(255, 255, 255, 0.3); /* Track semitransparente */
+    border-radius: 10px;
+}
+
+.user-list-wrapper::-webkit-scrollbar-thumb {
+    background: white; /* Thumb blanco o rosa muy claro */
+    border-radius: 10px;
+    border: 2px solid rgba(249, 161, 180, 1); /* Borde rosa para integrarlo */
 }

@@ -1,0 +1,61 @@
+{% extends "base.html" %}
+
+{% block content %}
+
+<style>
+    body {
+        /* Asegúrate de que este fondo sea el de las pokeballs pixel art si lo tienes */
+        background-image: url("{{ url_for('static', filename='img/fondos/fondo_3.png') }}");
+        background-size: cover;
+        background-position: center;
+        background-repeat: no-repeat;
+        background-attachment: fixed;
+    }
+</style>
+
+<div class="admin-container">
+    
+    <div class="admin-header-row">
+        <div class="header-pill title-pill">
+            <span>Administrador</span>
+        </div>
+
+        <div class="header-pill search-pill">
+            <input type="text" placeholder="Buscar User" class="search-input">
+        </div>
+
+        <a href="{{ url_for('admin.pending_users') }}" class="header-pill link-pill">
+            <span>Nuevas cuentas</span>
+        </a>
+    </div>
+
+    <div class="user-list-wrapper">
+        {% if users %}
+            {% for user in users %}
+            <div class="user-card">
+                <div class="avatar-container">
+                    <img src="{{ url_for('static', filename=user.foto.replace('static/', '')) }}" alt="Avatar">
+                </div>
+
+                <div class="user-info">
+                    <span class="nickname">{{ user.nombreUsuario }}</span>
+                    </div>
+
+                <div class="action-buttons">
+                    <a href="#" class="btn-img btn-edit" title="Editar">
+                        <img src="{{ url_for('static', filename='img/iconos/simbolo_editar.png') }}" alt="Editar">
+                    </a>
+                    
+                    <a href="#" class="btn-img btn-delete" title="Borrar" onclick="return confirm('¿Borrar a {{ user.nombreUsuario }}?');">
+                        <img src="{{ url_for('static', filename='img/iconos/simbolo_Eliminar_Rosa.png') }}" alt="Eliminar">
+                    </a>
+                </div>
+            </div>
+            {% endfor %}
+        {% else %}
+            <div class="empty-message">No hay usuarios activos.</div>
+        {% endif %}
+    </div>
+</div>
+
+{% endblock %}

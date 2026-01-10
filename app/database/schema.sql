@@ -1,16 +1,16 @@
 /*esta tabla habria que revisar, es un  boceto */
-CREATE TABLE IF NOT EXISTS users (
+CREATE TABLE IF NOT EXISTS Usuario (
     id INTEGER PRIMARY KEY AUTOINCREMENT,
-    nombre_usuario TEXT UNIQUE NOT NULL,
+    nombreUsuario TEXT UNIQUE NOT NULL,
     nombre TEXT NOT NULL,
     apellido1 TEXT NOT NULL,
     apellido2 TEXT NOT NULL,
     foto TEXT,
     descripcion TEXT,
-    contrasena TEXT NOT NULL,
+    contraseña TEXT NOT NULL,
     correo TEXT UNIQUE NOT NULL,
-    fecha_nacimiento DATE NOT NULL,
-    rol TEXT DEFAULT 'TRAINER',
+    fechaNacimiento DATE NOT NULL, -- YYYY-MM-DD
+    rol TEXT DEFAULT 'ENTRENADOR', -- ENTRENADOR o ADMIN,
     estado TEXT DEFAULT 'PENDIENTE' -- en el diagrama es un bool pero igual mejor asi para poder diferenciar entre aprobado, rechazado, pendiente
 );
 
