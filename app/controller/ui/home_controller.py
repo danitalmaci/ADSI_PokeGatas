@@ -13,12 +13,6 @@ def home_blueprint():
 
     @bp.route('/dashboard', methods=['GET', 'POST'])
     def dashboard():
-        return render_template('dashboard.html')
-
-
-    @bp.route('/admin/users')
-    def admin_users():
-        # TODO: Aquí cargarás tus usuarios pendientes
-        return render_template('users.html', users=[]) 
+        return render_template('dashboard.html') 
 
     return bp

@@ -8,6 +8,7 @@ from app.controller.ui.loan_controller import loan_blueprint
 from app.controller.ui.user_controlller import user_blueprint
 from app.controller.ui.home_controller import home_blueprint
 from app.controller.ui.chatbot_controller import chatbot_blueprint
+from app.controller.ui.admin_controller import admin_blueprint
 from app.database.connection import Connection
 from config import Config
 
@@ -30,6 +31,7 @@ def create_app():
     # Crear conexión a la base de datos
     db = Connection()
     app.register_blueprint(home_blueprint())
+    app.register_blueprint(admin_blueprint(db))
     app.register_blueprint(user_blueprint(db))
     app.register_blueprint(book_blueprint(db))
     app.register_blueprint(loan_blueprint(db))
