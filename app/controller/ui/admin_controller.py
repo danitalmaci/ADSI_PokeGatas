@@ -16,11 +16,6 @@ def admin_blueprint(db):
         
         # 2. Renderizamos la vista pasando los datos
         return render_template('admin/dashboard.html', users=users)
-
-    @bp.route('/pendientes', methods=['GET'])
-    def pending_users():
-        # users = admin_service.get_pending_users()
-        return "<h1>TO DO: Pagina de usuarios pendientes</h1>"
     
     @bp.route('/delete/<string:nickname>', methods=['GET'])
     def delete_user(nickname):
@@ -54,5 +49,19 @@ def admin_blueprint(db):
         
         # volver al dashboard
         return redirect(url_for('admin.admin_users'))
+    
+    # Vista de lista de pendientes
+    @bp.route('/pendientes', methods=['GET'])
+    def pending_users():
+        users = admin_service.get_pending_users()
+        return render_template('admin/pending_users.html', users=users)
+
+    # Aprobar cuenta
+    @bp.route('/approve/<string:nickname>', methods=['GET'])
+    def approve_user(nickname):
+        # llamar al modelo
+        admin_service.aprobarCuenta(nickname)
+        # recargar pagina
+        return redirect(url_for('admin.pending_users'))
 
     return bp

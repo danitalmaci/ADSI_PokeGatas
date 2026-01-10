@@ -69,6 +69,19 @@ class AdminController:
             print(f"ERROR AL BORRAR CUENTA: {e}")
             return False
         
+    def aprobarCuenta(self, nickname):
+        """
+        Aprueba la cuenta de un usuario dado su nickname.
+        """
+        query = "UPDATE Usuario SET rol = 1 WHERE nombreUsuario = ?"
+        try:
+            self.db.update(query, (nickname,))
+            print(f"Usuario {nickname} APROBADO")
+            return True
+        except Exception as e:
+            print(f"ERROR APROBANDO CUENTA: {e}")
+            return False
+        
     def get_user_by_nickname(self, nickname):
         """Obtiene todos los datos de un usuario dado su nickname."""
         query = "SELECT * FROM Usuario WHERE nombreUsuario = ?"

@@ -2,10 +2,37 @@
 <html lang="es">
 <head>
     <meta charset="UTF-8">
-    <title>PokeGatas</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}PokeGatas App{% endblock %}</title>
     <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
 </head>
 <body>
+
+    <button class="hamburger-btn" id="menuToggle">☰</button>
+
+    <aside class="side-menu" id="sidebar">
+        
+        <button class="close-btn" id="menuClose">×</button>
+
+        <div class="menu-buttons">
+            <a href="{{ url_for('pokedex.pokedex') }}" class="menu-btn">Pokedex</a>
+            <a href="{{ url_for('chatbot.chatbot') }}" class="menu-btn">Service-Ball</a>
+            <a href="#" class="menu-btn">Perfil</a>
+            <a href="#" class="menu-btn">Equipos</a>
+            <a href="#" class="menu-btn">Notificaciones</a>
+            <a href="{{ url_for('admin.admin_users') }}" class="menu-btn admin">Admin</a>
+            <a href="{{ url_for('home.index') }}" class="menu-btn">Cerrar Sesión</a>
+        </div>
+    </aside>
+
+    <main class="main-content main-viewport {% block page_class %}{% endblock %}" id="mainContent">
+    
+    {% with messages = get_flashed_messages() %}
+        {% endwith %}
+
     {% block content %}{% endblock %}
+    </main>
+    <script src="{{ url_for('static', filename='js/main.js') }}"></script>
+
 </body>
 </html>

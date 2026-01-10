@@ -1,24 +1,16 @@
 {% extends "base.html" %}
 
+{% block title %}ChatBot{% endblock %}
+
+{% block page_class %}bg-chatbot{% endblock %}
 
 {% block content %}
-
-<style>
-    body {
-        background-image: url("{{ url_for('static', filename='img/fondos/fondo_3.png') }}");
-        background-size: cover;       /* Ajusta la imagen para cubrir todo */
-        background-position: center;  /* Centra la imagen */
-        background-repeat: no-repeat; /* No la repitas como un mosaico */
-        background-attachment: fixed; /* Efecto: la imagen se queda quieta al hacer scroll */
-    }
-
-</style>
 
 <div class="chat-container">
     <div class="chat-header">
         <div class="bot-info">
             <div class="bot-avatar">
-                <img src="{{ url_for('static', filename='img/iconos/simbolo_ChatBot.png') }}">
+                <img src="{{ url_for('static', filename='img/iconos/simbolo_ChatBot.png') }}" alt="Bot">
             </div> 
             <div>
                 <h3>SERVICE-BALL</h3>
@@ -27,21 +19,14 @@
     </div>
 
     <div class="chat-messages" id="chatMessages">
-        <!-- Vacio para que se pongan dinamicamente -->
-    </div>
-
-    <script>
-    const testDiv = document.getElementById('chatMessages');
-</script>
+        </div>
 
     <div class="chat-input-container">
-        <input type="text"id="messageInput" placeholder="Escribe tu mensaje..." class="chat-input"
-        />
-        
-        <button id="sendButton" class="send-button">
-            Send ➤ </button>
+        <input type="text" id="messageInput" placeholder="Escribe tu mensaje..." class="chat-input" />
+        <button id="sendButton" class="send-button">Send ➤</button>
     </div>
 </div>
 
 <script src="{{ url_for('static', filename='js/chatbot.js') }}?v=2"></script>
+
 {% endblock %}
