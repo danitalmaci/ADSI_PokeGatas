@@ -21,5 +21,38 @@ def admin_blueprint(db):
     def pending_users():
         # users = admin_service.get_pending_users()
         return "<h1>TO DO: Pagina de usuarios pendientes</h1>"
+    
+    @bp.route('/delete/<string:nickname>', methods=['GET'])
+    def delete_user(nickname):
+        # llamada al modelo para borrar la cuenta
+        admin_service.borrarCuenta(nickname)
+        # volver a la vista de admin users
+        return redirect(url_for('admin.admin_users'))
+    
+    # formulario para editar usuario
+    @bp.route('/edit/<string:nickname>', methods=['GET'])
+    def edit_user_form(nickname):
+        # buscar usuario
+        user = admin_service.get_user_by_nickname(nickname)
+        if not user:
+            return "Usuario no encontrado", 404
+        return render_template('admin/edit_user.html', user=user)
+
+    # boton guardar cambios del formulario
+    @bp.route('/update', methods=['POST'])
+    def update_user():       
+        # recoger datos
+        antiguo_nick = request.form['antiguo_nickname']
+        nuevo_nick = request.form['nickname']
+        nombre = request.form['nombre']
+        ape1 = request.form['ape1']
+        ape2 = request.form['ape2']
+        desc = request.form['descripcion']
+        
+        # llamada al modelo
+        admin_service.update_user(antiguo_nick, nuevo_nick, nombre, ape1, ape2, desc)
+        
+        # volver al dashboard
+        return redirect(url_for('admin.admin_users'))
 
     return bp
