@@ -29,8 +29,7 @@ def añadir_usuarios():
             "pass": "admin123", # Contraseña para entrar
             "mail": "boss@rocket.com",
             "nac": "2005-09-01",
-            "rol": "ADMIN",
-            "estado": "APROBADO",
+            "rol": 2, # Administrador
             "foto": "static/img/users/admin.jpg"
         },
         {
@@ -42,8 +41,7 @@ def añadir_usuarios():
             "pass": "pikachu",
             "mail": "ash@pokemon.com",
             "nac": "1997-04-01",
-            "rol": "ENTRENADOR",
-            "estado": "APROBADO", # Usuario normal activo
+            "rol": 1, # Entrenador aprobado
             "foto": "static/img/users/ash.jpg"
         },
         {
@@ -55,8 +53,7 @@ def añadir_usuarios():
             "pass": "gary123",
             "mail": "gary@oaklab.com",
             "nac": "1997-05-01",
-            "rol": "ENTRENADOR",
-            "estado": "PENDIENTE", # Para probar que el admin tiene que aprobarlo
+            "rol": 0,   # Pendiente
             "foto": "static/img/users/gary.jpg"
         },
         {
@@ -68,8 +65,7 @@ def añadir_usuarios():
             "pass": "wobbuffet",
             "mail": "jessie@rocket.com",
             "nac": "1995-10-12",
-            "rol": "ENTRENADOR",
-            "estado": "RECHAZADO", # Para probar usuarios baneados
+            "rol": 0,  # Pendiente
             "foto": "static/img/users/jessie.jpg"
         }
     ]
@@ -80,8 +76,8 @@ def añadir_usuarios():
         INSERT INTO Usuario (
             nombreUsuario, nombre, apellido1, apellido2, 
             descripcion, contraseña, correo, fechaNacimiento, 
-            rol, estado, foto
-        ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+            rol, foto
+        ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
     """
 
     for u in usuarios_fake:
@@ -99,13 +95,12 @@ def añadir_usuarios():
                 u["mail"],
                 u["nac"],
                 u["rol"],
-                u["estado"],
                 u["foto"]
             )
             
             db.insert(query, params)
             count += 1
-            print(f"Usuario creado: {u['user']} ({u['rol']} - {u['estado']})")
+            print(f"Usuario creado: {u['user']} ({u['rol']})")
             
         except Exception as e:
             print(f"Error creando {u['user']}: {e}")

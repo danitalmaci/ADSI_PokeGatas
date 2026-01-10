@@ -8,21 +8,27 @@ class AdminController:
         Usa el método .select() de tu clase Connection.
         """
         query = """
-            SELECT id, nombreUsuario, foto, rol, estado 
+            SELECT id, nombreUsuario, foto, rol 
             FROM Usuario 
-            WHERE estado != 'PENDIENTE'
+            WHERE rol > 0
         """
         
         try:
             rows = self.db.select(query)
             users_list = []
             for row in rows:
+                # TRADUCCIÓN DE NÚMERO A TEXTO PARA LA VISTA
+                rol_numero = row['rol']
+                rol_texto = "Entrenador"
+                if rol_numero == 2:
+                    rol_texto = "Administrador"
+                
                 users_list.append({
                     "id": row['id'], 
                     "nombreUsuario": row['nombreUsuario'],
                     "foto": row['foto'],
-                    "rol": row['rol'],
-                    "estado": row['estado']
+                    "rol": rol_texto, # Enviamos el texto "Entrenador" en vez del número 1
+                    "rol_num": rol_numero
                 })
             
             return users_list
@@ -35,7 +41,7 @@ class AdminController:
         """
         Obtiene solo los usuarios con estado PENDIENTE.
         """
-        query = "SELECT id, nombreUsuario, foto, rol, estado FROM Usuario WHERE estado = 'PENDIENTE'"
+        query = "SELECT id, nombreUsuario, foto, rol FROM Usuario WHERE rol = 0"
         try:
             rows = self.db.select(query)
             users_list = []
@@ -44,8 +50,7 @@ class AdminController:
                     "id": row['id'], 
                     "nombreUsuario": row['nombreUsuario'],
                     "foto": row['foto'],
-                    "rol": row['rol'],
-                    "estado": row['estado']
+                    "rol": row['rol']
                 })
             return users_list
         except Exception as e:
