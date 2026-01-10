@@ -1,17 +1,8 @@
 {% extends "base.html" %}
 
-{% block content %}
+{% block page_class %}bg-admin{% endblock %}
 
-<style>
-    body {
-        /* Asegúrate de que este fondo sea el de las pokeballs pixel art si lo tienes */
-        background-image: url("{{ url_for('static', filename='img/fondos/fondo_3.png') }}");
-        background-size: cover;
-        background-position: center;
-        background-repeat: no-repeat;
-        background-attachment: fixed;
-    }
-</style>
+{% block content %}
 
 <div class="admin-container">
     
@@ -42,11 +33,14 @@
                     </div>
 
                 <div class="action-buttons">
-                    <a href="#" class="btn-img btn-edit" title="Editar">
+                    <a href="{{ url_for('admin.edit_user_form', nickname=user.nombreUsuario) }}" class="btn-img btn-edit" title="Editar">
                         <img src="{{ url_for('static', filename='img/iconos/simbolo_editar.png') }}" alt="Editar">
                     </a>
                     
-                    <a href="#" class="btn-img btn-delete" title="Borrar" onclick="return confirm('¿Borrar a {{ user.nombreUsuario }}?');">
+                    <a href="{{ url_for('admin.delete_user', nickname=user.nombreUsuario) }}" 
+                       class="btn-img btn-delete" 
+                       title="Borrar usuario" 
+                       onclick="return confirm('¿Seguro que quieres borrar a {{ user.nombreUsuario }}? Esta acción es irreversible.');">
                         <img src="{{ url_for('static', filename='img/iconos/simbolo_Eliminar_Rosa.png') }}" alt="Eliminar">
                     </a>
                 </div>
