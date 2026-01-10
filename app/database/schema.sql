@@ -10,8 +10,7 @@ CREATE TABLE IF NOT EXISTS Usuario (
     contraseña TEXT NOT NULL,
     correo TEXT UNIQUE NOT NULL,
     fechaNacimiento DATE NOT NULL, -- YYYY-MM-DD
-    rol TEXT DEFAULT 'ENTRENADOR', -- ENTRENADOR o ADMIN,
-    estado TEXT DEFAULT 'PENDIENTE' -- en el diagrama es un bool pero igual mejor asi para poder diferenciar entre aprobado, rechazado, pendiente
+    rol INTEGER DEFAULT 0 --   0 pendiente (default) , 1 entrenador normal, 2 administrador
 );
 
 /* Tablas de la Pokedex */
