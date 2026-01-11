@@ -64,3 +64,98 @@ class AdminController:
         except Exception as e:
             print(f"ERROR EN PENDIENTES: {e}")
             return []
+    
+    def borrarCuenta(self, nickname):
+        """
+        Elimina la cuenta de un usuario dado su nickname.
+        """
+        query = "DELETE FROM Usuario WHERE nombreUsuario = ?"
+        try:
+            self.db.delete(query, (nickname,))
+            return True
+        except Exception as e:
+            print(f"ERROR AL BORRAR CUENTA: {e}")
+            return False
+        
+    def aprobarCuenta(self, nickname):
+        """
+        Aprueba la cuenta de un usuario dado su nickname.
+        """
+        query = "UPDATE Usuario SET rol = 1 WHERE nombreUsuario = ?"
+        try:
+            self.db.update(query, (nickname,))
+            print(f"Usuario {nickname} APROBADO")
+            return True
+        except Exception as e:
+            print(f"ERROR APROBANDO CUENTA: {e}")
+            return False
+        
+    def get_user_by_nickname(self, nickname):
+        """Obtiene todos los datos de un usuario dado su nickname."""
+        query = "SELECT * FROM Usuario WHERE nombreUsuario = ?"
+        try:
+            rows = self.db.select(query, (nickname,))
+            if rows:
+                row = rows[0]
+                # convertir a diccionario CON LAS CLAVES QUE USA EL HTML
+                return {
+                    "id": row['id'],
+                    # IMPORTANTE: El HTML espera 'nickname', no 'nombreUsuario'
+                    "nickname": row['nombreUsuario'], 
+                    "nombre": row['nombre'],
+                    # IMPORTANTE: El HTML espera 'ape1', no 'apellido1'
+                    "ape1": row['apellido1'],
+                    # IMPORTANTE: El HTML espera 'ape2', no 'apellido2'
+                    "ape2": row['apellido2'],
+                    "descripcion": row['descripcion'],
+                    "foto": row['foto'],
+                    "rol": row['rol']
+                }
+            return None
+        except Exception as e:
+            print(f"Error recuperando usuario {nickname}: {e}")
+            return None
+        
+    def get_user_by_nickname(self, nickname):
+        """Obtiene todos los datos de un usuario dado su nickname."""
+        query = "SELECT * FROM Usuario WHERE nombreUsuario = ?"
+        try:
+            rows = self.db.select(query, (nickname,))
+            if rows:
+                row = rows[0]
+                # --- CAMBIO IMPORTANTE AQUI ---
+                # Estamos mapeando los nombres de la base de datos (derecha)
+                # a los nombres que usa tu HTML (izquierda)
+                return {
+                    "id": row['id'],
+                    "nickname": row['nombreUsuario'], # HTML pide 'nickname'
+                    "nombre": row['nombre'],
+                    "ape1": row['apellido1'],         # HTML pide 'ape1'
+                    "ape2": row['apellido2'],         # HTML pide 'ape2'
+                    "descripcion": row['descripcion'],
+                    "foto": row['foto'],
+                    "rol": row['rol']
+                }
+            return None
+        except Exception as e:
+            print(f"Error recuperando usuario {nickname}: {e}")
+            return None
+        
+    def update_user(self, antiguo_nick, nuevo_nick, nombre, ape1, ape2, desc):
+        """
+        Modifica los datos de un usuario en la base de datos.
+        """
+        query = """
+            UPDATE Usuario 
+            SET nombreUsuario = ?, nombre = ?, apellido1 = ?, apellido2 = ?, descripcion = ?
+            WHERE nombreUsuario = ?
+        """
+        try:
+            params = (nuevo_nick, nombre, ape1, ape2, desc, antiguo_nick)
+            self.db.update(query, params)
+            
+            print(f"Usuario {antiguo_nick} actualizado. a {nuevo_nick}")
+            return True
+        except Exception as e:
+            print(f"--- ERROR ACTUALIZANDO USUARIO: {e} ---")
+            return False

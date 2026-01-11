@@ -1,0 +1,20 @@
+{% extends 'base.html' %}
+
+{% block title %}Pokedex{% endblock %}
+
+{% block page_class %}bg-pokedex{% endblock %}
+
+{% block content %}
+    <div class="view-header">
+        <h1 align="center">Pokedex</h1>
+    </div>
+
+    <div class="sprite-grid">
+        {% for i in range(1, 21) %}
+        <div class="pokemon-placeholder">
+            Pokegata #{{ i }}
+        </div>
+        {% endfor %}
+    </div>
+
+{% endblock %}

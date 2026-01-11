@@ -10,7 +10,7 @@ def chatbot_blueprint():
 
     # RUTA 1: Pagina principal
     @bp.route('/chatbot', methods=['GET'])
-    def index():
+    def chatbot():
         return render_template('chatbot.html')
     
     return bp
