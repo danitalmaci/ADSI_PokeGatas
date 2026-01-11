@@ -7,10 +7,10 @@ CREATE TABLE IF NOT EXISTS Usuario (
     apellido2 TEXT NOT NULL,
     foto TEXT,
     descripcion TEXT,
-    contraseña TEXT NOT NULL,
+    contrasena TEXT NOT NULL,
     correo TEXT UNIQUE NOT NULL,
     fechaNacimiento DATE NOT NULL, -- YYYY-MM-DD
-    rol INTEGER DEFAULT 0 --   0 pendiente (default) , 1 entrenador normal, 2 administrador
+    rol INTEGER DEFAULT 0 -- 0 pendiente, 1 entrenador, 2 admin
 );
 
 /* Tablas de la Pokedex */
@@ -106,17 +106,15 @@ CREATE TABLE IF NOT EXISTS equipos (
     id INTEGER PRIMARY KEY AUTOINCREMENT,
     user_id INTEGER NOT NULL,
     nombre_equipo TEXT NOT NULL,
-    FOREIGN KEY(user_id) REFERENCES users(id) ON DELETE CASCADE
+    FOREIGN KEY(user_id) REFERENCES Usuario(id) ON DELETE CASCADE
 );
 /* -----------------------------------*/
 
-
-/*esta tabla habria que revisar, es un  boceto */
 CREATE TABLE IF NOT EXISTS PokemonEquipo (
     id INTEGER PRIMARY KEY AUTOINCREMENT,
     equipo_id INTEGER NOT NULL,
     pokedex_id INTEGER NOT NULL,
-    nombre_pokemon TEXT, --mote
+    nombre_pokemon TEXT, -- mote
     imagen TEXT,
     altura REAL,
     peso REAL,
@@ -127,7 +125,7 @@ CREATE TABLE IF NOT EXISTS PokemonEquipo (
     ataque_especial INTEGER,
     defensa_especial INTEGER,
     velocidad INTEGER,
-    nivel INTEGER, -- no se si vamos a guardarlo, imagino que si
+    nivel INTEGER,
     FOREIGN KEY(equipo_id) REFERENCES equipos(id) ON DELETE CASCADE,
-    FOREIGN KEY(pokedex_id) REFERENCES Pokemon(pokedex_id)
+    FOREIGN KEY(pokedex_id) REFERENCES PokemonPokedex(pokedexID)
 );

@@ -680,3 +680,149 @@ body {
     transform: scale(1.15);
     filter: brightness(1.05);
 }
+
+/* --- REGISTER / CREAR CUENTA --- */
+.register-container{
+  width: 100%;
+  height: 100vh;
+  display:flex;
+  justify-content:center;
+  align-items:center;
+  padding: 30px;
+}
+
+/* Aquí tú puedes poner el fondo que quieras */
+.bg-register{
+  background-image: url('img/fondos/fondo_3.png');
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
+}
+
+.register-card{
+  width: min(1100px, 95vw);   /* MÁS ANCHO */
+  min-height: 420px;         /* MÁS ALTO */
+  background: rgba(255, 255, 255, 0.65);
+  border-radius: 30px;
+  padding: 32px 36px;        /* Más aire interior */
+}
+
+.register-header{
+  display:flex;
+  justify-content:center;
+  margin-bottom: 18px;
+}
+
+.register-title-pill{
+  background-color: white;
+  padding: 12px 40px;
+  border-radius: 999px;
+  color: #ff9eb5;
+  font-weight: bold;
+}
+
+.register-body{
+  display:flex;
+  gap: 22px;
+  align-items:flex-start;
+}
+
+/* Izquierda */
+.register-left{
+  width: 220px;
+  display:flex;
+  flex-direction:column;
+  align-items:center;
+  gap: 12px;
+}
+
+.register-avatar-box{
+  width: 160px;
+  height: 160px;
+  border-radius: 18px;
+  background: rgba(255,255,255,0.7);
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  overflow:hidden;
+}
+
+.register-avatar-img{
+  width: 140px;
+  height: 140px;
+  object-fit: contain;
+}
+
+.register-change-photo-pill{
+  background-color: white;
+  padding: 10px 18px;
+  border-radius: 999px;
+  color: #ff9eb5;
+  font-weight: bold;
+  cursor: pointer;
+  box-shadow: 0 4px 6px rgba(0,0,0,0.05);
+}
+
+.register-back-link{
+  margin-top: 6px;
+  color: #ff6b81;
+  text-decoration: none;
+  font-weight: bold;
+}
+
+/* Derecha */
+.register-form{
+  flex: 1;
+}
+
+.register-grid{
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 14px;
+}
+
+
+.register-actions{
+  margin-top: 18px;
+  display:flex;
+  justify-content:flex-end;
+}
+
+/* ================================================= */
+/* =============== FLASH MESSAGES ================== */
+/* ================================================= */
+
+.flash-container{
+    position: fixed;
+    top: 20px;
+    right: 20px;
+    z-index: 5000;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+.flash-message{
+    padding: 12px 16px;
+    border-radius: 12px;
+    background: rgba(255,255,255,0.95);
+    box-shadow: 0 6px 16px rgba(0,0,0,0.15);
+    min-width: 280px;
+    max-width: 360px;
+    border-left: 6px solid #ff6b81;
+    font-family: sans-serif;
+}
+
+.flash-success{
+    border-left-color: #4caf50;
+}
+
+.flash-error{
+    border-left-color: #ff6b81;
+}
+
+.flash-title{
+    display: block;
+    margin-bottom: 4px;
+    font-weight: bold;
+}
