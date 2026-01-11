@@ -1,18 +1,31 @@
 {% extends 'base.html' %}
 
+{% block page_class %}login-page bg-login{% endblock %}
+
 {% block content %}
-<div class="login-container">
-    <div class="login-box">
-        <h1>Inicio Sesión</h1>
-        <form action="/dashboard" method="GET">
-            <input type="text" placeholder="Usuario" style="width: 100%; padding: 10px; margin-bottom: 10px;">
-            <input type="password" placeholder="Contraseña" style="width: 100%; padding: 10px; margin-bottom: 10px;">
-            <button type="submit" class="menu-btn" style="width: 100%; border: none; cursor: pointer;">Entrar</button>
-        </form>
-        
-        <p style="margin-top: 15px; font-size: 0.9em;">
-            <a href="/register">Crear PokeCuenta</a>
-        </p>
-    </div>
+<div class="login-screen">
+  <div class="login-ui">
+
+    <div class="login-title">Inicio Sesión</div>
+
+    <!-- ✅ ahora apunta a /login y manda nickname + contrasena -->
+    <form class="login-form" action="{{ url_for('users.login') }}" method="POST">
+      <div class="login-row">
+        <div class="login-label-pill">NOMBRE</div>
+        <input class="login-input-pill" type="text" name="nickname" required>
+      </div>
+
+      <div class="login-row">
+        <div class="login-label-pill">CONTRASEÑA</div>
+        <input class="login-input-pill" type="password" name="contrasena" required>
+      </div>
+
+      <button class="login-action-pill" type="submit">ENTRAR</button>
+    </form>
+
+    <a class="login-create-pill" href="{{ url_for('users.register') }}">CREAR POKE-CUENTA</a>
+
+    <a class="login-back" href="{{ url_for('home.index') }}" aria-label="Volver">←</a>
+  </div>
 </div>
 {% endblock %}

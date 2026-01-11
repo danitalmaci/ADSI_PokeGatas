@@ -8,25 +8,36 @@
 </head>
 <body>
 
-    <!-- Botón menú -->
-    <button class="hamburger-btn" id="menuToggle">☰</button>
+    {# ===================================================== #}
+    {# MENÚ GLOBAL (SOLO CUANDO NO ES EL MENÚ LOGUEADO) #}
+    {# ===================================================== #}
 
-    <!-- Sidebar -->
-    <aside class="side-menu" id="sidebar">
-        <button class="close-btn" id="menuClose">×</button>
+    {% if page_class != 'bg-pokedex' %}
 
-        <div class="menu-buttons">
-            <a href="{{ url_for('pokedex.pokedex') }}" class="menu-btn">Pokedex</a>
-            <a href="{{ url_for('chatbot.chatbot') }}" class="menu-btn">Service-Ball</a>
-            <a href="#" class="menu-btn">Perfil</a>
-            <a href="{{ url_for('team_bp.list_teams') }}" class="menu-btn">Equipos</a>
-            <a href="#" class="menu-btn">Notificaciones</a>
-            <a href="{{ url_for('admin.admin_users') }}" class="menu-btn admin">Admin</a>
-            <a href="{{ url_for('home.index') }}" class="menu-btn">Cerrar Sesión</a>
-        </div>
-    </aside>
+        <!-- Botón menú -->
+        <button class="hamburger-btn" id="menuToggle">☰</button>
 
-    <!-- Contenido principal -->
+        <!-- Sidebar -->
+        <aside class="side-menu" id="sidebar">
+            <button class="close-btn" id="menuClose">×</button>
+
+            <div class="menu-buttons">
+                <a href="{{ url_for('pokedex.pokedex') }}" class="menu-btn">Pokedex</a>
+                <a href="{{ url_for('chatbot.chatbot') }}" class="menu-btn">Service-Ball</a>
+                <a href="#" class="menu-btn">Perfil</a>
+                <a href="{{ url_for('team_bp.list_teams') }}" class="menu-btn">Equipos</a>
+                <a href="#" class="menu-btn">Notificaciones</a>
+                <a href="{{ url_for('admin.admin_users') }}" class="menu-btn admin">Admin</a>
+                <a href="{{ url_for('home.index') }}" class="menu-btn">Cerrar Sesión</a>
+            </div>
+        </aside>
+
+    {% endif %}
+
+    {# ===================================================== #}
+    {# CONTENIDO PRINCIPAL #}
+    {# ===================================================== #}
+
     <main class="main-content main-viewport {% block page_class %}{% endblock %}" id="mainContent">
 
         <!-- FLASH MESSAGES -->
