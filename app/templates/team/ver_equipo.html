@@ -1,0 +1,152 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<style>
+    /* Estilo "Cute/Pink" basado en tu imagen */
+    body {
+        background-color: #ffe6f2; /* Fondo rosa muy suave */
+        font-family: 'Arial', sans-serif;
+    }
+
+    /* Contenedor principal (Tarjeta translúcida rosa) */
+    .contenedor-detalle {
+        background-color: rgba(255, 182, 193, 0.9); /* Rosa fuerte con transparencia */
+        border-radius: 25px;
+        padding: 40px;
+        max-width: 900px;
+        margin: 50px auto;
+        box-shadow: 0 8px 32px 0 rgba(31, 38, 135, 0.37);
+        border: 1px solid rgba(255, 255, 255, 0.18);
+        position: relative;
+    }
+
+    /* Título del equipo (Pill shape) */
+    .titulo-equipo {
+        background: white;
+        color: #ff9eb5;
+        padding: 10px 40px;
+        border-radius: 50px;
+        font-size: 1.5rem;
+        font-weight: bold;
+        display: inline-block;
+        margin-bottom: 30px;
+        box-shadow: 0 4px 6px rgba(0,0,0,0.05);
+    }
+
+    /* Grid de Pokémon */
+    .grid-pokemon {
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+        gap: 20px;
+    }
+
+    /* Tarjeta individual de Pokémon (Blanca y redondeada) */
+    .card-pokemon {
+        background: white;
+        border-radius: 20px;
+        padding: 15px;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        transition: transform 0.2s;
+    }
+
+    .card-pokemon:hover {
+        transform: translateY(-5px);
+    }
+
+    .info-poke {
+        display: flex;
+        align-items: center;
+        gap: 15px;
+    }
+
+    .img-poke {
+        width: 60px;
+        height: 60px;
+        object-fit: contain;
+    }
+
+    .nombre-poke {
+        font-size: 1.2rem;
+        color: #ff8fab;
+        font-weight: bold;
+    }
+
+    /* Botones de acción (Editar/Borrar) */
+    .acciones {
+        display: flex;
+        gap: 8px;
+    }
+
+    .btn-icon {
+        background: #ffc2d1;
+        border: none;
+        border-radius: 10px;
+        width: 35px;
+        height: 35px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        color: white;
+        cursor: pointer;
+        font-size: 1.1rem;
+    }
+
+    .btn-icon:hover {
+        background: #ff8fab;
+    }
+
+    /* Botón Volver */
+    .btn-volver {
+        position: absolute;
+        bottom: 20px;
+        left: 20px;
+        background: white;
+        color: #ff8fab;
+        border-radius: 50%;
+        width: 50px;
+        height: 50px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 1.5rem;
+        text-decoration: none;
+        box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+    }
+</style>
+
+<div class="contenedor-detalle">
+    
+    <div class="titulo-equipo">
+        {{ nombreEquipo }}
+    </div>
+    
+    <a href="#" style="color: white; text-decoration: underline; margin-left: 15px; font-weight: bold;">
+        ✏️ Añadir Pokemon
+    </a>
+
+    <div style="margin-top: 20px;"></div>
+
+    <div class="grid-pokemon">
+        {% for poke in equipo %}
+        <div class="card-pokemon">
+            <div class="info-poke">
+                <img src="{{ poke.imagen }}" class="img-poke" alt="Pokemon">
+                <span class="nombre-poke">{{ poke.nombre_pokemon }}</span>
+            </div>
+            
+            <div class="acciones">
+                <button class="btn-icon" title="Editar">✏️</button>
+                <button class="btn-icon" title="Eliminar">🗑️</button>
+            </div>
+        </div>
+        {% else %}
+        <p style="color: white; font-weight: bold; font-size: 1.2rem;">Este equipo está vacío.</p>
+        {% endfor %}
+    </div>
+
+    <a href="{{ url_for('team_bp.list_teams') }}" class="btn-volver">↩</a>
+
+</div>
+{% endblock %}

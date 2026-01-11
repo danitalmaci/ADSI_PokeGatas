@@ -1,40 +1,69 @@
 from flask import Blueprint, render_template, request, redirect, url_for, flash, session
 from app.database.connection import Connection
-# Importamos el modelo que acabamos de crear
 from app.controller.model.team_controller import TeamController
+from flask import jsonify
 
-# Definimos el Blueprint con prefijo '/equipos'
 team_blueprint = Blueprint('team_bp', __name__, url_prefix='/equipos')
 
-# RUTA 1: Listar Equipos (Necesario para ver el botón de borrar)
 @team_blueprint.route('/')
 def list_teams():
-    # OJO: Aquí deberíamos coger el ID del usuario logueado.
-    # Como aún no tenemos el Login 100% integrado, usamos 1 por defecto para probar.
     user_id = session.get('user_id', 1) 
     
     db = Connection()
-    controller = TeamController(db)
-    
-    # Llamamos al método del modelo
+    controller = TeamController(db) 
     teams_data = controller.get_teams_by_user(user_id)
     
-    return render_template('equipos.html', teams=teams_data)
-
-# RUTA 2: Eliminar Equipo (Implementación del Diagrama 9.23)
+    return render_template('team/equipos.html', teams=teams_data)
+    
 @team_blueprint.route('/eliminar/<int:team_id>')
 def delete_team(team_id):
+        db = Connection()
+        controller = TeamController(db)
+        success = controller.delete_team(team_id)
+        
+        if success:
+            flash("Equipo eliminado correctamente", "success")
+        else:
+            flash("Error al eliminar el equipo", "error")
+        
+        return redirect(url_for('team_bp.list_teams'))
+
+@team_blueprint.route('/crear', methods=['GET', 'POST'])
+def create_team():
+    # Usamos user_id = 1 simulando el nickname
+    nickname = 1 
+    
     db = Connection()
     controller = TeamController(db)
-    
-    # 1. Llamamos al método delete_team del Modelo (Paso 4 del diagrama)
-    success = controller.delete_team(team_id)
-    
-    # 2. Feedback visual (Paso 6 del diagrama: "mostrarMensaje")
-    if success:
-        flash("Equipo eliminado correctamente", "success")
+
+    if request.method == 'POST':
+        nombreEquipo = request.form.get('nombre_equipo')
+        lista_pok = request.form.getlist('pokemons')
+        
+        if len(lista_pok) > 6:
+            flash("Máximo 6 Pokémon por equipo", "error")
+            return redirect(url_for('team_bp.create_team'))
+
+        exito = controller.crearEquipo(nickname, nombreEquipo, lista_pok)
+        
+        if exito:
+            return redirect(url_for('team_bp.list_teams'))
+        else:
+            flash("Error al crear equipo", "error")
+            return redirect(url_for('team_bp.create_team'))
+
     else:
-        flash("Error al eliminar el equipo", "error")
+        json_pokedex = controller.consultarPokedex()
+        return render_template('team/create_team.html', pokemons=json_pokedex)
+
+@team_blueprint.route('/ver_equipo/<nombreEquipo>')
+def consultarDetalleEquipo(nombreEquipo):
     
-    # 3. Recargamos la lista (Paso 5 del diagrama: "eliminarEquipoDeLista" -> recargar página)
-    return redirect(url_for('team_bp.list_teams'))
+    db = Connection()
+    controller = TeamController(db)
+
+    json_detalle_equipo = controller.verDetalleEquipo(nombreEquipo)
+    
+    return render_template('team/ver_equipo.html', 
+                           equipo=json_detalle_equipo, 
+                           nombreEquipo=nombreEquipo)
