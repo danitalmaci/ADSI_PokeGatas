@@ -171,7 +171,7 @@ body {
     font-weight: bold;
 }
 
-/* --- ESTILOS LOGIN --- */
+/* --- ESTILOS LOGIN (ANTIGUOS, ya no se usan en el nuevo diseño) --- */
 .login-container {
     width: 100%;
     height: 100vh;
@@ -781,7 +781,6 @@ body {
   gap: 14px;
 }
 
-
 .register-actions{
   margin-top: 18px;
   display:flex;
@@ -825,4 +824,178 @@ body {
     display: block;
     margin-bottom: 4px;
     font-weight: bold;
+}
+
+
+/* ================================================= */
+/* ================== LOGIN PIXEL ================== */
+/* ================================================= */
+
+/* Para que el login NO tenga el padding/gris del main-viewport */
+.main-viewport.login-page{
+    padding: 0 !important;
+    background-color: transparent !important;
+    overflow: hidden;
+}
+
+/* Fondo del login (tu imagen fondo_2.png) */
+.bg-login{
+    background-image: url('img/fondos/fondo_2.png');
+    background-size: cover;
+    background-position: center;
+    background-repeat: no-repeat;
+}
+
+/* Capa que centra la UI */
+.login-screen{
+    width: 100%;
+    height: 100vh;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+/* Caja principal (transparente clarito como en el mockup) */
+.login-ui{
+    width: min(900px, 92vw);
+    min-height: 420px;
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    gap: 18px;
+
+    background: rgba(255,255,255,0.55);
+    border-radius: 22px;
+    padding: 26px 30px;
+    box-shadow: 0 8px 22px rgba(0,0,0,0.10);
+}
+
+/* Título tipo “pixel” (sin fuentes extra, pero con look suave) */
+.login-title{
+    width: fit-content;
+    margin: 0 auto;
+    padding: 10px 26px;
+    border-radius: 999px;
+    background: rgba(255,255,255,0.85);
+    color: #ff9eb5;
+    font-weight: 800;
+    font-size: 2.2rem;
+    letter-spacing: 1px;
+}
+
+/* Form layout */
+.login-form{
+    width: min(720px, 92%);
+    margin: 0 auto;
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+}
+
+/* Cada fila: label píldora + input largo */
+.login-row{
+    display: grid;
+    grid-template-columns: 180px 1fr;
+    gap: 14px;
+    align-items: center;
+}
+
+.login-label-pill{
+    background: rgba(255,255,255,0.85);
+    border-radius: 999px;
+    padding: 12px 16px;
+    text-align: center;
+    color: #ff9eb5;
+    font-weight: 800;
+    letter-spacing: 1px;
+}
+
+.login-input-pill{
+    background: rgba(255,255,255,0.85);
+    border-radius: 999px;
+    padding: 12px 16px;
+    border: 2px solid rgba(255, 158, 181, 0.65);
+    outline: none;
+    font-size: 1rem;
+}
+
+.login-input-pill:focus{
+    border-color: #ff9eb5;
+}
+
+/* Botón “ENTRAR” */
+.login-action-pill{
+    width: 260px;
+    margin: 10px auto 0;
+    border: none;
+    border-radius: 999px;
+    padding: 14px 20px;
+    background: rgba(249, 161, 180, 0.90);
+    color: white;
+    font-weight: 800;
+    letter-spacing: 1px;
+    cursor: pointer;
+    box-shadow: 0 6px 14px rgba(0,0,0,0.10);
+    transition: transform 0.15s ease, background 0.2s ease;
+}
+
+.login-action-pill:hover{
+    background: #ff6b81;
+    transform: scale(1.03);
+}
+
+/* Botón/link “CREAR POKE-CUENTA” como píldora */
+.login-create-pill{
+    width: 320px;
+    margin: 0 auto;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+
+    border-radius: 999px;
+    padding: 12px 18px;
+
+    background: rgba(255,255,255,0.85);
+    color: #ff9eb5;
+    font-weight: 800;
+    text-decoration: none;
+    letter-spacing: 1px;
+
+    border: 2px solid rgba(255, 158, 181, 0.45);
+    transition: transform 0.15s ease;
+}
+
+.login-create-pill:hover{
+    transform: scale(1.03);
+}
+
+/* Flecha volver abajo-izquierda */
+.login-back{
+    position: absolute;
+    left: 18px;
+    bottom: 14px;
+    width: 54px;
+    height: 54px;
+    border-radius: 50%;
+    background: rgba(255,255,255,0.85);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    text-decoration: none;
+    color: #ff6b81;
+    font-weight: 900;
+    font-size: 1.6rem;
+    box-shadow: 0 6px 14px rgba(0,0,0,0.10);
+}
+
+/* Responsive: en pantallas pequeñas apila */
+@media (max-width: 720px){
+    .login-ui{ min-height: 520px; }
+    .login-row{
+        grid-template-columns: 1fr;
+    }
+    .login-label-pill{
+        width: 100%;
+    }
 }
