@@ -1,0 +1,336 @@
+{% extends 'base.html' %}
+
+{% block content %}
+
+<style>
+    body {
+        background-image: url("{{ url_for('static', filename='img/fondos/fondo_3.png') }}"); 
+        background-size: cover;
+        background-attachment: fixed;
+        font-family: 'Arial', sans-serif;
+        margin: 0; padding: 0;
+    }
+
+    .main-panel {
+        background-color: rgba(255, 158, 181, 0.95);
+        border-radius: 40px;
+        padding: 30px 40px;
+        width: 90%; 
+        max-width: 1000px;
+        height: 85vh;
+        margin: 30px auto;
+        box-shadow: 0 15px 35px rgba(0,0,0,0.2);
+        position: relative;
+        display: flex;
+        flex-direction: column;
+        box-sizing: border-box;
+    }
+
+    .top-bar {
+        display: grid;
+        grid-template-columns: 1fr 2fr 1fr;
+        gap: 20px;
+        align-items: center;
+        margin-bottom: 20px;
+        flex-shrink: 0;
+    }
+
+    .pill-label, .btn-crear {
+        background-color: white;
+        color: #ff9eb5;
+        padding: 12px 0;
+        border-radius: 50px;
+        font-weight: bold;
+        font-size: 1.3rem;
+        text-align: center;
+        box-shadow: 0 4px 6px rgba(0,0,0,0.05);
+        text-decoration: none;
+        display: block;
+    }
+
+    .search-bar {
+        background-color: rgba(255, 255, 255, 0.4);
+        border: none;
+        border-radius: 50px;
+        padding: 12px 20px;
+        color: white;
+        font-weight: bold;
+        font-size: 1.3rem;
+        text-align: center;
+        width: 100%;
+        box-sizing: border-box;
+    }
+    .search-bar::placeholder { color: white; opacity: 0.9; }
+    .search-bar:focus { outline: none; background-color: rgba(255, 255, 255, 0.6); }
+
+    .btn-crear:hover { transform: scale(1.05); color: #ff6b95; }
+
+    .teams-list {
+        flex-grow: 1;
+        overflow-y: auto;
+        padding-right: 15px;
+        padding-left: 10px;
+    }
+
+    .teams-list::-webkit-scrollbar {
+        width: 10px;
+    }
+    .teams-list::-webkit-scrollbar-track {
+        background: rgba(255, 255, 255, 0.1); 
+        border-radius: 10px;
+    }
+    .teams-list::-webkit-scrollbar-thumb {
+        background-color: rgba(255, 255, 255, 0.8); 
+        border-radius: 10px;
+    }
+
+    .team-row {
+        margin-bottom: 35px;
+    }
+
+    .team-container {
+        display: flex;
+        align-items: center; 
+        gap: 25px;
+        width: 100%;
+    }
+
+    .pokemon-box {
+        background-color: white;
+        border-radius: 45px;
+        padding: 30px; 
+        /* Flex-grow asegura que llene el espacio horizontal disponible */
+        flex-grow: 1;
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        align-items: center; /* Centra el contenido (las bolas) en la caja grande */
+        box-shadow: 0 5px 10px rgba(0,0,0,0.05);
+        min-height: 280px; /* Un poco más alto para acomodar las bolas grandes */
+    }
+
+    .rows-wrapper {
+        display: flex;
+        flex-direction: column;
+        gap: 15px; /* Espacio vertical entre filas */
+    }
+
+    .poke-row {
+        display: flex;
+        gap: 90px; /* HUECOS MUCHO MÁS GRANDES */
+    }
+
+    .poke-row.bottom {
+        /* Para el zig-zag perfecto con gap 50 y ancho 125: (125+50)/2 = 87.5px */
+        margin-left: 88px; 
+    }
+
+    .poke-circle {
+        width: 125px; /* BOLAS MÁS GRANDES */
+        height: 125px; 
+        border-radius: 50%;
+        background-color: #ff9eb5;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        overflow: hidden;
+        border: none;
+        box-shadow: inset 0 0 0 0 transparent; 
+        flex-shrink: 0;
+    }
+    
+    .poke-img {
+        width: 100%;
+        height: 100%;
+        object-fit: contain;
+        background: white;
+        border-radius: 50%;
+        border: 4px solid #ff9eb5;
+    }
+
+    .actions-col {
+        display: flex;
+        flex-direction: column;
+        gap: 50px;
+        justify-content: center;
+        justify-content: flex-start;
+        padding-top: 10px;
+    }
+
+    .btn-icon {
+        background-color: white;
+        border: none;
+        border-radius: 50%;
+        width: 60px; 
+        height: 60px;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        text-decoration: none;
+        font-size: 1.8rem;
+        color: #ff9eb5;
+        box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+        transition: all 0.2s;
+        padding: 12px;
+        box-sizing: border-box;
+    }
+
+    .btn-icon img {
+        width: 100%;
+        height: 100%;
+        object-fit: contain;
+    }
+
+    .btn-icon:hover { transform: scale(1.1); background-color: #fff0f5; }
+
+    .btn-back-home {
+        position: absolute;
+        bottom: 20px;
+        left: 20px;
+        background: white;
+        color: #ff9eb5;
+        width: 60px;
+        height: 60px;
+        border-radius: 50%;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        font-size: 3rem;
+        text-decoration: none;
+        box-shadow: 0 5px 15px rgba(0,0,0,0.3);
+        transition: transform 0.2s;
+        z-index: 9999;
+        padding: 18px;
+        box-sizing: border-box;
+    }
+
+    .btn-back-home img {
+        width: 100%;
+        height: 100%;
+        object-fit: contain;
+    }
+
+    .btn-back-home:hover { transform: scale(1.1); }
+
+    .modal-overlay {
+        position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+        background-color: rgba(0, 0, 0, 0.4); 
+        z-index: 9999;
+        display: flex; justify-content: center; align-items: center;
+    }
+    .notification-box {
+        background-color: white;
+        border-radius: 25px;
+        padding: 40px;
+        width: 500px;
+        text-align: center;
+        position: relative;
+        box-shadow: 0 20px 50px rgba(0,0,0,0.2);
+    }
+    .notification-text { color: #ff9eb5; font-size: 1.4rem; font-weight: bold; margin: 10px 0; }
+    .close-modal-btn { position: absolute; top: 15px; right: 20px; background: none; border: none; font-size: 1.5rem; color: #aaa; cursor: pointer; }
+    .hidden { display: none !important; }
+
+    .team-name-label {
+        color: white; font-weight: bold; font-size: 1.8rem; margin-bottom: 10px; margin-left: 20px;
+    }
+
+</style>
+
+<div class="main-panel">
+
+    {% with messages = get_flashed_messages(with_categories=true) %}
+      {% if messages %}
+        <div id="notificacionModal" class="modal-overlay">
+            <div class="notification-box">
+                <button class="close-modal-btn" onclick="cerrarNotificacion()">✖</button>
+                {% for category, message in messages %}
+                    <p class="notification-text">{{ message }}</p>
+                {% endfor %}
+            </div>
+        </div>
+      {% endif %}
+    {% endwith %}
+
+    <div class="top-bar">
+        <div class="pill-label">Mis Equipos</div>
+        <input type="text" class="search-bar" placeholder="Buscar Equipo">
+        <a href="{{ url_for('team_bp.create_team') }}" class="btn-crear">Crear equipo</a>
+    </div>
+
+    <div class="teams-list">
+        {% for team in teams %}
+        <div class="team-row">
+            <div class="team-name-label">{{ team.nombre_equipo }}</div>
+
+            <div class="team-container">
+                <div class="pokemon-box">
+                    <div class="rows-wrapper">
+                        
+                        <div class="poke-row top">
+                            {% for i in range(0, 3) %} 
+                                {% if team.imagenes and i < team.imagenes|length %}
+                                    <div class="poke-circle">
+                                        <img src="{{ team.imagenes[i] }}" class="poke-img">
+                                    </div>
+                                {% else %}
+                                    <div class="poke-circle"></div>
+                                {% endif %}
+                            {% endfor %}
+                        </div>
+
+                        <div class="poke-row bottom">
+                            {% for i in range(3, 6) %}
+                                {% if team.imagenes and i < team.imagenes|length %}
+                                    <div class="poke-circle">
+                                        <img src="{{ team.imagenes[i] }}" class="poke-img">
+                                    </div>
+                                {% else %}
+                                    <div class="poke-circle"></div>
+                                {% endif %}
+                            {% endfor %}
+                        </div>
+
+                    </div>
+                </div>
+
+                <div class="actions-col">
+    <a href="{{ url_for('team_bp.consultarDetalleEquipo', nombreEquipo=team.nombre_equipo) }}" class="btn-icon">
+        <img src="{{ url_for('static', filename='img/iconos/simbolo_ver.png') }}" alt="Ver">
+    </a>
+    
+    <a href="#" class="btn-icon">
+        <img src="{{ url_for('static', filename='img/iconos/simbolo_Editar.png') }}" alt="Editar">
+    </a>
+    
+    <a href="{{ url_for('team_bp.delete_team', team_id=team['id']) }}" 
+       class="btn-icon" 
+       onclick="return confirm('¿Borrar este equipo?');">
+        <img src="{{ url_for('static', filename='img/iconos/simbolo_Eliminar_Rosa.png') }}" alt="Borrar">
+    </a>
+</div>
+            </div>
+        </div>
+        {% else %}
+        <div style="text-align: center; color: white; margin-top: 100px;">
+            <h2 style="font-size: 2rem;">No tienes equipos todavía.</h2>
+        </div>
+        {% endfor %}
+    </div>
+
+</div>
+
+<a href="/" class="btn-back-home">
+    <img src="{{ url_for('static', filename='img/iconos/simbolo_Volver.png') }}" alt="Volver">
+</a>
+
+<script>
+    function cerrarNotificacion() {
+        const modal = document.getElementById('notificacionModal');
+        if (modal) {
+            modal.classList.add('hidden');
+        }
+    }
+</script>
+
+{% endblock %}
