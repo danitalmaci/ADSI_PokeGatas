@@ -1,0 +1,67 @@
+{% extends 'base.html' %}
+
+{% block content %}
+
+<style>
+    body {
+        background-image: url("{{ url_for('static', filename='img/fondos/fondo_3.png') }}"); 
+        background-size: cover;
+        background-attachment: fixed;
+    }
+</style>
+
+<div class="container" style="max-width: 800px; margin-top: 50px;">
+    
+    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
+        <h2 style="color: white; text-shadow: 2px 2px 4px #000;">Mis Equipos</h2>
+        
+        <a href="#" class="btn btn-light" style="border-radius: 20px; font-weight: bold;">
+            + Crear equipo
+        </a>
+    </div>
+
+    {% with messages = get_flashed_messages(with_categories=true) %}
+      {% if messages %}
+        {% for category, message in messages %}
+          <div class="alert alert-{{ 'success' if category == 'success' else 'danger' }}">
+            {{ message }}
+          </div>
+        {% endfor %}
+      {% endif %}
+    {% endwith %}
+
+    <div class="list-group">
+        {% for team in teams %}
+        <div class="list-group-item" style="border-radius: 15px; margin-bottom: 10px; display: flex; justify-content: space-between; align-items: center; padding: 20px;">
+            
+            <div>
+                <h4 style="margin: 0; color: #333;">{{ team.nombre_equipo }}</h4>
+            </div>
+
+            <div class="action-buttons">
+                <a href="#" class="btn btn-outline-primary btn-sm" title="Ver Equipo">
+                    👁️
+                </a>
+
+                <a href="#" class="btn btn-outline-warning btn-sm" title="Modificar Equipo">
+                    ✏️
+                </a>
+
+                <a href="{{ url_for('team_bp.delete_team', team_id=team['id']) }}" 
+                   class="btn btn-outline-danger btn-sm" 
+                   onclick="return confirm('¿Estás seguro de que quieres eliminar el equipo {{ team.nombre_equipo }}?');"
+                   title="Eliminar Equipo">
+                    🗑️
+                </a>
+            </div>
+
+        </div>
+        {% else %}
+        <div class="alert alert-info">
+            No tienes equipos creados. ¡Crea uno nuevo!
+        </div>
+        {% endfor %}
+    </div>
+
+</div>
+{% endblock %}
