@@ -1,11 +1,12 @@
 from werkzeug.security import generate_password_hash
 from app.database.connection import Connection
 
-def añadir_usuarios():
+
+def anadir_usuarios():
     print("Iniciando carga de USUARIOS de prueba...")
-    
+
     db = Connection()
-    
+
     # Aseguramos que la tabla exista
     try:
         db.init_schema()
@@ -18,18 +19,17 @@ def añadir_usuarios():
         print(f"Nota: {e}")
 
     # --- DATOS DE PRUEBA ---
-    # Creamos una lista de diccionarios para iterar fácilmente
     usuarios_fake = [
         {
             "user": "admin_jefe",
-            "nombre": "David",#pro
+            "nombre": "David",
             "ape1": "Team",
             "ape2": "Rocket",
             "desc": "Administrador supremo del sistema.",
-            "pass": "admin123", # Contraseña para entrar
+            "pass": "admin123",
             "mail": "boss@rocket.com",
             "nac": "2005-09-01",
-            "rol": 2, # Administrador
+            "rol": 2,  # Administrador
             "foto": "static/img/users/admin.jpg"
         },
         {
@@ -41,7 +41,7 @@ def añadir_usuarios():
             "pass": "pikachu",
             "mail": "ash@pokemon.com",
             "nac": "1997-04-01",
-            "rol": 1, # Entrenador aprobado
+            "rol": 1,  # Entrenador aprobado
             "foto": "static/img/users/ash.jpg"
         },
         {
@@ -53,7 +53,7 @@ def añadir_usuarios():
             "pass": "gary123",
             "mail": "gary@oaklab.com",
             "nac": "1997-05-01",
-            "rol": 0,   # Pendiente
+            "rol": 0,  # Pendiente
             "foto": "static/img/users/gary.jpg"
         },
         {
@@ -71,41 +71,42 @@ def añadir_usuarios():
     ]
 
     count = 0
-    
+
+    # ✅ IMPORTANTE: usamos "contrasena" (sin ñ) para que coincida con schema.sql
     query = """
         INSERT INTO Usuario (
-            nombreUsuario, nombre, apellido1, apellido2, 
-            descripcion, contraseña, correo, fechaNacimiento, 
-            rol, foto
+            nombreUsuario, nombre, apellido1, apellido2,
+            foto, descripcion, contrasena, correo, fechaNacimiento,
+            rol
         ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
     """
 
     for u in usuarios_fake:
         try:
-            # contraseña encriptada
             password_encriptada = generate_password_hash(u["pass"])
-            
+
             params = (
                 u["user"],
                 u["nombre"],
                 u["ape1"],
                 u["ape2"],
+                u["foto"],
                 u["desc"],
-                password_encriptada, #guardar hash, no la contraseña en texto plano
+                password_encriptada,
                 u["mail"],
                 u["nac"],
-                u["rol"],
-                u["foto"]
+                u["rol"]
             )
-            
+
             db.insert(query, params)
             count += 1
-            print(f"Usuario creado: {u['user']} ({u['rol']})")
-            
+            print(f"Usuario creado: {u['user']} (rol={u['rol']})")
+
         except Exception as e:
             print(f"Error creando {u['user']}: {e}")
 
     print(f"\nCarga de usuarios finalizada. Total: {count}")
 
+
 if __name__ == "__main__":
-    añadir_usuarios()
+    anadir_usuarios()

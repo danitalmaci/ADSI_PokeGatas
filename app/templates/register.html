@@ -1,0 +1,61 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="register-container bg-register">
+  <div class="register-card">
+
+    <div class="register-header">
+      <div class="register-title-pill">Crear Cuenta</div>
+    </div>
+
+    <div class="register-body">
+
+      <!-- Columna izquierda: avatar + cambiar foto -->
+      <div class="register-left">
+        <div class="register-avatar-box">
+          <img
+            class="register-avatar-img"
+            src="{{ url_for('static', filename='img/iconos/simbolo_ChatBot.png') }}"
+            alt="Avatar"
+          />
+        </div>
+
+        <label class="register-change-photo-pill">
+          Cambiar foto
+          <input type="file" name="foto" accept="image/*" hidden>
+        </label>
+
+        <a class="register-back-link" href="/">Volver</a>
+      </div>
+
+      <!-- Columna derecha: formulario -->
+      <form class="register-form" action="/register" method="POST">
+        <div class="register-grid">
+          <input class="form-control-pill" type="text" name="nombre" placeholder="Nombre" required>
+          <input class="form-control-pill" type="text" name="apellido1" placeholder="1er Apellido" required>
+          <input class="form-control-pill" type="text" name="apellido2" placeholder="2º Apellido">
+
+          <!-- IMPORTANTE: nickname (no nombre_usuario) -->
+          <input class="form-control-pill" type="text" name="nickname" placeholder="Nombre de Usuario" required>
+
+          <input class="form-control-pill" type="date" name="fecha_nacimiento" required>
+
+          <input class="form-control-pill" type="email" name="correo" placeholder="Dirección correo" required>
+
+          <!-- IMPORTANTE: contrasena (mínimo 8) -->
+          <input class="form-control-pill" type="password" name="contrasena" placeholder="Contraseña (mín. 8)" required>
+
+          <input class="form-control-pill" type="text" name="descripcion" placeholder="Descripción">
+        </div>
+
+        <div class="register-actions">
+          <button class="menu-btn" type="submit" style="width: 200px; border: none;">
+            Crear Cuenta
+          </button>
+        </div>
+      </form>
+
+    </div>
+  </div>
+</div>
+{% endblock %}

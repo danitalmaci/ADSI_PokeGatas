@@ -8,10 +8,11 @@
 </head>
 <body>
 
+    <!-- Botón menú -->
     <button class="hamburger-btn" id="menuToggle">☰</button>
 
+    <!-- Sidebar -->
     <aside class="side-menu" id="sidebar">
-        
         <button class="close-btn" id="menuClose">×</button>
 
         <div class="menu-buttons">
@@ -25,14 +26,29 @@
         </div>
     </aside>
 
+    <!-- Contenido principal -->
     <main class="main-content main-viewport {% block page_class %}{% endblock %}" id="mainContent">
-    
-    {% with messages = get_flashed_messages() %}
+
+        <!-- FLASH MESSAGES -->
+        {% with messages = get_flashed_messages(with_categories=true) %}
+          {% if messages %}
+            <div class="flash-container">
+              {% for category, message in messages %}
+                <div class="flash-message {% if category == 'success' %}flash-success{% else %}flash-error{% endif %}">
+                  <strong class="flash-title">
+                    {% if category == 'success' %}✅ Éxito{% else %}⚠️ Error{% endif %}
+                  </strong>
+                  <div>{{ message }}</div>
+                </div>
+              {% endfor %}
+            </div>
+          {% endif %}
         {% endwith %}
 
-    {% block content %}{% endblock %}
-    </main>
-    <script src="{{ url_for('static', filename='js/main.js') }}"></script>
+        {% block content %}{% endblock %}
 
+    </main>
+
+    <script src="{{ url_for('static', filename='js/main.js') }}"></script>
 </body>
 </html>

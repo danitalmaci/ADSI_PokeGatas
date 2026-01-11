@@ -17,11 +17,15 @@ from config import Config
 
 def init_db():
     print("Iniciando la base de datos")
-    if os.path.exists(Config.DB_PATH):
-        conn = sqlite3.connect(Config.DB_PATH)
-        with open('app/database/schema.sql') as f:
-            conn.executescript(f.read())
-        conn.close()
+
+    base_dir = os.path.dirname(os.path.abspath(__file__))
+    schema_path = os.path.join(base_dir, "database", "schema.sql")
+
+    conn = sqlite3.connect(Config.DB_PATH)
+    with open(schema_path, "r", encoding="utf-8") as f:
+        conn.executescript(f.read())
+    conn.close()
+
 
 def create_app():
     app = Flask(__name__)
