@@ -11,12 +11,15 @@ def admin_blueprint(db):
 
     @bp.route('/users', methods=['GET'])
     def admin_users():
-        # 1. Llamamos a la lógica de negocio
-        users = admin_service.get_active_users()
+        # 1. Recogemos el parámetro 'search' de la URL (si existe)
+        search_query = request.args.get('search')
         
-        # 2. Renderizamos la vista pasando los datos
+        # 2. Llamamos a la lógica de negocio pasando el filtro
+        # Si search_query es None, el modelo devolverá todos (como antes)
+        users = admin_service.get_active_users(filtro_nombre=search_query)
+        
+        # 3. Renderizamos la vista pasando los datos
         return render_template('admin/dashboard.html', users=users)
-
     @bp.route('/pendientes', methods=['GET'])
     def pending_users():
         # users = admin_service.get_pending_users()

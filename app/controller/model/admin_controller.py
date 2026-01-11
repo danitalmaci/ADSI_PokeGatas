@@ -2,23 +2,31 @@ class AdminController:
     def __init__(self, db):
         self.db = db
 
-    def get_active_users(self):
+    def get_active_users(self, filtro_nombre=None):
         """
         Obtiene todos los usuarios que NO están pendientes.
-        Usa el método .select() de tu clase Connection.
+        Si recibe filtro_nombre, busca por coincidencias (LIKE).
         """
         query = """
             SELECT id, nombreUsuario, foto, rol 
             FROM Usuario 
             WHERE rol > 0
         """
-        
+        params = None
+        if filtro_nombre:
+            query += " AND nombreUsuario LIKE ?"
+            params = [f"%{filtro_nombre}%"] # Los % son para buscar texto parcial
+
         try:
-            rows = self.db.select(query)
+            rows = self.db.select(query, params)
             users_list = []
             for row in rows:
                 # TRADUCCIÓN DE NÚMERO A TEXTO PARA LA VISTA
                 rol_numero = row['rol']
+                try:
+                    rol_numero = int(rol_numero)
+                except:
+                    rol_numero = 0
                 rol_texto = "Entrenador"
                 if rol_numero == 2:
                     rol_texto = "Administrador"
