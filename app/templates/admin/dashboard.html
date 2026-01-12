@@ -34,7 +34,11 @@
             {% for user in users %}
             <div class="user-card">
                 <div class="avatar-container">
-                    <img src="{{ url_for('static', filename=user.foto.replace('static/', '')) }}" alt="Avatar">
+                    {% if user.foto %}
+                        <img src="{{ url_for('static', filename=user.foto.replace('static/', '')) }}" alt="Avatar">
+                    {% else %}
+                        <img src="{{ url_for('static', filename='img/usuario/user1.png') }}" alt="Avatar">
+                    {% endif %}
                 </div>
 
                 <div class="user-info">
