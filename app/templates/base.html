@@ -8,6 +8,25 @@
 </head>
 <body>
 
+    <!-- Botón menú -->
+    <button class="hamburger-btn" id="menuToggle">☰</button>
+
+    <!-- Sidebar -->
+    <aside class="side-menu" id="sidebar">
+        <button class="close-btn" id="menuClose">×</button>
+
+        <div class="menu-buttons">
+            <a href="{{ url_for('pokedex.mostrarPokedex') }}" class="menu-btn">Pokedex</a>
+            <a href="{{ url_for('chatbot.chatbot') }}" class="menu-btn">Service-Ball</a>
+            <a href="#" class="menu-btn">Perfil</a>
+            <a href="{{ url_for('team_bp.list_teams') }}" class="menu-btn">Equipos</a>
+            <a href="#" class="menu-btn">Notificaciones</a>
+            <a href="{{ url_for('admin.admin_users') }}" class="menu-btn admin">Admin</a>
+            <a href="{{ url_for('home.index') }}" class="menu-btn">Cerrar Sesión</a>
+        </div>
+    </aside>
+
+    <!-- Contenido principal -->
     {# ===================================================== #}
     {# MENÚ GLOBAL (SOLO CUANDO NO ES EL MENÚ LOGUEADO) #}
     {# ===================================================== #}
@@ -22,7 +41,7 @@
             <button class="close-btn" id="menuClose">×</button>
 
             <div class="menu-buttons">
-                <a href="{{ url_for('pokedex.pokedex') }}" class="menu-btn">Pokedex</a>
+                <a href="{{ url_for('pokedex.mostrarPokedex') }}" class="menu-btn">Pokedex</a>
                 <a href="{{ url_for('chatbot.chatbot') }}" class="menu-btn">Service-Ball</a>
                 <a href="{{ url_for('perfil.perfil') }}" class="menu-btn">Perfil</a>
                 <a href="{{ url_for('team_bp.list_teams') }}" class="menu-btn">Equipos</a>

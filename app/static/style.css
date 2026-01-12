@@ -998,6 +998,389 @@ body {
     .login-label-pill{
         width: 100%;
     }
+/* ================================================= */
+/* ===================== POKEDEX =================== */
+/* ================================================= */
+/* CONTENEDOR PRINCIPAL */
+.pokedex-container {
+    background-color: #f8b3c8;
+    border-radius: 30px;
+    padding: 30px;
+    max-width: 900px;
+    margin: 0 auto;
+}
+/* TÍTULO */
+.pokedex-title {
+    text-align: center;
+    font-size: 3.5rem; /* más grande */
+    color: white;
+    margin-bottom: 30px;
+
+    font-family: 'Press Start 2P', monospace;
+    letter-spacing: 3px;   /* MUY importante en fuentes pixel */
+    line-height: 1.4;
+
+    text-shadow: 
+        3px 3px 0 #000;   /* efecto retro */
+}
+
+/* GRID DE POKÉMON */
+.pokedex-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+    gap: 20px;
+}
+
+/* TARJETA */
+.pokemon-card {
+    background-color: #ffd6e4;
+    border-radius: 20px;
+    padding: 15px;
+    text-align: center;
+    position: relative;
+    box-shadow: 0 4px 0 #e89bb3;
+}
+
+/* NÚMERO */
+.pokemon-number {
+    position: absolute;
+    top: 8px;
+    left: 12px;
+    font-size: 0.8rem;
+    color: #a5556a;
+    font-weight: bold;
+}
+
+/* IMAGEN */
+.pokemon-img {
+    width: 96px;
+    height: 96px;
+    image-rendering: pixelated;
+    margin-top: 10px;
+}
+
+/* NOMBRE */
+.pokemon-name {
+    margin-top: 8px;
+    font-weight: bold;
+    text-transform: capitalize;
+    color: #7a2c45;
+}
+
+.pokemon-name a {
+    display: block;          /* ocupa el ancho de la card */
+    max-width: 100%;
+    text-decoration: none;
+    color: inherit;
+
+     /* CLAVE */
+    font-size: clamp(0.7rem, 1.5vw, 1.1rem);
+
+    white-space: normal;        /* permite saltos */
+    word-break: break-word;    /* rompe palabras largas */
+    line-height: 1.2;
+}
+.pokemon-name a {
+    text-decoration: none;   /* quita el subrayado */
+    color: inherit;          /* usa el color del texto normal */
+    font-weight: bold;       /* opcional */
+    cursor: pointer;         /* sigue siendo clickeable */
+}
+
+/* Opcional: efecto hover bonito */
+.pokemon-name a:hover {
+    color: #e63946;          /* el color que quieras */
+    text-decoration: none;
+}
+
+
+
+/* ================================================= */
+/* ================== INFO_POKEMON ================= */
+/* ================================================= */
+
+/* CONTENEDOR GENERAL */
+.pokemon-detail {
+    display: flex;
+    gap: 30px;
+    background: rgba(255, 255, 255, 0.6);
+    border-radius: 30px;
+    padding: 25px;
+    max-width: 1000px;
+    margin: auto;
+}
+
+/* ────────── IZQUIERDA: INFO ────────── */
+.pokemon-info {
+    flex: 2;
+}
+
+/* PANEL ROSA */
+.info-panel {
+    background-color: #f7a9be;
+    border-radius: 25px;
+    padding: 20px;
+    color: white;
+}
+
+/* GRID DE DATOS */
+.info-grid {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    text-align: center;
+    margin-bottom: 15px;
+}
+
+.info-label {
+    font-size: 0.8rem;
+    opacity: 0.9;
+}
+
+.info-value {
+    font-weight: bold;
+    margin-top: 5px;
+}
+
+/* HABILIDADES */
+.abilities {
+    text-align: center;
+    margin-top: 15px;
+}
+
+.abilities h4 {
+    margin-bottom: 5px;
+}
+
+/* ────────── STATS ────────── */
+.stats {
+    margin-top: 20px;
+}
+
+.stat {
+    margin-bottom: 10px;
+}
+
+.stat-label {
+    font-size: 0.8rem;
+    margin-bottom: 3px;
+}
+
+.stat-bar {
+    background: #ffd6e4;
+    border-radius: 10px;
+    overflow: hidden;
+}
+
+.stat-fill {
+    height: 10px;
+    background: #ff6fa1;
+    border-radius: 10px;
+}
+
+/* ────────── DERECHA: IMAGEN ────────── */
+.pokemon-visual {
+    flex: 1;
+    text-align: center;
+}
+
+/* SPRITE */
+.pokemon-sprite {
+    width: 160px;
+    image-rendering: pixelated;
+}
+
+/* NOMBRE */
+.pokemon-name {
+    font-size: 1.5rem;
+    font-weight: bold;
+    margin-top: 10px;
+}
+
+/* NÚMERO */
+.pokemon-id {
+    color: #f48fb1;
+    font-weight: bold;
+}
+
+/* TIPO */
+.pokemon-type {
+    margin-top: 10px;
+}
+
+.type-icon {
+    width: 50px;
+
+/* ================================================= */
+/* ================== LOGIN PIXEL ================== */
+/* ================================================= */
+
+/* Para que el login NO tenga el padding/gris del main-viewport */
+.main-viewport.login-page{
+    padding: 0 !important;
+    background-color: transparent !important;
+    overflow: hidden;
+}
+
+/* Fondo del login (tu imagen fondo_2.png) */
+.bg-login{
+    background-image: url('img/fondos/fondo_2.png');
+    background-size: cover;
+    background-position: center;
+    background-repeat: no-repeat;
+}
+
+/* Capa que centra la UI */
+.login-screen{
+    width: 100%;
+    height: 100vh;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+/* Caja principal (transparente clarito como en el mockup) */
+.login-ui{
+    width: min(900px, 92vw);
+    min-height: 420px;
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    gap: 18px;
+
+    background: rgba(255,255,255,0.55);
+    border-radius: 22px;
+    padding: 26px 30px;
+    box-shadow: 0 8px 22px rgba(0,0,0,0.10);
+}
+
+/* Título tipo “pixel” (sin fuentes extra, pero con look suave) */
+.login-title{
+    width: fit-content;
+    margin: 0 auto;
+    padding: 10px 26px;
+    border-radius: 999px;
+    background: rgba(255,255,255,0.85);
+    color: #ff9eb5;
+    font-weight: 800;
+    font-size: 2.2rem;
+    letter-spacing: 1px;
+}
+
+/* Form layout */
+.login-form{
+    width: min(720px, 92%);
+    margin: 0 auto;
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+}
+
+/* Cada fila: label píldora + input largo */
+.login-row{
+    display: grid;
+    grid-template-columns: 180px 1fr;
+    gap: 14px;
+    align-items: center;
+}
+
+.login-label-pill{
+    background: rgba(255,255,255,0.85);
+    border-radius: 999px;
+    padding: 12px 16px;
+    text-align: center;
+    color: #ff9eb5;
+    font-weight: 800;
+    letter-spacing: 1px;
+}
+
+.login-input-pill{
+    background: rgba(255,255,255,0.85);
+    border-radius: 999px;
+    padding: 12px 16px;
+    border: 2px solid rgba(255, 158, 181, 0.65);
+    outline: none;
+    font-size: 1rem;
+}
+
+.login-input-pill:focus{
+    border-color: #ff9eb5;
+}
+
+/* Botón “ENTRAR” */
+.login-action-pill{
+    width: 260px;
+    margin: 10px auto 0;
+    border: none;
+    border-radius: 999px;
+    padding: 14px 20px;
+    background: rgba(249, 161, 180, 0.90);
+    color: white;
+    font-weight: 800;
+    letter-spacing: 1px;
+    cursor: pointer;
+    box-shadow: 0 6px 14px rgba(0,0,0,0.10);
+    transition: transform 0.15s ease, background 0.2s ease;
+}
+
+.login-action-pill:hover{
+    background: #ff6b81;
+    transform: scale(1.03);
+}
+
+/* Botón/link “CREAR POKE-CUENTA” como píldora */
+.login-create-pill{
+    width: 320px;
+    margin: 0 auto;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+
+    border-radius: 999px;
+    padding: 12px 18px;
+
+    background: rgba(255,255,255,0.85);
+    color: #ff9eb5;
+    font-weight: 800;
+    text-decoration: none;
+    letter-spacing: 1px;
+
+    border: 2px solid rgba(255, 158, 181, 0.45);
+    transition: transform 0.15s ease;
+}
+
+.login-create-pill:hover{
+    transform: scale(1.03);
+}
+
+/* Flecha volver abajo-izquierda */
+.login-back{
+    position: absolute;
+    left: 18px;
+    bottom: 14px;
+    width: 54px;
+    height: 54px;
+    border-radius: 50%;
+    background: rgba(255,255,255,0.85);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    text-decoration: none;
+    color: #ff6b81;
+    font-weight: 900;
+    font-size: 1.6rem;
+    box-shadow: 0 6px 14px rgba(0,0,0,0.10);
+}
+
+/* Responsive: en pantallas pequeñas apila */
+@media (max-width: 720px){
+    .login-ui{ min-height: 520px; }
+    .login-row{
+        grid-template-columns: 1fr;
+    }
+    .login-label-pill{
+        width: 100%;
+    }
 }
 
 /* ================================================= */
