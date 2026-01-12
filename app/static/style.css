@@ -1100,16 +1100,27 @@ body {
 /* ================== INFO_POKEMON ================= */
 /* ================================================= */
 
+/* Fondo del perfil (puedes cambiar la imagen cuando quieras) */
+.bg-pokemon{
+  background-image: url('img/fondos/fondo_3.png'); /* pon aquí el que quieras */
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
+  min-height: 100vh;
+  padding: 40px;
+}
 /* CONTENEDOR GENERAL */
 .pokemon-detail {
     display: flex;
-    gap: 30px;
-    background: rgba(255, 255, 255, 0.6);
+    flex-direction: row-reverse;
+    gap: 40px;
+    background: #ffffff;        /* opaco */
     border-radius: 30px;
-    padding: 25px;
-    max-width: 1000px;
+    padding: 40px;
+    max-width: 1200px;          /* más ancho */
     margin: auto;
 }
+
 
 /* ────────── IZQUIERDA: INFO ────────── */
 .pokemon-info {
@@ -1133,23 +1144,22 @@ body {
 }
 
 .info-label {
-    font-size: 0.8rem;
-    opacity: 0.9;
+    font-size: 1rem;
 }
 
 .info-value {
-    font-weight: bold;
-    margin-top: 5px;
+    font-size: 1.2rem;
 }
 
 /* HABILIDADES */
-.abilities {
+.abilities p {
     text-align: center;
-    margin-top: 15px;
+    font-size: 1rem;
 }
 
 .abilities h4 {
-    margin-bottom: 5px;
+    text-align: center; 
+    font-size: 1.2rem;
 }
 
 /* ────────── STATS ────────── */
@@ -1162,21 +1172,34 @@ body {
 }
 
 .stat-label {
-    font-size: 0.8rem;
-    margin-bottom: 3px;
+    font-size: 1rem;
 }
 
 .stat-bar {
     background: #ffd6e4;
     border-radius: 10px;
     overflow: hidden;
+    position: relative;
+    height: 16px;
 }
 
 .stat-fill {
-    height: 10px;
+    height: 100%;
     background: #ff6fa1;
     border-radius: 10px;
+    transition: width 0.8s ease-in-out;
 }
+
+.stat-number {
+    position: absolute;
+    right: 8px;
+    top: 50%;
+    transform: translateY(-50%);
+    font-size: 0.9rem;
+    font-weight: bold;
+    color: #333;
+}
+
 
 /* ────────── DERECHA: IMAGEN ────────── */
 .pokemon-visual {
@@ -1184,17 +1207,13 @@ body {
     text-align: center;
 }
 
-/* SPRITE */
 .pokemon-sprite {
-    width: 160px;
-    image-rendering: pixelated;
+    width: 220px;
 }
 
 /* NOMBRE */
 .pokemon-name {
-    font-size: 1.5rem;
-    font-weight: bold;
-    margin-top: 10px;
+    font-size: 2rem;
 }
 
 /* NÚMERO */
