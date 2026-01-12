@@ -3,17 +3,14 @@ import sqlite3
 
 from flask import Flask
 
-from app.controller.ui.user_controlller import user_blueprint   
-
-
-from app.controller.ui.user_controlller import user_blueprint
+from app.controller.ui.gestor_usuarios import user_blueprint
 from app.controller.ui.home_controller import home_blueprint
 from app.controller.ui.chatbot_controller import chatbot_blueprint
 from app.controller.ui.admin_controller import admin_blueprint
 from app.controller.ui.gestor_Pokemon import pokedex_blueprint
 from app.controller.ui.team_controller import team_blueprint
-from app.controller.ui.perfil_controlador import perfil_blueprint
-from app.controller.ui.menu_logged_controller import menu_logged_blueprint  
+from app.controller.ui.gestor_perfil import perfil_blueprint
+from app.controller.ui.gestor_menu_logged import menu_logged_blueprint
 
 from app.database.connection import Connection
 from config import Config
@@ -40,14 +37,15 @@ def create_app():
 
     # Crear conexión a la base de datos
     db = Connection()
-    app.register_blueprint(perfil_blueprint(db))
+
+    # Blueprints
     app.register_blueprint(home_blueprint())
-    app.register_blueprint(admin_blueprint(db))
     app.register_blueprint(user_blueprint(db))
-    app.register_blueprint(menu_logged_blueprint())  # ✅ NUEVO: menú tras login
+    app.register_blueprint(menu_logged_blueprint())
+    app.register_blueprint(perfil_blueprint(db))
+    app.register_blueprint(admin_blueprint(db))
     app.register_blueprint(chatbot_blueprint())
     app.register_blueprint(pokedex_blueprint())
-    app.register_blueprint(team_blueprint)  # ✅ si team_blueprint es función (factory)
-
+    app.register_blueprint(team_blueprint)  # ✅ llamada correcta si es factory
 
     return app
