@@ -1,6 +1,7 @@
 {% extends 'base.html' %}
 
-{% block title %}pokemon{% endblock %}
+{% block page_class %}bg-pokemon{% endblock %}
+{% block title %}{{ pokemon.nombrePokemon }}{% endblock %}
 
 {% block content %}
 <div class="pokemon-detail">
@@ -11,48 +12,87 @@
       <div class="info-grid">
         <div>
           <div class="info-label">Altura</div>
-          <div class="info-value">0.4 m</div>
+          <div class="info-value">{{ pokemon.altura }} m</div>
         </div>
         <div>
           <div class="info-label">Peso</div>
-          <div class="info-value">10.1 kg</div>
+          <div class="info-value">{{ pokemon.peso }} kg</div>
         </div>
         <div>
           <div class="info-label">Sexo</div>
-          <div class="info-value">Fem/Masc</div>
+          <div class="info-value">{{ pokemon.sexo }}</div>
         </div>
         <div>
           <div class="info-label">Categoría</div>
-          <div class="info-value">Malicioso</div>
+          <div class="info-value">{{ pokemon.nombreCategoria }}</div>
         </div>
       </div>
 
       <div class="abilities">
-        <h4>Habilidad</h4>
-        <p>Flexibilidad</p>
-        <p>Liviano</p>
+        <h4>Habilidades</h4>
+        {% for habilidad in pokemon.habilidades %}
+          <p>{{ habilidad.nombreHabilidad }}</p>
+        {% endfor %}
       </div>
 
     </div>
 
     <div class="stats">
       <div class="stat">
-        <div class="stat-label">Ps</div>
+        <div class="stat-label">PS</div>
         <div class="stat-bar">
-          <div class="stat-fill" style="width:60%"></div>
+          <div class="stat-fill" style="width:{{ pokemon.ps }}%"></div>
+          <span class="stat-number">{{ pokemon.ps }}</span>
         </div>
       </div>
-      <!-- repetir para ataque, defensa, etc -->
+      <div class="stat">
+        <div class="stat-label">Ataque</div>
+        <div class="stat-bar">
+          <div class="stat-fill" style="width:{{ pokemon.ataque }}%"></div>
+          <span class="stat-number">{{ pokemon.ataque }}</span>
+        </div>
+      </div>
+      <div class="stat">
+        <div class="stat-label">Ataque Especial</div>
+        <div class="stat-bar">
+          <div class="stat-fill" style="width:{{ pokemon.ataqueEspecial }}%"></div>
+          <span class="stat-number">{{ pokemon.ataqueEspecial }}</span>
+        </div>
+      </div>
+      <div class="stat">
+        <div class="stat-label">Defensa</div>
+        <div class="stat-bar">
+          <div class="stat-fill" style="width:{{ pokemon.defensa }}%"></div>
+          <span class="stat-number">{{ pokemon.defensa }}</span>
+          
+        </div>
+      </div>
+      <div class="stat">
+        <div class="stat-label">Defensa Especial</div>
+        <div class="stat-bar">
+          <div class="stat-fill" style="width:{{ pokemon.defensaEspecial }}%"></div>
+          <span class="stat-number">{{ pokemon.defensaEspecial }}</span>
+        </div>
+      </div>
+      <div class="stat">
+        <div class="stat-label">Velocidad</div>
+        <div class="stat-bar">
+          <div class="stat-fill" style="width:{{ pokemon.velocidad }}%"></div>
+          <span class="stat-number">{{ pokemon.velocidad }}</span>
+        </div>
+      </div>
     </div>
   </div>
 
   <div class="pokemon-visual">
-    <img src="sprite.png" class="pokemon-sprite">
-    <div class="pokemon-name">Purrloin</div>
-    <div class="pokemon-id">Nº 0509</div>
+    <img src="{{ pokemon.imagen }}" class="pokemon-sprite">
+    <div class="pokemon-name">{{ pokemon.nombrePokemon }}</div>
+    <div class="pokemon-id">Nº {{ pokemon.pokedexID }}</div>
     <div class="pokemon-type">
-      <img src="tipo-siniestro.png" class="type-icon">
-    </div>
+    {% for tipo in pokemon.tipos %}
+      <img src="{{ tipo.imagenTipo }}" class="type-icon" alt="{{ tipo.nombreTipo }}">
+    {% endfor %}
+    </div>  
   </div>
 
 </div>
