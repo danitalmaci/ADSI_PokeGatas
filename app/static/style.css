@@ -999,3 +999,289 @@ body {
         width: 100%;
     }
 }
+
+/* ================================================= */
+/* =================== PERFIL ====================== */
+/* ================================================= */
+
+/* Fondo del perfil (puedes cambiar la imagen cuando quieras) */
+.bg-perfil{
+  background-image: url('img/fondos/fondo_2.png'); /* pon aquí el que quieras */
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
+}
+
+/* Contenedor centrado */
+.perfil-container{
+  width: 100%;
+  min-height: 100vh;
+  display:flex;
+  justify-content:center;
+  align-items:center;
+  padding: 30px;
+}
+
+/* Tarjeta principal */
+.perfil-card{
+  width: min(1080px, 96vw);      
+  min-height: 520px;            
+  background: #ffffff;          
+  border-radius: 40px;            
+  padding: 28px 32px;
+  box-shadow: 0 12px 30px rgba(0,0,0,0.12);
+}
+
+
+/* Header: 3 “píldoras” */
+.perfil-header{
+  display:flex;
+  align-items:center;
+  gap: 14px;
+  margin-bottom: 16px;
+}
+
+.perfil-pill{
+  background: rgba(255,255,255,0.85);
+  border-radius: 999px;
+  padding: 10px 18px;
+  color: #ff8fab;
+  font-weight: 700;
+  font-size: 0.95rem;
+  box-shadow: 0 4px 10px rgba(0,0,0,0.06);
+  white-space: nowrap;
+}
+
+.perfil-pill-action{
+  margin-left: auto;
+  text-decoration: none;
+  background: #f9a1b4d1;
+  color: white;
+}
+
+.perfil-pill span{
+  color: #ff6b81;
+}
+
+/* Body: izquierda + derecha */
+.perfil-body{
+  display:flex;
+  gap: 18px;
+  align-items: flex-start;
+}
+
+/* Columna izquierda */
+.perfil-left{
+  width: 210px;
+  display:flex;
+  flex-direction:column;
+  align-items:flex-start;
+  gap: 12px;
+}
+
+.perfil-avatar{
+  width: 170px;
+  height: 170px;
+  border-radius: 22px;
+  background: rgba(255,255,255,0.65);
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  box-shadow: inset 0 0 0 3px rgba(255,255,255,0.45);
+}
+
+.perfil-avatar-placeholder{
+  width: 115px;
+  height: 115px;
+  border-radius: 18px;
+  background: rgba(0,0,0,0.06);
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  color: #ff8fab;
+  font-weight: 800;
+}
+.perfil-avatar-img{
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  border-radius: 18px; /* ajusta si tu caja es más redonda */
+  display: block;
+}
+
+
+.perfil-nickname{
+  width: 170px;
+  background: rgba(255,255,255,0.80);
+  border-radius: 999px;
+  padding: 10px 14px;
+  box-shadow: 0 4px 10px rgba(0,0,0,0.06);
+}
+
+.perfil-nickname-label{
+  font-size: 0.75rem;
+  font-weight: 800;
+  color: #ff9eb5;
+  line-height: 1.1;
+}
+
+.perfil-nickname-value{
+  font-size: 0.95rem;
+  font-weight: 900;
+  color: #ff6b81;
+  overflow:hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.perfil-link{
+  color: #ff6b81;
+  font-weight: 800;
+  text-decoration: none;
+  margin-left: 6px;
+}
+
+.perfil-link:hover{
+  text-decoration: underline;
+}
+
+/* Columna derecha */
+.perfil-right{
+  flex: 1;
+}
+
+/* Panel favoritos */
+.perfil-favs{
+  background: rgba(249,161,180,0.45);
+  border-radius: 28px;
+  padding: 18px 20px;
+  box-shadow: inset 0 0 0 4px rgba(255,255,255,0.45);
+}
+
+.perfil-favs-title{
+  font-weight: 900;
+  color: #ff6b81;
+  margin-bottom: 10px;
+  padding-left: 6px;
+}
+
+/* Scroll lateral como mockup */
+.perfil-favs-scroll{
+  max-height: 220px; /* para que aparezca scroll */
+  overflow-y: auto;
+  padding-right: 10px;
+}
+
+/* Grid pokemons */
+.perfil-favs-grid{
+  display:grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 12px;
+}
+
+.perfil-poke-slot{
+  height: 90px;
+  border-radius: 18px;
+  background: rgba(255,255,255,0.75);
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  box-shadow: 0 4px 10px rgba(0,0,0,0.05);
+}
+
+.perfil-poke-placeholder{
+  color:#ff8fab;
+  font-weight: 900;
+}
+
+/* Scrollbar estilo rosa */
+.perfil-favs-scroll::-webkit-scrollbar{
+  width: 10px;
+}
+.perfil-favs-scroll::-webkit-scrollbar-track{
+  background: rgba(255,255,255,0.35);
+  border-radius: 10px;
+}
+.perfil-favs-scroll::-webkit-scrollbar-thumb{
+  background: rgba(249,161,180,0.9);
+  border-radius: 10px;
+  border: 2px solid rgba(255,255,255,0.55);
+}
+/*--------------------------------------------------------------*/
+/* =============================== */
+/* ============ MODAL ============ */
+/* =============================== */
+.avatar-modal-overlay{
+  position: fixed;
+  inset: 0;
+  background: rgba(0,0,0,0.35);
+  display: none;
+  align-items: center;
+  justify-content: center;
+  z-index: 9999;
+  padding: 20px;
+}
+
+.avatar-modal-overlay.active{
+  display: flex;
+}
+
+.avatar-modal{
+  width: min(760px, 95vw);
+  background: white;
+  border-radius: 22px;
+  box-shadow: 0 12px 30px rgba(0,0,0,0.2);
+  padding: 18px;
+}
+
+.avatar-modal-header{
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  margin-bottom: 12px;
+}
+
+.avatar-modal-title{
+  font-weight: bold;
+  color: #ff8fab;
+  font-size: 1.1rem;
+}
+
+.avatar-modal-close{
+  width: 44px;
+  height: 44px;
+  border: none;
+  border-radius: 12px;
+  background: #fff0f5;
+  color: #ff6b81;
+  font-size: 1.6rem;
+  cursor: pointer;
+}
+
+.avatar-grid{
+  display: grid;
+  grid-template-columns: repeat(5, minmax(0, 1fr));
+  gap: 12px;
+}
+
+.avatar-option{
+  border: 2px solid transparent;
+  border-radius: 16px;
+  background: #fff0f5;
+  padding: 8px;
+  cursor: pointer;
+  transition: transform 0.15s, border-color 0.15s;
+}
+
+.avatar-option:hover{
+  transform: scale(1.03);
+  border-color: #ff9eb5;
+}
+
+.avatar-option img{
+  width: 100%;
+  height: 90px;
+  object-fit: contain;
+  display: block;
+}

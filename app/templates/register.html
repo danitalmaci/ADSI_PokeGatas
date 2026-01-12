@@ -14,28 +14,37 @@
       <div class="register-left">
         <div class="register-avatar-box">
           <img
+            id="avatarPreview"
             class="register-avatar-img"
-            src="{{ url_for('static', filename='img/iconos/simbolo_ChatBot.png') }}"
+            src="{{ url_for('static', filename='img/usuario/user3.png') }}"
             alt="Avatar"
           />
         </div>
 
-        <label class="register-change-photo-pill">
+        <!-- Botón: abre modal -->
+        <button type="button" id="openAvatarModal" class="register-change-photo-pill">
           Cambiar foto
-          <input type="file" name="foto" accept="image/*" hidden>
-        </label>
+        </button>
 
         <a class="register-back-link" href="/">Volver</a>
       </div>
 
       <!-- Columna derecha: formulario -->
       <form class="register-form" action="/register" method="POST">
+        <!-- ✅ Aquí se guarda la ruta elegida para enviarla al backend -->
+        <input
+          type="hidden"
+          name="foto"
+          id="fotoInput"
+          value="{{ url_for('static', filename='img/usuario/user3.png') }}"
+        >
+
         <div class="register-grid">
           <input class="form-control-pill" type="text" name="nombre" placeholder="Nombre" required>
           <input class="form-control-pill" type="text" name="apellido1" placeholder="1er Apellido" required>
-          <input class="form-control-pill" type="text" name="apellido2" placeholder="2º Apellido">
+          <input class="form-control-pill" type="text" name="apellido2" placeholder="2º Apellido" required>
 
-          <!-- IMPORTANTE: nickname (no nombre_usuario) -->
+          <!-- IMPORTANTE: nickname -->
           <input class="form-control-pill" type="text" name="nickname" placeholder="Nombre de Usuario" required>
 
           <input class="form-control-pill" type="date" name="fecha_nacimiento" required>
@@ -58,4 +67,79 @@
     </div>
   </div>
 </div>
+
+<!-- ========================= -->
+<!-- ========== MODAL ========= -->
+<!-- ========================= -->
+<div id="avatarModal" class="avatar-modal-overlay" aria-hidden="true">
+  <div class="avatar-modal">
+    <div class="avatar-modal-header">
+      <div class="avatar-modal-title">Elige tu avatar</div>
+      <button type="button" id="closeAvatarModal" class="avatar-modal-close">×</button>
+    </div>
+
+    <div class="avatar-grid">
+      {% for i in range(1, 11) %}
+        <button
+          type="button"
+          class="avatar-option"
+          data-avatar="{{ url_for('static', filename='img/usuario/user' ~ i ~ '.png') }}"
+        >
+          <img
+            src="{{ url_for('static', filename='img/usuario/user' ~ i ~ '.png') }}"
+            alt="Avatar {{ i }}"
+          >
+        </button>
+      {% endfor %}
+    </div>
+  </div>
+</div>
+
+<!-- ========================= -->
+<!-- ========== JS ============ -->
+<!-- ========================= -->
+<script>
+  (function () {
+    const modal = document.getElementById("avatarModal");
+    const openBtn = document.getElementById("openAvatarModal");
+    const closeBtn = document.getElementById("closeAvatarModal");
+    const preview = document.getElementById("avatarPreview");
+    const fotoInput = document.getElementById("fotoInput");
+
+    function openModal() {
+      modal.classList.add("active");
+      modal.setAttribute("aria-hidden", "false");
+    }
+
+    function closeModal() {
+      modal.classList.remove("active");
+      modal.setAttribute("aria-hidden", "true");
+    }
+
+    openBtn.addEventListener("click", openModal);
+    closeBtn.addEventListener("click", closeModal);
+
+    // Cerrar si click fuera de la caja
+    modal.addEventListener("click", (e) => {
+      if (e.target === modal) closeModal();
+    });
+
+    // Elegir avatar
+    document.querySelectorAll(".avatar-option").forEach(btn => {
+      btn.addEventListener("click", () => {
+        const avatarUrl = btn.getAttribute("data-avatar");
+        preview.src = avatarUrl;
+        fotoInput.value = avatarUrl; // ✅ se enviará al backend
+        closeModal();
+      });
+    });
+
+    // ESC cierra modal
+    document.addEventListener("keydown", (e) => {
+      if (e.key === "Escape" && modal.classList.contains("active")) {
+        closeModal();
+      }
+    });
+  })();
+</script>
 {% endblock %}
