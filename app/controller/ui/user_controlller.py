@@ -35,12 +35,16 @@ def user_blueprint(db):
         return redirect(url_for('users.login'))
 
     # ✅ REGISTRO (GET muestra, POST guarda)
+       # ✅ REGISTRO (GET muestra, POST guarda)
     @bp.route('/register', methods=['GET', 'POST'])
     def register():
         if request.method == 'GET':
             return render_template('register.html')
 
         try:
+            # ✅ La foto vendrá de un input hidden llamado "foto"
+            foto = request.form.get('foto', '').strip() or None
+
             service.create_account(
                 nickname=request.form.get('nickname', ''),
                 nombre=request.form.get('nombre', ''),
@@ -50,7 +54,7 @@ def user_blueprint(db):
                 contrasena=request.form.get('contrasena', ''),
                 fecha_nacimiento=request.form.get('fecha_nacimiento', ''),
                 descripcion=request.form.get('descripcion', ''),
-                foto=None
+                foto=foto
             )
 
             flash("Cuenta creada correctamente. Espera la aprobación del administrador.", "success")
@@ -59,5 +63,6 @@ def user_blueprint(db):
         except ValueError as e:
             flash(str(e), "error")
             return redirect('/register')
+
 
     return bp

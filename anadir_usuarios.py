@@ -42,7 +42,7 @@ def anadir_usuarios():
             "mail": "ash@pokemon.com",
             "nac": "1997-04-01",
             "rol": 1,  # Entrenador aprobado
-            "foto": "static/img/users/ash.jpg"
+            "foto": "static/img/usuario/user3.png"
         },
         {
             "user": "gary_oak",

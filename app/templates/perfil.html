@@ -1,0 +1,71 @@
+{% extends 'base.html' %}
+
+{% block page_class %}bg-perfil{% endblock %}
+
+{% block content %}
+<div class="perfil-container">
+  <div class="perfil-card">
+
+    <!-- Header pills -->
+    <div class="perfil-header">
+      <div class="perfil-pill">
+        Seguidores: <span>{{ data.numero_seguidores }}</span>
+      </div>
+
+      <div class="perfil-pill">
+        Seguidos: <span>{{ data.numero_seguidos }}</span>
+      </div>
+
+      <a class="perfil-pill perfil-pill-action" href="#">
+        Buscar Seguidor
+      </a>
+    </div>
+
+    <div class="perfil-body">
+      <!-- Left column -->
+      <div class="perfil-left">
+        <div class="perfil-avatar">
+        {% if data.foto %}
+          <img
+            class="perfil-avatar-img"
+            src="{{ url_for('static', filename=data.foto.replace('static/', '')) }}"
+            alt="Avatar"
+          >
+        {% else %}
+          <div class="perfil-avatar-placeholder">FOTO</div>
+        {% endif %}
+      </div>
+
+
+        <div class="perfil-nickname">
+          <div class="perfil-nickname-label">NickName</div>
+          <div class="perfil-nickname-value">{{ data.nickname }}</div>
+        </div>
+
+        <a class="perfil-link" href="#">Actualizar perfil</a>
+        <a class="perfil-link" href="/">Volver</a>
+      </div>
+
+      <!-- Right column -->
+      <div class="perfil-right">
+        <div class="perfil-favs">
+          <div class="perfil-favs-title">Pokemos Favoritos</div>
+
+          <!-- Zona “scroll” como en el mockup -->
+          <div class="perfil-favs-scroll">
+            <div class="perfil-favs-grid">
+              {% for i in range(6) %}
+                <div class="perfil-poke-slot">
+                  <div class="perfil-poke-placeholder">POK {{ i+1 }}</div>
+                </div>
+              {% endfor %}
+            </div>
+          </div>
+
+        </div>
+      </div>
+    </div>
+
+  </div>
+</div>
+{% endblock %}
