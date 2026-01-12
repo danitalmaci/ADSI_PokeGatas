@@ -1,15 +1,45 @@
-from werkzeug.security import generate_password_hash
+from werkzeug.security import generate_password_hash, check_password_hash
 
 
 class UserController:
     def __init__(self, db):
         self.db = db
 
+    # -------------------------------------------------
+    # Caso de uso: Iniciar sesión
+    # -------------------------------------------------
+    def iniciarSesion(self, nickname, contrasena) -> int:
+        nickname = (nickname or "").strip()
+        contrasena = (contrasena or "").strip()
+
+        if not nickname or not contrasena:
+            return 0
+
+        # sql1: obtener contraseña del usuario
+        rows = self.db.select(
+            sentence="""
+                SELECT contrasena
+                FROM Usuario
+                WHERE nombreUsuario = ?
+            """,
+            parameters=[nickname]
+        )
+
+        # next()
+        if not rows:
+            return 0
+
+        password_hash = rows[0]["contrasena"]
+
+        # comprobar contraseña
+        if check_password_hash(password_hash, contrasena):
+            return 1
+
+        return 0
+
+    # -------------------------------------------------
     # Caso de uso: Registrarse
-    # - valida datos
-    # - comprueba nickname (sql1)
-    # - comprueba correo (requisito de doc)
-    # - inserta usuario (sql2) con rol=0 (pendiente)
+    # -------------------------------------------------
     def create_account(self, nickname, nombre, apellido1, apellido2, correo, contrasena, fecha_nacimiento, descripcion=None, foto=None):
         nickname = (nickname or "").strip()
         nombre = (nombre or "").strip()
@@ -20,14 +50,14 @@ class UserController:
         descripcion = (descripcion or "").strip() if descripcion else None
         foto = (foto or "").strip() if foto else None
 
-        # Validaciones mínimas (doc: contraseña mínimo 8 + campos obligatorios)
+        # Validaciones mínimas
         if not nickname or not nombre or not apellido1 or not apellido2 or not correo or not fecha_nacimiento:
             raise ValueError("Datos no válidos. Rellena todos los campos obligatorios.")
 
         if len(contrasena) < 8:
             raise ValueError("Datos no válidos. Contraseña mínimo 8 caracteres.")
 
-        # sql1: comprobar si existe nombreUsuario
+        # sql1: comprobar nickname
         rows = self.db.select(
             sentence="SELECT COUNT(*) AS cantidad FROM Usuario WHERE nombreUsuario = ?",
             parameters=[nickname]
@@ -35,7 +65,7 @@ class UserController:
         if rows and rows[0]["cantidad"] > 0:
             raise ValueError("El nombre de usuario ya está en uso.")
 
-        # (doc) comprobar si existe correo
+        # comprobar correo
         rows2 = self.db.select(
             sentence="SELECT COUNT(*) AS cantidad FROM Usuario WHERE correo = ?",
             parameters=[correo]
@@ -43,10 +73,10 @@ class UserController:
         if rows2 and rows2[0]["cantidad"] > 0:
             raise ValueError("El correo ya está en uso.")
 
-        # Guardar contraseña hasheada (coherente con anadir_usuarios.py)
+        # hash de contraseña
         password_hash = generate_password_hash(contrasena)
 
-        # sql2: insertar Usuario (rol=0 pendiente)
+        # sql2: insertar usuario
         self.db.insert(
             sentence="""
                 INSERT INTO Usuario
@@ -66,7 +96,9 @@ class UserController:
             ]
         )
 
-    # Mantengo este método por si lo usas en admin/listado
+    # -------------------------------------------------
+    # Listado
+    # -------------------------------------------------
     def get_all(self):
         rows = self.db.select(
             sentence="SELECT * FROM Usuario"

@@ -1,4 +1,4 @@
-from flask import Blueprint, request, redirect, render_template, flash
+from flask import Blueprint, request, redirect, render_template, flash, session, url_for
 from app.controller.model.user_controller import UserController
 
 
@@ -10,6 +10,29 @@ def user_blueprint(db):
     @bp.route('/users', methods=['GET'])
     def users():
         return render_template('users.html', users=service.get_all())
+
+    # ✅ LOGIN (GET muestra, POST comprueba)
+    @bp.route('/login', methods=['GET', 'POST'])
+    def login():
+        if request.method == 'GET':
+            return render_template('login.html')
+
+        nickname = request.form.get('nickname', '').strip()
+        contrasena = request.form.get('contrasena', '').strip()
+
+        ok = service.iniciarSesion(nickname, contrasena)
+
+        if ok == 1:
+            # Guardar quién ha iniciado sesión
+            session['nickname'] = nickname
+
+            flash("Sesión iniciada correctamente.", "success")
+
+            # Redirigir al menú (ajusta esta ruta a la tuya si no es /menu)
+            return redirect('/menu_logged')
+
+        flash("Nickname o contraseña incorrectos.", "error")
+        return redirect(url_for('users.login'))
 
     # ✅ REGISTRO (GET muestra, POST guarda)
     @bp.route('/register', methods=['GET', 'POST'])
