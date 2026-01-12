@@ -246,3 +246,46 @@ class GestorUsuarios:
     def get_all(self):
         rows = self.db.select(sentence="SELECT * FROM Usuario")
         return [dict(row) for row in rows]
+    
+    # -------------------------------------------------
+    # Caso de uso: Mostrar notificaciones
+    # -------------------------------------------------
+
+    def mostrar_Notificaciones(self, nickname, nombreUsuarioSeguidor=None, filtroFecha=None):
+        # 1️⃣ Buscar a quién sigue el usuario
+        query_followed = "SELECT nombreUsuarioSeguido FROM Sigue WHERE nombreUsuarioSeguidor = ?"
+        followed_rows = self.db.select(query_followed, (nickname,))
+        
+        # Convertir tuplas a dicts
+        usuarios_seguidos = [row[0] for row in followed_rows]  # row[0] es nombreUsuarioSeguido
+
+        if not usuarios_seguidos:
+            return []  # No sigue a nadie
+
+        # 2️⃣ Construir query para notificaciones de los usuarios seguidos
+        placeholders = ','.join(['?'] * len(usuarios_seguidos))
+        query_notif = f"""
+            SELECT nombreUsuario, fecha, info_notificacion
+            FROM Notificacion
+            WHERE nombreUsuario IN ({placeholders})
+        """
+        params = usuarios_seguidos
+
+        # Aplicar filtro opcional por usuario
+        if nombreUsuarioSeguidor:
+            query_notif += " AND nombreUsuario = ?"
+            params.append(nombreUsuarioSeguidor)
+
+        # Aplicar filtro opcional por fecha
+        if filtroFecha:
+            query_notif += " AND fecha >= ?"
+            params.append(filtroFecha)
+
+        # 3️⃣ Ejecutar y convertir filas a diccionarios
+        rows = self.db.select(query_notif, tuple(params))
+        columns = ["nombreUsuario", "fecha", "info_notificacion"]
+        notif_list = [dict(zip(columns, row)) for row in rows]
+
+        return notif_list
+
+

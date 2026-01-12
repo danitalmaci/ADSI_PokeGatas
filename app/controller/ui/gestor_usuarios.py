@@ -53,5 +53,12 @@ def user_blueprint(db):
         except ValueError as e:
             flash(str(e), "error")
             return redirect('/register')
+    
+    @bp.route('/notificaciones', methods=['GET', 'POST'])
+    def mostrarNotificaciones():
+        nickname = session.get("nickname")
+
+        JSON_Notificaciones = pokedex.mostrarNotificaciones(nickname)
+        return render_template('notificaciones.html', notificaciones=JSON_Notificaciones)
 
     return bp

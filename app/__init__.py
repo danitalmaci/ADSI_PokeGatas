@@ -45,7 +45,7 @@ def create_app():
     app.register_blueprint(perfil_blueprint(db))
     app.register_blueprint(admin_blueprint(db))
     app.register_blueprint(chatbot_blueprint())
-    app.register_blueprint(pokedex_blueprint())
+    app.register_blueprint(pokedex_blueprint(db))
     app.register_blueprint(team_blueprint)  # ✅ llamada correcta si es factory
 
     return app

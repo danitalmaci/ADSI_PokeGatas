@@ -1,7 +1,6 @@
 /*esta tabla habria que revisar, es un  boceto */
 CREATE TABLE IF NOT EXISTS Usuario (
-    id INTEGER PRIMARY KEY AUTOINCREMENT,
-    nombreUsuario TEXT UNIQUE NOT NULL,
+    nombreUsuario TEXT PRIMARY KEY NOT NULL,
     nombre TEXT NOT NULL,
     apellido1 TEXT NOT NULL,
     apellido2 TEXT NOT NULL,
@@ -128,4 +127,24 @@ CREATE TABLE IF NOT EXISTS PokemonEquipo (
     nivel INTEGER,
     FOREIGN KEY(equipo_id) REFERENCES equipos(id) ON DELETE CASCADE,
     FOREIGN KEY(pokedex_id) REFERENCES PokemonPokedex(pokedexID)
+);
+
+/* -----------------------------------*/
+
+CREATE TABLE IF NOT EXISTS Notificacion (
+    nombreUsuario TEXT NOT NULL,
+    fecha DATE NOT NULL,
+    info_notificacion TEXT,
+    PRIMARY KEY (nombreUsuario, fecha),
+    FOREIGN KEY(nombreUsuario) REFERENCES Usuario(nombreUsuario)
+);
+
+/* -----------------------------------*/
+
+CREATE TABLE IF NOT EXISTS Sigue (
+    nombreUsuarioSeguido TEXT NOT NULL,
+    nombreUsuarioSeguidor TEXT NOT NULL,
+    PRIMARY KEY (nombreUsuarioSeguido, nombreUsuarioSeguidor),
+    FOREIGN KEY(nombreUsuarioSeguido) REFERENCES Usuario(nombreUsuario),
+    FOREIGN KEY(nombreUsuarioSeguidor) REFERENCES Usuario(nombreUsuario)
 );

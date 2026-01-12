@@ -1,10 +1,12 @@
 from app.controller.model.gestor_usuarios import GestorUsuarios
+from app.controller.model.gestor_Pokemon import gestorPokemon
 
 
 class Pokedex:
     def __init__(self, db):
         self.db = db
         self.gestor_usuarios = GestorUsuarios(db)
+        self.gestor_Pokemon = gestorPokemon(db)
 
     # -------- USUARIOS / AUTH --------
     def iniciar_sesion(self, nickname, contrasena) -> int:
@@ -48,3 +50,20 @@ class Pokedex:
             correo=correo,
             foto=foto
         )
+    
+    # -------- POKEDEX --------
+
+    def mostrarPokedex(self):
+        return self.gestor_Pokemon.mostrarPokedex()
+
+    # -------- POKEMON --------
+
+    def mostrarPokemon(self,nombrePokemon):
+        return self.gestor_Pokemon.mostrarPokemon(nombrePokemon)
+    
+     # -------- NOTIFICACIONES --------
+
+    def mostrarNotificaciones(self,nickname):
+        return self.gestor_usuarios.mostrar_Notificaciones(nickname)
+
+        

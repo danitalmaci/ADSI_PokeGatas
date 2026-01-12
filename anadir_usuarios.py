@@ -10,11 +10,11 @@ def anadir_usuarios():
     # Aseguramos que la tabla exista
     try:
         db.init_schema()
-        # Limpiamos usuarios anteriores para no duplicar errores de UNIQUE
+        # Limpiamos tablas para no duplicar
+        db.delete("DELETE FROM Sigue")
         db.delete("DELETE FROM Usuario")
-        # Reiniciamos el contador del ID autoincremental (opcional, para limpieza)
         db.delete("DELETE FROM sqlite_sequence WHERE name='Usuario'")
-        print("Tabla Usuario limpiada.")
+        print("Tablas Usuario y Sigue limpiadas.")
     except Exception as e:
         print(f"Nota: {e}")
 
@@ -29,8 +29,8 @@ def anadir_usuarios():
             "pass": "admin123",
             "mail": "boss@rocket.com",
             "nac": "2005-09-01",
-            "rol": 2,  # Administrador
-            "foto": "static/img/users/admin.jpg"
+            "rol": 2,
+            "foto": "static/img/usuario/user4.png"
         },
         {
             "user": "ash_ketchum",
@@ -41,7 +41,7 @@ def anadir_usuarios():
             "pass": "pikachu",
             "mail": "ash@pokemon.com",
             "nac": "1997-04-01",
-            "rol": 1,  # Entrenador aprobado
+            "rol": 1,
             "foto": "static/img/usuario/user3.png"
         },
         {
@@ -53,8 +53,8 @@ def anadir_usuarios():
             "pass": "gary123",
             "mail": "gary@oaklab.com",
             "nac": "1997-05-01",
-            "rol": 0,  # Pendiente
-            "foto": "static/img/users/gary.jpg"
+            "rol": 0,
+            "foto": "static/img/usuario/user10.png"
         },
         {
             "user": "jessie_rocket",
@@ -65,15 +65,13 @@ def anadir_usuarios():
             "pass": "wobbuffet",
             "mail": "jessie@rocket.com",
             "nac": "1995-10-12",
-            "rol": 0,  # Pendiente
-            "foto": "static/img/users/jessie.jpg"
+            "rol": 0,
+            "foto": "static/img/usuario/user5.png"
         }
     ]
 
-    count = 0
-
-    # ✅ IMPORTANTE: usamos "contrasena" (sin ñ) para que coincida con schema.sql
-    query = """
+    # ---------- INSERT USUARIOS ----------
+    query_usuario = """
         INSERT INTO Usuario (
             nombreUsuario, nombre, apellido1, apellido2,
             foto, descripcion, contrasena, correo, fechaNacimiento,
@@ -82,30 +80,49 @@ def anadir_usuarios():
     """
 
     for u in usuarios_fake:
+        password_encriptada = generate_password_hash(u["pass"])
+
+        params = (
+            u["user"],
+            u["nombre"],
+            u["ape1"],
+            u["ape2"],
+            u["foto"],
+            u["desc"],
+            password_encriptada,
+            u["mail"],
+            u["nac"],
+            u["rol"]
+        )
+
+        db.insert(query_usuario, params)
+        print(f"Usuario creado: {u['user']}")
+
+    # ---------- INSERT SIGUE ----------
+    print("\nIniciando carga de relaciones SIGUE...")
+
+    sigue_fake = [
+        ("gary_oak", "ash_ketchum"),        # Ash sigue a Gary
+        ("jessie_rocket", "ash_ketchum"),   # Ash sigue a Jessie
+        ("ash_ketchum", "gary_oak"),        # Gary sigue a Ash
+        ("ash_ketchum", "admin_jefe"),      # Admin sigue a Ash
+        ("gary_oak", "admin_jefe"),         # Admin sigue a Gary
+        ("jessie_rocket", "admin_jefe"),    # Admin sigue a Jessie
+    ]
+
+    query_sigue = """
+        INSERT INTO Sigue (nombreUsuarioSeguido, nombreUsuarioSeguidor)
+        VALUES (?, ?)
+    """
+
+    for seguido, seguidor in sigue_fake:
         try:
-            password_encriptada = generate_password_hash(u["pass"])
-
-            params = (
-                u["user"],
-                u["nombre"],
-                u["ape1"],
-                u["ape2"],
-                u["foto"],
-                u["desc"],
-                password_encriptada,
-                u["mail"],
-                u["nac"],
-                u["rol"]
-            )
-
-            db.insert(query, params)
-            count += 1
-            print(f"Usuario creado: {u['user']} (rol={u['rol']})")
-
+            db.insert(query_sigue, (seguido, seguidor))
+            print(f"{seguidor} sigue a {seguido}")
         except Exception as e:
-            print(f"Error creando {u['user']}: {e}")
+            print(f"Error en relación {seguidor} -> {seguido}: {e}")
 
-    print(f"\nCarga de usuarios finalizada. Total: {count}")
+    print("\nCarga de datos finalizada correctamente.")
 
 
 if __name__ == "__main__":
