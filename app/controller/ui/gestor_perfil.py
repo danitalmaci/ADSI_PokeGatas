@@ -24,6 +24,43 @@ def perfil_blueprint(db):
 
         return render_template("perfil.html", data=data)
 
+    # ✅ Ver Seguidores (GET)
+    @bp.route("/seguidores", methods=["GET"])
+    def ver_seguidores():
+        nickname_sesion = session.get("nickname")
+        if not nickname_sesion:
+            flash("Debes iniciar sesión.", "error")
+            return redirect(url_for("users.login"))
+
+        try:
+            data = pokedex.cargar_seguidores(nickname_sesion)
+        except Exception as e:
+            flash(f"Error cargando seguidores: {e}", "error")
+            return redirect(url_for("perfil.perfil"))
+
+        return render_template("seguidores.html", data=data)
+
+    # ✅ NUEVO: Eliminar seguidor (POST)
+    @bp.route("/seguidores/eliminar", methods=["POST"])
+    def eliminar_seguidor():
+        nickname_sesion = session.get("nickname")
+        if not nickname_sesion:
+            flash("Debes iniciar sesión.", "error")
+            return redirect(url_for("users.login"))
+
+        seguidor = (request.form.get("seguidor") or "").strip()
+        if not seguidor:
+            flash("Seguidor inválido.", "error")
+            return redirect(url_for("perfil.ver_seguidores"))
+
+        try:
+            pokedex.eliminar_seguidor(nickname_sesion, seguidor)
+            flash(f"{seguidor} ya no es tu seguidor.", "success")
+        except Exception as e:
+            flash(f"Error eliminando seguidor: {e}", "error")
+
+        return redirect(url_for("perfil.ver_seguidores"))
+
     # ✅ GET: cargar pantalla actualizar
     # ✅ POST: guardar cambios
     @bp.route("/perfil/actualizar", methods=["GET", "POST"])
