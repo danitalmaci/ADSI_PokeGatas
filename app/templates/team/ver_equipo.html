@@ -124,35 +124,12 @@
 
     /* 6. BOTÓN VOLVER (Círculo blanco abajo izquierda) */
     .btn-back-fixed {
-        position: absolute; 
-        bottom: 20px;    
-        left: 20px;     
-        
-        background: white;
-        width: 60px;     
-        height: 60px;
-        border-radius: 50%;
-        
-        display: flex;
-        justify-content: center;
-        align-items: center;
-        
-        box-shadow: 0 5px 15px rgba(0,0,0,0.3);
-        transition: transform 0.2s;
-        z-index: 9999; 
-        
-        padding: 18px; 
-        box-sizing: border-box;
-        text-decoration: none;
+        position: fixed; bottom: 20px; left: 20px;
+        background: white; width: 60px; height: 60px; border-radius: 50%;
+        display: flex; justify-content: center; align-items: center;
+        box-shadow: 0 5px 15px rgba(0,0,0,0.3); z-index: 9999;
     }
-
-    .btn-back-fixed img { 
-        width: 100%; 
-        height: 100%; 
-        object-fit: contain; 
-    }
-
-    .btn-back-fixed:hover { transform: scale(1.1); }
+    .btn-back-fixed img { width: 60%; height: 60%; object-fit: contain}
 
 </style>
 
@@ -182,7 +159,7 @@
 
 </div>
 
-<a href="{{ url_for('team_bp.list_teams') }}" class="btn-floating btn-back-fixed">
+<a href="{{ url_for('team_bp.list_teams') }}" class="btn-back-fixed">
     <img src="{{ url_for('static', filename='img/iconos/simbolo_Volver.png') }}" alt="Volver">
 </a>
 
