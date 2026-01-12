@@ -1,13 +1,11 @@
+# app/controller/model/gestor_usuarios.py
 from werkzeug.security import generate_password_hash, check_password_hash
 
-
-class UserController:
+class GestorUsuarios:
     def __init__(self, db):
         self.db = db
 
-    # -------------------------------------------------
     # Caso de uso: Iniciar sesión
-    # -------------------------------------------------
     def iniciarSesion(self, nickname, contrasena) -> int:
         nickname = (nickname or "").strip()
         contrasena = (contrasena or "").strip()
@@ -34,9 +32,7 @@ class UserController:
 
         return 0
 
-    # -------------------------------------------------
     # Caso de uso: Registrarse
-    # -------------------------------------------------
     def create_account(
         self,
         nickname,
@@ -101,9 +97,7 @@ class UserController:
             ]
         )
 
-    # -------------------------------------------------
     # Caso de uso: Consultar perfil (doc 9.8)
-    # -------------------------------------------------
     def consultar_perfil(self, nickname: str) -> dict:
         nickname = (nickname or "").strip()
         if not nickname:
@@ -148,9 +142,7 @@ class UserController:
             "numero_seguidos": int(seguidos),
         }
 
-    # -------------------------------------------------
     # Listado
-    # -------------------------------------------------
     def get_all(self):
         rows = self.db.select(sentence="SELECT * FROM Usuario")
         return [dict(row) for row in rows]

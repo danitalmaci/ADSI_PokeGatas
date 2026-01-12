@@ -1,17 +1,14 @@
 from flask import Blueprint, request, redirect, render_template, flash, session, url_for
-from app.controller.model.user_controller import UserController
-
+from app.controller.pokedex import Pokedex
 
 def user_blueprint(db):
     bp = Blueprint('users', __name__)
-    service = UserController(db)
+    pokedex = Pokedex(db)
 
-    # (opcional) listado de usuarios para admin/pruebas
     @bp.route('/users', methods=['GET'])
     def users():
-        return render_template('users.html', users=service.get_all())
+        return render_template('users.html', users=pokedex.listar_usuarios())
 
-    # ✅ LOGIN (GET muestra, POST comprueba)
     @bp.route('/login', methods=['GET', 'POST'])
     def login():
         if request.method == 'GET':
@@ -20,32 +17,25 @@ def user_blueprint(db):
         nickname = request.form.get('nickname', '').strip()
         contrasena = request.form.get('contrasena', '').strip()
 
-        ok = service.iniciarSesion(nickname, contrasena)
+        ok = pokedex.iniciar_sesion(nickname, contrasena)
 
         if ok == 1:
-            # Guardar quién ha iniciado sesión
             session['nickname'] = nickname
-
             flash("Sesión iniciada correctamente.", "success")
-
-            # Redirigir al menú (ajusta esta ruta a la tuya si no es /menu)
             return redirect('/menu_logged')
 
         flash("Nickname o contraseña incorrectos.", "error")
         return redirect(url_for('users.login'))
 
-    # ✅ REGISTRO (GET muestra, POST guarda)
-       # ✅ REGISTRO (GET muestra, POST guarda)
     @bp.route('/register', methods=['GET', 'POST'])
     def register():
         if request.method == 'GET':
             return render_template('register.html')
 
         try:
-            # ✅ La foto vendrá de un input hidden llamado "foto"
             foto = request.form.get('foto', '').strip() or None
 
-            service.create_account(
+            pokedex.crear_cuenta(
                 nickname=request.form.get('nickname', ''),
                 nombre=request.form.get('nombre', ''),
                 apellido1=request.form.get('apellido1', ''),
@@ -63,6 +53,5 @@ def user_blueprint(db):
         except ValueError as e:
             flash(str(e), "error")
             return redirect('/register')
-
 
     return bp
