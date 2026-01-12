@@ -123,7 +123,6 @@ class GestorUsuarios:
         seguidores = 0
         seguidos = 0
 
-        # Si no existe la tabla Sigue aún, no rompemos la app
         try:
             rows_followers = self.db.select(
                 sentence="SELECT COUNT(*) AS numero_seguidores FROM Sigue WHERE nombreUsuarioSeguido = ?",
@@ -237,6 +236,95 @@ class GestorUsuarios:
                 foto,
                 nickname_sesion
             ]
+        )
+        return True
+
+    # -------------------------------------------------
+    # Caso de uso: Ver seguidores (doc 9.10)
+    # Devuelve JSON = [ { nombreUsuarioSeguidor, fotoSeguidor,
+    #                     numSeguidoresDelSeguidor, numSeguidosDelSeguidor }, ... ]
+    # -------------------------------------------------
+    def cargar_seguidores(self, nickname_sesion: str) -> list:
+        nickname_sesion = (nickname_sesion or "").strip()
+        if not nickname_sesion:
+            raise ValueError("Nickname vacío")
+
+        # sql1
+        rows = self.db.select(
+            sentence="""
+                SELECT nombreUsuarioSeguidor
+                FROM Sigue
+                WHERE nombreUsuarioSeguido = ?
+            """,
+            parameters=[nickname_sesion]
+        )
+
+        seguidores_json = []
+
+        for r in rows:
+            nickname_seguidor = r["nombreUsuarioSeguidor"]
+
+            # sql2
+            row_foto = self.db.select(
+                sentence="""
+                    SELECT foto
+                    FROM Usuario
+                    WHERE nombreUsuario = ?
+                """,
+                parameters=[nickname_seguidor]
+            )
+            foto_seguidor = row_foto[0]["foto"] if row_foto else None
+
+            # sql3
+            row_num_seguidores = self.db.select(
+                sentence="""
+                    SELECT COUNT(*) AS numero_seguidores
+                    FROM Sigue
+                    WHERE nombreUsuarioSeguido = ?
+                """,
+                parameters=[nickname_seguidor]
+            )
+            num_seguidores = int(row_num_seguidores[0]["numero_seguidores"]) if row_num_seguidores else 0
+
+            # sql4
+            row_num_seguidos = self.db.select(
+                sentence="""
+                    SELECT COUNT(*) AS numero_seguidos
+                    FROM Sigue
+                    WHERE nombreUsuarioSeguidor = ?
+                """,
+                parameters=[nickname_seguidor]
+            )
+            num_seguidos = int(row_num_seguidos[0]["numero_seguidos"]) if row_num_seguidos else 0
+
+            seguidores_json.append({
+                "nombreUsuarioSeguidor": nickname_seguidor,
+                "fotoSeguidor": foto_seguidor,
+                "numSeguidoresDelSeguidor": num_seguidores,
+                "numSeguidosDelSeguidor": num_seguidos
+            })
+
+        return seguidores_json
+
+    # -------------------------------------------------
+    # ✅ NUEVO: eliminar seguidor (borrar relación en Sigue)
+    # nickname_sesion = tú (seguidO)
+    # seguidor = quien te sigue (seguidor)
+    # -------------------------------------------------
+    def eliminar_seguidor(self, nickname_sesion: str, seguidor: str) -> bool:
+        nickname_sesion = (nickname_sesion or "").strip()
+        seguidor = (seguidor or "").strip()
+
+        if not nickname_sesion or not seguidor:
+            raise ValueError("Datos inválidos")
+
+        self.db.delete(
+            sentence="""
+                DELETE FROM Sigue
+                WHERE nombreUsuarioSeguido = ?
+                  AND nombreUsuarioSeguidor = ?
+            """,
+            parameters=[nickname_sesion, seguidor]
         )
         return True
 

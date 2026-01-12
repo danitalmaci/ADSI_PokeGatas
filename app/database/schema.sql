@@ -129,3 +129,24 @@ CREATE TABLE IF NOT EXISTS PokemonEquipo (
     FOREIGN KEY(equipo_id) REFERENCES equipos(id) ON DELETE CASCADE,
     FOREIGN KEY(pokedex_id) REFERENCES PokemonPokedex(pokedexID)
 );
+
+/* -----------------------------------*/
+CREATE TABLE IF NOT EXISTS Sigue (
+    nombreUsuarioSeguido   TEXT NOT NULL,
+    nombreUsuarioSeguidor  TEXT NOT NULL,
+
+    -- Clave primaria compuesta (un usuario no puede seguir dos veces al mismo)
+    PRIMARY KEY (nombreUsuarioSeguido, nombreUsuarioSeguidor),
+
+    -- FK: el que es seguido
+    FOREIGN KEY (nombreUsuarioSeguido)
+        REFERENCES Usuario(nombreUsuario)
+        ON DELETE CASCADE
+        ON UPDATE CASCADE,
+
+    -- FK: el que sigue
+    FOREIGN KEY (nombreUsuarioSeguidor)
+        REFERENCES Usuario(nombreUsuario)
+        ON DELETE CASCADE
+        ON UPDATE CASCADE
+);
