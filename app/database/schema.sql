@@ -142,9 +142,21 @@ CREATE TABLE IF NOT EXISTS Notificacion (
 /* -----------------------------------*/
 
 CREATE TABLE IF NOT EXISTS Sigue (
-    nombreUsuarioSeguido TEXT NOT NULL,
-    nombreUsuarioSeguidor TEXT NOT NULL,
+    nombreUsuarioSeguido   TEXT NOT NULL,
+    nombreUsuarioSeguidor  TEXT NOT NULL,
+
+    -- Clave primaria compuesta (un usuario no puede seguir dos veces al mismo)
     PRIMARY KEY (nombreUsuarioSeguido, nombreUsuarioSeguidor),
-    FOREIGN KEY(nombreUsuarioSeguido) REFERENCES Usuario(nombreUsuario),
-    FOREIGN KEY(nombreUsuarioSeguidor) REFERENCES Usuario(nombreUsuario)
+
+    -- FK: el que es seguido
+    FOREIGN KEY (nombreUsuarioSeguido)
+        REFERENCES Usuario(nombreUsuario)
+        ON DELETE CASCADE
+        ON UPDATE CASCADE,
+
+    -- FK: el que sigue
+    FOREIGN KEY (nombreUsuarioSeguidor)
+        REFERENCES Usuario(nombreUsuario)
+        ON DELETE CASCADE
+        ON UPDATE CASCADE
 );

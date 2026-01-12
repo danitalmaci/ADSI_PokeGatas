@@ -8,9 +8,10 @@
 
     <!-- Header pills -->
     <div class="perfil-header">
-      <div class="perfil-pill">
+      <!-- ✅ ahora es un link -->
+      <a class="perfil-pill" href="{{ url_for('perfil.ver_seguidores') }}">
         Seguidores: <span>{{ data.numero_seguidores }}</span>
-      </div>
+      </a>
 
       <div class="perfil-pill">
         Seguidos: <span>{{ data.numero_seguidos }}</span>
@@ -41,7 +42,6 @@
           <div class="perfil-nickname-value">{{ data.nickname }}</div>
         </div>
 
-        <!-- CAMBIO AQUÍ -->
         <a class="perfil-link" href="{{ url_for('perfil.actualizar_perfil') }}">Actualizar perfil</a>
 
         <a class="perfil-link" href="/">Volver</a>

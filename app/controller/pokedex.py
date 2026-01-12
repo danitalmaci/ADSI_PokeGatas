@@ -67,3 +67,12 @@ class Pokedex:
         return self.gestor_usuarios.mostrar_Notificaciones(nickname)
 
         
+
+    # -------- SEGUIDORES --------
+    # Ver seguidores (según diagrama 9.10)
+    def cargar_seguidores(self, nickname_sesion: str) -> list:
+        return self.gestor_usuarios.cargar_seguidores(nickname_sesion)
+
+    # ✅ NUEVO: Eliminar seguidor (borrar relación en Sigue)
+    def eliminar_seguidor(self, nickname_sesion: str, seguidor: str) -> bool:
+        return self.gestor_usuarios.eliminar_seguidor(nickname_sesion, seguidor)
