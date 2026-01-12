@@ -1,30 +1,22 @@
 {% extends 'base.html' %}
 
+{% block title %}Menú Principal{% endblock %}
+
 {% block page_class %}bg-pokedex{% endblock %}
 
 {% block content %}
 
-<!-- MENÚ LATERAL SIEMPRE VISIBLE -->
-<nav class="side-menu active" aria-label="Menú lateral">
-  <div class="menu-buttons">
-    <a class="menu-btn" href="/perfil">Perfil</a>
-    <a class="menu-btn" href="/equipos">Equipos</a>
-    <a class="menu-btn" href="/notificaciones">Notificaciones</a>
-    <a class="menu-btn" href="/chatbot">Service-Ball</a>
-    <a class="menu-btn" href="/logout">Cerrar sesión</a>
-  </div>
-</nav>
-
-<!-- CONTENIDO PRINCIPAL -->
-<div class="app-interface">
-  <div class="main-viewport shifted">
-    <div class="view-header">
-      <h2>Menú principal</h2>
-      <p>Has iniciado sesión como <b>{{ session["nickname"] }}</b></p>
+    <div class="view-header" align="center" style="color: #ff9eb5">
+        <h2>Menú Principal</h2>
+        <p>Bienvenido, <b>{{ session.get('nickname', 'Entrenador') }}</b></p>
     </div>
 
-    <p>Selecciona una opción del menú de la izquierda.</p>
-  </div>
-</div>
+    <div class="menu-central-container" align="center" style="display: flex; gap: 20px; flex-wrap: wrap; margin-top: 40px;">
+
+        <div style="width: 100%; margin-top: 20px; color: black;">
+            <p>👈 Usa el botón de las 3 rayitas arriba a la izquierda para ver todas las opciones.</p>
+        </div>
+
+    </div>
 
 {% endblock %}

@@ -8,70 +8,41 @@
 </head>
 <body>
 
-    <!-- Botón menú -->
-    <button class="hamburger-btn" id="menuToggle">☰</button>
+    {# MENÚ LATERAL    #}
+    
+    <button class="hamburger-btn" id="menuToggle">
+        <img src="{{ url_for('static', filename='img/iconos/simbolo_Tres_Rayas.png') }}" alt="Menu">
+    </button>
 
-    <!-- Sidebar -->
     <aside class="side-menu" id="sidebar">
         <button class="close-btn" id="menuClose">×</button>
 
         <div class="menu-buttons">
             <a href="{{ url_for('pokedex.mostrarPokedex') }}" class="menu-btn">Pokedex</a>
             <a href="{{ url_for('chatbot.chatbot') }}" class="menu-btn">Service-Ball</a>
-            <a href="#" class="menu-btn">Perfil</a>
+            
+            <a href="{{ url_for('perfil.perfil') }}" class="menu-btn">Perfil</a>
+            
             <a href="{{ url_for('team_bp.list_teams') }}" class="menu-btn">Equipos</a>
             <a href="#" class="menu-btn">Notificaciones</a>
+            
             <a href="{{ url_for('admin.admin_users') }}" class="menu-btn admin">Admin</a>
+            
             <a href="{{ url_for('home.index') }}" class="menu-btn">Cerrar Sesión</a>
         </div>
     </aside>
 
-    <!-- Contenido principal -->
-    {# ===================================================== #}
-    {# MENÚ GLOBAL (SOLO CUANDO NO ES EL MENÚ LOGUEADO) #}
-    {# ===================================================== #}
 
-    {% if page_class != 'bg-pokedex' %}
+    {# CONTENIDO PRINCIPAL#}
 
-        <!-- Botón menú -->
-        <button class="hamburger-btn" id="menuToggle">
-          <img src="{{ url_for('static', filename='img/iconos/simbolo_Tres_Rayas.png') }}" alt="Menu">
-        </button>
-
-        <!-- Sidebar -->
-        <aside class="side-menu" id="sidebar">
-            <button class="close-btn" id="menuClose">×</button>
-
-            <div class="menu-buttons">
-                <a href="{{ url_for('pokedex.mostrarPokedex') }}" class="menu-btn">Pokedex</a>
-                <a href="{{ url_for('chatbot.chatbot') }}" class="menu-btn">Service-Ball</a>
-                <a href="{{ url_for('perfil.perfil') }}" class="menu-btn">Perfil</a>
-                <a href="{{ url_for('team_bp.list_teams') }}" class="menu-btn">Equipos</a>
-                <a href="#" class="menu-btn">Notificaciones</a>
-                <a href="{{ url_for('admin.admin_users') }}" class="menu-btn admin">Admin</a>
-                <a href="{{ url_for('home.index') }}" class="menu-btn">Cerrar Sesión</a>
-            </div>
-        </aside>
-
-    {% endif %}
-
-    {# ===================================================== #}
-    {# CONTENIDO PRINCIPAL #}
-    {# ===================================================== #}
     
     <main class="main-content main-viewport {% block page_class %}{% endblock %}" id="mainContent">
 
-        <!-- FLASH MESSAGES -->
         {% with messages = get_flashed_messages(with_categories=true) %}
           {% if messages %}
             <div class="flash-container">
               {% for category, message in messages %}
-                <!--<div class="flash-message {% if category == 'success' %}flash-success{% else %}flash-error{% endif %}">
-                  <strong class="flash-title">
-                    {% if category == 'success' %}✅ Éxito{% else %}⚠️ Error{% endif %}
-                  </strong>
-                  <div>{{ message }}</div>
-                </div>-->
+                 <div class="flash-message">{{ message }}</div>
               {% endfor %}
             </div>
           {% endif %}
@@ -80,6 +51,7 @@
         {% block content %}{% endblock %}
 
     </main>
+    
     <script src="{{ url_for('static', filename='js/main.js') }}"></script>
 </body>
 </html>

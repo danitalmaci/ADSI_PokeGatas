@@ -6,7 +6,7 @@ from flask import Flask
 from app.controller.ui.gestor_usuarios import user_blueprint
 from app.controller.ui.home_controller import home_blueprint
 from app.controller.ui.chatbot_controller import chatbot_blueprint
-from app.controller.ui.admin_controller import admin_blueprint
+from app.controller.ui.gestor_admin import admin_blueprint
 from app.controller.ui.gestor_Pokemon import pokedex_blueprint
 from app.controller.ui.team_controller import team_blueprint
 from app.controller.ui.gestor_perfil import perfil_blueprint
@@ -46,6 +46,6 @@ def create_app():
     app.register_blueprint(admin_blueprint(db))
     app.register_blueprint(chatbot_blueprint())
     app.register_blueprint(pokedex_blueprint(db))
-    app.register_blueprint(team_blueprint)  # ✅ llamada correcta si es factory
+    app.register_blueprint(team_blueprint)
 
     return app

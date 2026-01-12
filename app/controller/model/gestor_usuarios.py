@@ -375,5 +375,100 @@ class GestorUsuarios:
         notif_list = [dict(zip(columns, row)) for row in rows]
 
         return notif_list
+    
+    # -- FUNCIONES DE ADMINISTRADOR --------------
 
+    def obtenerCuentas(self, filtro_nombre=None):
+        """
+        [ADMIN] Obtiene todos los usuarios que NO están pendientes (rol > 0).
+        Si recibe filtro_nombre, busca por coincidencias (LIKE).
+        """
+        query = "SELECT nombreUsuario, foto, rol FROM Usuario WHERE rol > 0"
+        params = None
+        if filtro_nombre:
+            query += " AND nombreUsuario LIKE ?"
+            params = [f"%{filtro_nombre}%"]
 
+        try:
+            rows = self.db.select(query, params)
+            users_list = []
+            for row in rows:
+                rol_numero = row['rol']
+                try:
+                    rol_numero = int(rol_numero)
+                except:
+                    rol_numero = 0
+                
+                rol_texto = "Entrenador"
+                if rol_numero == 2:
+                    rol_texto = "Administrador"
+                
+                users_list.append({ 
+                    "nombreUsuario": row['nombreUsuario'],
+                    "foto": row['foto'] if row['foto'] else 'img/usuario/user1.png',
+                    "rol": rol_texto,
+                    "rol_num": rol_numero
+                })
+            return users_list
+        except Exception as e:
+            print(f"ERROR EN GESTOR USUARIOS (Active): {e}")
+            return []
+
+    def obtenerCuentasPendientes(self):
+        """[ADMIN] Obtiene solo los usuarios con estado PENDIENTE (rol=0)."""
+        query = "SELECT nombreUsuario, foto, rol FROM Usuario WHERE rol = 0"
+        try:
+            rows = self.db.select(query)
+            users_list = []
+            for row in rows:
+                users_list.append({
+                    "nombreUsuario": row['nombreUsuario'],
+                    "foto": row['foto'] if row['foto'] else 'img/usuario/user1.png',
+                    "rol": row['rol']
+                })
+            return users_list
+        except Exception as e:
+            print(f"ERROR EN PENDIENTES: {e}")
+            return []
+
+    def borrarCuenta(self, nickname):
+        """[ADMIN] Elimina la cuenta de un usuario dado su nickname."""
+        query = "DELETE FROM Usuario WHERE nombreUsuario = ?"
+        try:
+            self.db.delete(query, (nickname,))
+            return True
+        except Exception as e:
+            print(f"ERROR AL BORRAR CUENTA: {e}")
+            return False
+
+    def aprobarCuenta(self, nickname):
+        """[ADMIN] Aprueba la cuenta de un usuario (rol 0 -> 1)."""
+        query = "UPDATE Usuario SET rol = 1 WHERE nombreUsuario = ?"
+        try:
+            self.db.update(query, (nickname,))
+            print(f"Usuario {nickname} APROBADO")
+            return True
+        except Exception as e:
+            print(f"ERROR APROBANDO CUENTA: {e}")
+            return False
+
+    #Para modificar perfil, reutilizo el metodo get_datos_actualizar_perfil
+
+    def update_user_admin(self, antiguo_nick, nuevo_nick, nombre, ape1, ape2, desc):
+        """
+        Modifica los datos de un usuario desde el panel de administración.
+        Nota: creo que habria que unificar en un solo "actualizar_datos"
+        """
+        query = """
+            UPDATE Usuario 
+            SET nombreUsuario = ?, nombre = ?, apellido1 = ?, apellido2 = ?, descripcion = ?
+            WHERE nombreUsuario = ?
+        """
+        try:
+            params = (nuevo_nick, nombre, ape1, ape2, desc, antiguo_nick)
+            self.db.update(query, params)
+            print(f"Usuario {antiguo_nick} actualizado a {nuevo_nick}")
+            return True
+        except Exception as e:
+            print(f"--- ERROR ACTUALIZANDO USUARIO (ADMIN): {e} ---")
+            return False

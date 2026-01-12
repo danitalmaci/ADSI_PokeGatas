@@ -2,9 +2,9 @@
 
 {% block title %}Solicitudes Pendientes{% endblock %}
 
-{% block content %}
+{% block page_class %}admin-page-bg{% endblock %}
 
-<div class="admin-page-bg">
+{% block content %}
 
     <div class="admin-container">
         <div class="admin-header-row">
@@ -23,7 +23,11 @@
                 <div class="user-card">
                     
                     <div class="avatar-container">
-                        <img src="{{ url_for('static', filename='img/avatar_placeholder.png') }}" alt="Avatar">
+                        {% if user.foto %}
+                             <img src="{{ url_for('static', filename=user.foto.replace('static/', '')) }}" alt="Avatar">
+                        {% else %}
+                             <img src="{{ url_for('static', filename='img/avatar_placeholder.png') }}" alt="Avatar">
+                        {% endif %}
                     </div>
 
                     <div class="user-info">
@@ -50,6 +54,5 @@
             {% endif %}
         </div>
     </div>
-</div>
 
 {% endblock %}
