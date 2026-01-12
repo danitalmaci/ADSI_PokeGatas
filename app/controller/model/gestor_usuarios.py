@@ -1,11 +1,14 @@
 # app/controller/model/gestor_usuarios.py
 from werkzeug.security import generate_password_hash, check_password_hash
 
+
 class GestorUsuarios:
     def __init__(self, db):
         self.db = db
 
+    # -------------------------------------------------
     # Caso de uso: Iniciar sesión
+    # -------------------------------------------------
     def iniciarSesion(self, nickname, contrasena) -> int:
         nickname = (nickname or "").strip()
         contrasena = (contrasena or "").strip()
@@ -32,7 +35,9 @@ class GestorUsuarios:
 
         return 0
 
+    # -------------------------------------------------
     # Caso de uso: Registrarse
+    # -------------------------------------------------
     def create_account(
         self,
         nickname,
@@ -97,7 +102,9 @@ class GestorUsuarios:
             ]
         )
 
+    # -------------------------------------------------
     # Caso de uso: Consultar perfil (doc 9.8)
+    # -------------------------------------------------
     def consultar_perfil(self, nickname: str) -> dict:
         nickname = (nickname or "").strip()
         if not nickname:
@@ -142,7 +149,100 @@ class GestorUsuarios:
             "numero_seguidos": int(seguidos),
         }
 
+    # -------------------------------------------------
+    # sql1: Cargar datos para la pantalla "Actualizar Perfil"
+    # -------------------------------------------------
+    def get_datos_actualizar_perfil(self, nickname: str) -> dict:
+        nickname = (nickname or "").strip()
+        if not nickname:
+            raise ValueError("Nickname vacío")
+
+        rows = self.db.select(
+            sentence="""
+                SELECT nombreUsuario, nombre, apellido1, apellido2, correo, fechaNacimiento, descripcion, foto
+                FROM Usuario
+                WHERE nombreUsuario = ?
+            """,
+            parameters=[nickname]
+        )
+
+        if not rows:
+            raise ValueError("Usuario no encontrado")
+
+        row = dict(rows[0])
+
+        return {
+            "nickname": row.get("nombreUsuario"),
+            "nombre": row.get("nombre"),
+            "apellido1": row.get("apellido1"),
+            "apellido2": row.get("apellido2"),
+            "correo": row.get("correo"),
+            "fecha_nacimiento": row.get("fechaNacimiento"),
+            "descripcion": row.get("descripcion"),
+            "foto": row.get("foto"),
+        }
+
+    # -------------------------------------------------
+    # sql2: comprobarNicknameRepe
+    # -------------------------------------------------
+    def comprobar_nickname_repe(self, nickname: str) -> int:
+        rows = self.db.select(
+            sentence="SELECT COUNT(*) AS cantidad FROM Usuario WHERE nombreUsuario = ?",
+            parameters=[nickname]
+        )
+        if not rows:
+            return 0
+        return int(rows[0]["cantidad"])
+
+    # -------------------------------------------------
+    # sql3: actualizarDatos
+    # -------------------------------------------------
+    def actualizar_datos(
+        self,
+        nickname_sesion: str,
+        nuevo_nickname: str,
+        nombre: str,
+        apellido1: str,
+        apellido2: str,
+        descripcion: str,
+        fecha_nacimiento: str,
+        correo: str,
+        foto: str = None
+    ) -> bool:
+        nickname_sesion = (nickname_sesion or "").strip()
+        nuevo_nickname = (nuevo_nickname or "").strip()
+
+        if not nickname_sesion or not nuevo_nickname:
+            raise ValueError("Nickname vacío")
+
+        # sql2 solo si cambia el nickname
+        if nuevo_nickname != nickname_sesion:
+            if self.comprobar_nickname_repe(nuevo_nickname) > 0:
+                raise ValueError("El nombre de usuario ya está en uso.")
+
+        self.db.update(
+            sentence="""
+                UPDATE Usuario
+                SET nombreUsuario = ?, nombre = ?, apellido1 = ?, apellido2 = ?, correo = ?, fechaNacimiento = ?, descripcion = ?, foto = ?
+                WHERE nombreUsuario = ?
+            """,
+            parameters=[
+                nuevo_nickname,
+                nombre,
+                apellido1,
+                apellido2,
+                correo,
+                fecha_nacimiento,
+                descripcion,
+                foto,
+                nickname_sesion
+            ]
+        )
+        return True
+
+    # -------------------------------------------------
     # Listado
+    # -------------------------------------------------
     def get_all(self):
         rows = self.db.select(sentence="SELECT * FROM Usuario")
         return [dict(row) for row in rows]

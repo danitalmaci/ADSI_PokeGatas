@@ -36,13 +36,14 @@
         {% endif %}
       </div>
 
-
         <div class="perfil-nickname">
           <div class="perfil-nickname-label">NickName</div>
           <div class="perfil-nickname-value">{{ data.nickname }}</div>
         </div>
 
-        <a class="perfil-link" href="#">Actualizar perfil</a>
+        <!-- ✅ CAMBIO AQUÍ -->
+        <a class="perfil-link" href="{{ url_for('perfil.actualizar_perfil') }}">Actualizar perfil</a>
+
         <a class="perfil-link" href="/">Volver</a>
       </div>
 
