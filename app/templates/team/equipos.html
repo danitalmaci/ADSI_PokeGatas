@@ -3,12 +3,32 @@
 {% block content %}
 
 <style>
-    body {
-        background-image: url("{{ url_for('static', filename='img/fondos/fondo_3.png') }}"); 
+
+    body, .main-viewport {
+        background-color: transparent !important;
+        background-image: none !important;
+        min-height: 100vh;
+    }
+
+    body::before {
+        content: "";
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        z-index: -1; 
+        background-image: url("{{ url_for('static', filename='img/fondos/fondo_5.png') }}"); 
         background-size: cover;
-        background-attachment: fixed;
+        background-position: center;
+        background-repeat: no-repeat;
+    }
+
+    body {
         font-family: 'Arial', sans-serif;
         margin: 0; padding: 0;
+        background-color: transparent;
+        min-height: 100vh;
     }
 
     .main-panel {
@@ -299,7 +319,7 @@
         <img src="{{ url_for('static', filename='img/iconos/simbolo_ver.png') }}" alt="Ver">
     </a>
     
-    <a href="#" class="btn-icon">
+    <a href="{{ url_for('team_bp.modificar_equipo', idEquipo=team['id']) }}" class="btn-icon">
         <img src="{{ url_for('static', filename='img/iconos/simbolo_Editar.png') }}" alt="Editar">
     </a>
     
@@ -332,5 +352,80 @@
         }
     }
 </script>
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        const searchInput = document.querySelector('.search-bar');
+        
+        searchInput.addEventListener('keyup', function(e) {
+            const nombre = e.target.value;
 
+            fetch(`/equipos/buscar?q=${nombre}`)
+                .then(response => response.json())
+                .then(jsonResultadoBusqueda => {
+                    mostrarResultado(jsonResultadoBusqueda);
+                })
+                .catch(error => console.error(error));
+        });
+    });
+
+    function mostrarResultado(equipos) {
+        const container = document.querySelector('.teams-list');
+        container.innerHTML = '';
+
+        if (equipos.length === 0) {
+            container.innerHTML = '<div style="text-align: center; color: white; margin-top: 100px;"><h2 style="font-size: 2rem;">No se encontraron equipos.</h2></div>';
+            return;
+        }
+
+        equipos.forEach(team => {
+            let topRowHTML = '<div class="poke-row top">';
+            for (let i = 0; i < 3; i++) {
+                if (team.imagenes && i < team.imagenes.length) {
+                    topRowHTML += `<div class="poke-circle"><img src="${team.imagenes[i]}" class="poke-img"></div>`;
+                } else {
+                    topRowHTML += `<div class="poke-circle"></div>`;
+                }
+            }
+            topRowHTML += '</div>';
+
+            let bottomRowHTML = '<div class="poke-row bottom">';
+            for (let i = 3; i < 6; i++) {
+                if (team.imagenes && i < team.imagenes.length) {
+                    bottomRowHTML += `<div class="poke-circle"><img src="${team.imagenes[i]}" class="poke-img"></div>`;
+                } else {
+                    bottomRowHTML += `<div class="poke-circle"></div>`;
+                }
+            }
+            bottomRowHTML += '</div>';
+
+            const staticPath = "/static/img/iconos"; 
+            
+            const html = `
+            <div class="team-row">
+                <div class="team-name-label">${team.nombre_equipo}</div>
+                <div class="team-container">
+                    <div class="pokemon-box">
+                        <div class="rows-wrapper">
+                            ${topRowHTML}
+                            ${bottomRowHTML}
+                        </div>
+                    </div>
+                    <div class="actions-col">
+                        <a href="/equipos/ver_equipo/${team.nombre_equipo}" class="btn-icon">
+                            <img src="${staticPath}/simbolo_ver.png" alt="Ver">
+                        </a>
+                        <a href="/equipos/modificar/${team.id}" class="btn-icon">
+                            <img src="${staticPath}/simbolo_Editar.png" alt="Editar">
+                        </a>
+                        <a href="/equipos/eliminar/${team.id}" class="btn-icon" onclick="return confirm('¿Borrar este equipo?');">
+                            <img src="${staticPath}/simbolo_Eliminar_Rosa.png" alt="Borrar">
+                        </a>
+                    </div>
+                </div>
+            </div>`;
+            
+            container.innerHTML += html;
+        });
+    }
+</script>
 {% endblock %}

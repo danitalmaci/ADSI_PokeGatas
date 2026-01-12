@@ -15,7 +15,9 @@
     {% if page_class != 'bg-pokedex' %}
 
         <!-- Botón menú -->
-        <button class="hamburger-btn" id="menuToggle">☰</button>
+        <button class="hamburger-btn" id="menuToggle">
+          <img src="{{ url_for('static', filename='img/iconos/simbolo_Tres_Rayas.png') }}" alt="Menu">
+        </button>
 
         <!-- Sidebar -->
         <aside class="side-menu" id="sidebar">
@@ -37,7 +39,7 @@
     {# ===================================================== #}
     {# CONTENIDO PRINCIPAL #}
     {# ===================================================== #}
-
+    
     <main class="main-content main-viewport {% block page_class %}{% endblock %}" id="mainContent">
 
         <!-- FLASH MESSAGES -->
@@ -45,12 +47,12 @@
           {% if messages %}
             <div class="flash-container">
               {% for category, message in messages %}
-                <div class="flash-message {% if category == 'success' %}flash-success{% else %}flash-error{% endif %}">
+                <!--<div class="flash-message {% if category == 'success' %}flash-success{% else %}flash-error{% endif %}">
                   <strong class="flash-title">
                     {% if category == 'success' %}✅ Éxito{% else %}⚠️ Error{% endif %}
                   </strong>
                   <div>{{ message }}</div>
-                </div>
+                </div>-->
               {% endfor %}
             </div>
           {% endif %}
@@ -59,7 +61,6 @@
         {% block content %}{% endblock %}
 
     </main>
-
     <script src="{{ url_for('static', filename='js/main.js') }}"></script>
 </body>
 </html>
