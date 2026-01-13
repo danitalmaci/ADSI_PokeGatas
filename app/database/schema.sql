@@ -60,7 +60,27 @@ CREATE TABLE IF NOT EXISTS PokemonPokedex (
     FOREIGN KEY(nombreRegion) REFERENCES RegionPokemon(nombreRegion),
     FOREIGN KEY(nombreCategoria) REFERENCES CategoriaPokemon(nombreCategoria),
     FOREIGN KEY(nombrePokemonPrevolucion) REFERENCES PokemonPokedex(nombrePokemon)
+);
 
+/* ✅ NUEVA TABLA: PokemonFavoritos (Usuario <-> PokemonPokedex) */
+CREATE TABLE IF NOT EXISTS PokemonFavoritos (
+    nombreUsuario TEXT NOT NULL,
+    nombrePokemon TEXT NOT NULL,
+
+    -- PK compuesta: un usuario no puede marcar 2 veces el mismo pokemon
+    PRIMARY KEY (nombreUsuario, nombrePokemon),
+
+    -- FK a Usuario
+    FOREIGN KEY (nombreUsuario)
+        REFERENCES Usuario(nombreUsuario)
+        ON DELETE CASCADE
+        ON UPDATE CASCADE,
+
+    -- FK a PokemonPokedex (por nombrePokemon)
+    FOREIGN KEY (nombrePokemon)
+        REFERENCES PokemonPokedex(nombrePokemon)
+        ON DELETE CASCADE
+        ON UPDATE CASCADE
 );
 
 /* Relación Pokemon <-> Tipo) */
@@ -107,6 +127,7 @@ CREATE TABLE IF NOT EXISTS equipos (
     nombre_equipo TEXT NOT NULL,
     FOREIGN KEY(user_id) REFERENCES Usuario(id) ON DELETE CASCADE
 );
+
 /* -----------------------------------*/
 
 CREATE TABLE IF NOT EXISTS PokemonEquipo (

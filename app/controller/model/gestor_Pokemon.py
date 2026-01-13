@@ -2,6 +2,9 @@
 from app.database.connection import Connection
 import unicodedata
 import random
+from flask import request
+from flask import url_for
+
 
 class gestorPokemon:
     def __init__(self, db):
@@ -242,3 +245,55 @@ class gestorPokemon:
         )
 
         return {"error": None, "respuesta": respuesta_html}
+    
+    def mostrarPokemon(self, nombrePokemon):
+        query = (
+            "SELECT p.nombrePokemon, p.imagen, p.nombreCategoria, p.altura, p.peso, "
+            "p.pokedexID, p.sexo, p.ps, p.velocidad, p.ataque, p.ataqueEspecial, "
+            "p.defensa, p.defensaEspecial, "
+            "h.nombreHabilidad, "
+            "t.nombreTipo, tp.imagenTipo "
+            "FROM PokemonPokedex p "
+            "INNER JOIN Posee h ON p.nombrePokemon = h.nombrePokemon "
+            "INNER JOIN Contiene t ON p.nombrePokemon = t.nombrePokemon "
+            "INNER JOIN TipoPokemon tp ON t.nombreTipo = tp.nombreTipo "
+            "WHERE p.nombrePokemon = ?"
+        )
+        rows = self.db.select(query, (nombrePokemon,))
+        
+        if not rows:
+            return {}  # Pokémon no encontrado
+        
+        # Tomamos los datos generales del Pokémon (la primera fila)
+        base = rows[0]
+        JSON_Pokemon = {
+            "nombrePokemon": base["nombrePokemon"],
+            "imagen": base["imagen"],
+            "nombreCategoria": base["nombreCategoria"],
+            "altura": base["altura"],
+            "peso": base["peso"],
+            "pokedexID": base["pokedexID"],
+            "sexo": base["sexo"],
+            "ps": base["ps"],
+            "velocidad": base["velocidad"],
+            "ataque": base["ataque"],
+            "ataqueEspecial": base["ataqueEspecial"],
+            "defensa": base["defensa"],
+            "defensaEspecial": base["defensaEspecial"],
+            "habilidades": [],
+            "tipos": []
+        }
+        
+        # Agrupar habilidades
+        habilidades_set = set()
+        tipos_set = {}
+
+        for row in rows:
+            habilidades_set.add(row["nombreHabilidad"])
+            tipos_set[row["nombreTipo"]] = row["imagenTipo"]
+        
+        # Convertir habilidades a lista de dicts
+        JSON_Pokemon["habilidades"] = [{"nombreHabilidad": h} for h in habilidades_set]
+        JSON_Pokemon["tipos"] = [{"nombreTipo": t, "imagenTipo": img} for t, img in tipos_set.items()]
+        
+        return JSON_Pokemon
