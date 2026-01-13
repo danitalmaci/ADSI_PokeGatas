@@ -1236,6 +1236,7 @@ body {
 
 .info-label {
     font-size: 1rem;
+    font-family: 'Press Start 2P', monospace;
 }
 
 .info-value {
@@ -1250,7 +1251,8 @@ body {
 
 .abilities h4 {
     text-align: center; 
-    font-size: 1.2rem;
+    font-size: 1rem;
+    font-family: 'Press Start 2P', monospace;
 }
 
 /* ────────── STATS ────────── */
@@ -1264,6 +1266,7 @@ body {
 
 .stat-label {
     font-size: 1rem;
+    font-family: 'Press Start 2P', monospace;
 }
 
 .stat-bar {
@@ -1305,12 +1308,14 @@ body {
 /* NOMBRE */
 .pokemon-name {
     font-size: 2rem;
+    font-family: 'Press Start 2P', monospace;
 }
 
 /* NÚMERO */
 .pokemon-id {
     color: #f48fb1;
     font-weight: bold;
+    font-family: 'Press Start 2P', monospace;
 }
 
 /* TIPO */
@@ -1319,8 +1324,23 @@ body {
 }
 
 .type-icon {
-    width: 50px;
+    width: 60px;
+    height: 20px;
+    margin-right: 10px;
+    border-radius: 12px;        /* esquinas redondeadas */
+    border: 2px solid #fff;     /* borde blanco */
+    box-shadow: 0 2px 6px rgba(0,0,0,0.2); /* sombra ligera */
+    background-color: #fff;  
 }
+.btn-back-fixed {
+    position: fixed; bottom: 20px; left: 20px;  
+    background: white; width: 60px; height: 60px; border-radius: 50%;
+    display: flex; justify-content: center; align-items: center;
+    box-shadow: 0 5px 15px rgba(0,0,0,0.3); z-index: 9999;
+    }
+.btn-back-fixed img { width: 60%; height: 60%; object-fit: contain}
+
+
 /* ================================================= */
 /* ================== LOGIN PIXEL ================== */
 /* ================================================= */
