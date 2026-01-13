@@ -2,63 +2,74 @@
 
 {% block title %}Editar Usuario{% endblock %}
 
+{% block page_class %}admin-page-bg{% endblock %}
+
 {% block content %}
-<div class="admin-page-bg">
-    <div class="admin-container">
-        
-        <div class="admin-header-row">
-            <div class="header-pill title-pill">
-                Editar: {{ user.nickname }}
-            </div>
-            <a href="{{ url_for('admin.admin_users') }}" class="header-pill link-pill" style="flex: 0 0 auto;">
-                ← Volver
-            </a>
+<div class="admin-container">
+    
+    <div class="admin-header-row">
+        <div class="header-pill title-pill">
+            Editar: {{ user.nickname }}
         </div>
-
-        <div class="edit-form-card">
-            
-            <form action="{{ url_for('admin.update_user') }}" method="POST">
-                
-                <input type="hidden" name="antiguo_nickname" value="{{ user.nickname }}">
-
-                <div class="current-avatar-preview">
-                    <img src="{{ url_for('static', filename='img/avatar_placeholder.png') }}" alt="Avatar actual">
-                </div>
-
-                <div class="form-group">
-                    <label for="nickname" class="form-label">Nickname</label>
-                    <input type="text" id="nickname" name="nickname" class="form-control-pill" value="{{ user.nickname }}" required>
-                </div>
-
-                <div class="form-group">
-                    <label for="nombre" class="form-label">Nombre</label>
-                    <input type="text" id="nombre" name="nombre" class="form-control-pill" value="{{ user.nombre }}">
-                </div>
-
-                <div style="display: flex; gap: 15px;">
-                    <div class="form-group" style="flex: 1;">
-                        <label for="ape1" class="form-label">Primer Apellido</label>
-                        <input type="text" id="ape1" name="ape1" class="form-control-pill" value="{{ user.ape1 }}">
-                    </div>
-                    <div class="form-group" style="flex: 1;">
-                        <label for="ape2" class="form-label">Segundo Apellido</label>
-                        <input type="text" id="ape2" name="ape2" class="form-control-pill" value="{{ user.ape2 }}">
-                    </div>
-                </div>
-
-                <div class="form-group">
-                    <label for="descripcion" class="form-label">Descripción</label>
-                    <textarea id="descripcion" name="descripcion" class="form-control-pill" rows="3" style="border-radius: 20px;">{{ user.descripcion }}</textarea>
-                </div>
-
-                <div class="form-actions">
-                    <a href="{{ url_for('admin.admin_users') }}" class="btn-pill btn-cancel">Cancelar</a>
-                    <button type="submit" class="btn-pill btn-save">Guardar Cambios</button>
-                </div>
-
-            </form>
-        </div>
-
+        <a href="{{ url_for('admin.admin_users') }}" class="header-pill link-pill" style="flex: 0 0 auto;">
+            ← Volver
+        </a>
     </div>
+
+    <div class="edit-form-card">
+        
+        <form action="{{ url_for('admin.update_user') }}" method="POST">
+            
+            <input type="hidden" name="antiguo_nickname" value="{{ user.nickname }}">
+
+            <div class="current-avatar-preview">
+                {% if user.foto %}
+                    <img src="{{ url_for('static', filename=user.foto.replace('static/', '')) }}" alt="Avatar actual">
+                {% else %}
+                    <img src="{{ url_for('static', filename='img/avatar_placeholder.png') }}" alt="Avatar actual">
+                {% endif %}
+            </div>
+
+            <div class="form-group">
+                <label for="nickname" class="form-label">Nickname</label>
+                <input type="text" id="nickname" name="nickname" class="form-control-pill" value="{{ user.nickname }}" required>
+            </div>
+
+            <div class="form-group">
+                <label for="nombre" class="form-label">Nombre</label>
+                <input type="text" id="nombre" name="nombre" class="form-control-pill" value="{{ user.nombre }}">
+            </div>
+
+            <div style="display: flex; gap: 15px;">
+                <div class="form-group">
+                    <label class="form-label">Primer Apellido</label>
+                    <input type="text" 
+                        name="ape1" 
+                        value="{{ user.apellido1 }}" 
+                        class="form-control-pill">
+                </div>
+
+                <div class="form-group">
+                    <label class="form-label">Segundo Apellido</label>
+                    <input type="text" 
+                        name="ape2" 
+                        value="{{ user.apellido2 }}" 
+                        class="form-control-pill">
+                </div>
+            </div>
+
+            <div class="form-group">
+                <label for="descripcion" class="form-label">Descripción</label>
+                <textarea id="descripcion" name="descripcion" class="form-control-pill" rows="3" style="border-radius: 20px;">{{ user.descripcion }}</textarea>
+            </div>
+
+            <div class="form-actions">
+                <a href="{{ url_for('admin.admin_users') }}" class="btn-pill btn-cancel">Cancelar</a>
+                <button type="submit" class="btn-pill btn-save">Guardar Cambios</button>
+            </div>
+
+        </form>
+    </div>
+
 </div>
 {% endblock %}

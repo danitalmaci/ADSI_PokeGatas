@@ -583,6 +583,7 @@ body {
     justify-content: center;
     align-items: flex-start;
     padding-top: 40px;
+    padding-bottom: 40px;
 }
 
 .edit-form-card {

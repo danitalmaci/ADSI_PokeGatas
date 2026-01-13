@@ -86,3 +86,18 @@ class Pokedex:
     # ✅ NUEVO: Eliminar seguidor (borrar relación en Sigue)
     def eliminar_seguido(self, nickname_sesion: str, seguido: str) -> bool:
         return self.gestor_usuarios.eliminar_seguido(nickname_sesion, seguido)
+    #--------- ADMIN --------------
+    def obtenerCuentas(self, filtro_nombre=None):
+        return self.gestor_usuarios.obtenerCuentas(filtro_nombre)
+
+    def obtenerCuentasPendientes(self):
+        return self.gestor_usuarios.obtenerCuentasPendientes()
+
+    def aprobarCuenta(self, nickname):
+        return self.gestor_usuarios.aprobarCuenta(nickname)
+
+    def borrarCuenta(self, nickname):
+        return self.gestor_usuarios.borrarCuenta(nickname)
+
+    def modificarCuenta(self, **kwargs):
+        return self.gestor_usuarios.update_user_admin(**kwargs)
