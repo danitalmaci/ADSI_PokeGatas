@@ -1338,6 +1338,7 @@ body {
     display: flex; justify-content: center; align-items: center;
     box-shadow: 0 5px 15px rgba(0,0,0,0.3); z-index: 9999;
     }
+    
 .btn-back-fixed img { width: 60%; height: 60%; object-fit: contain}
 
 
