@@ -46,3 +46,21 @@ class gestorPokemon:
         )
         rows = self.db.select(query, (nombrePokemon,))
         return [dict(row) for row in rows]
+    
+    def obtener_pokemon_por_id(self, pokedex_id):
+        try:
+            # Consultamos los datos necesarios para el equipo
+            sql = """
+                SELECT pokedexID, nombrePokemon, imagen, altura, peso, sexo, ps, 
+                       ataque, defensa, ataqueEspecial, defensaEspecial, velocidad 
+                FROM PokemonPokedex 
+                WHERE pokedexID = ?
+            """
+            rows = self.db.select(sql, [pokedex_id])
+            
+            if rows:
+                return dict(rows[0])
+            return None
+        except Exception as e:
+            print(f"Error obtener_pokemon_por_id: {e}")
+            return None

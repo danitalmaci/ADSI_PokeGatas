@@ -1,5 +1,27 @@
+@import url('https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap');
+
 /* --- ESTILOS GENERALES --- */
-* { margin: 0; padding: 0; box-sizing: border-box; font-family: sans-serif; }
+html {
+    font-size: 11px; 
+}
+
+* { 
+    margin: 0; 
+    padding: 0; 
+    box-sizing: border-box; 
+    
+    font-family: 'Press Start 2P', cursive, sans-serif !important;
+    
+    letter-spacing: -1px !important; 
+    
+}
+
+
+button, input, textarea, select, .btn {
+    font-family: 'Press Start 2P', cursive, sans-serif !important;
+    font-size: 0.9rem !important; 
+}
+
 
 body {
     background-color: #f0f0f0;
@@ -105,13 +127,15 @@ body {
     display: flex;
     align-items: center;
     justify-content: center;
-
+    text-align: center;
     background-color: #f9a1b4d1;
     color: white;
     text-decoration: none;
-    font-size: 18px;
+    font-size: 13px !important;   
+    line-height: 1.2 !important;  
+    padding: 0 10px;              
+    
     font-weight: 500;
-
     border-radius: 999px;
     margin: 0 auto;
     transition: background 0.3s, transform 0.2s;

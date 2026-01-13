@@ -105,7 +105,7 @@
         display: flex; justify-content: center; align-items: center;
         box-shadow: 0 5px 15px rgba(0,0,0,0.3); z-index: 9999;
     }
-    .btn-back-fixed img { width: 60%; height: 60%; object-fit: contain}
+    .btn-back-fixed img { width: 60%; height: 60%; object-fit: contain;}
 
     .input-name-pill {
         background-color: white; color: #ff9eb5;
@@ -154,7 +154,7 @@
 
 <div class="edit-card">
     
-    <form class="header-row" action="{{ url_for('team_bp.guardar_cambios_equipo', idEquipo=equipo.id) }}" method="POST">
+    <form class="header-row" action="{{ url_for('team_bp.guardar_cambios_equipo', id_equipo=equipo.id) }}" method="POST">
         
         <input type="text" name="nuevoNombre" value="{{ equipo.nombreEquipo }}" class="input-name-pill" required>
         
@@ -173,7 +173,7 @@
                     <div class="poke-name">{{ poke.nombrePokemon }}</div>
                     
                     <div class="actions-container">
-                        <a href="{{ url_for('team_bp.eliminar_pokemon_action', idEquipo=equipo.id, idUnico=poke.id_unico) }}" 
+                        <a href="{{ url_for('team_bp.eliminar_pokemon', id_equipo=equipo.id, id_unico=poke.id_unico) }}" 
                            class="action-btn" onclick="return confirm('¿Eliminar?');">
                             <img src="{{ url_for('static', filename='img/iconos/simbolo_Eliminar_Rosa.png') }}">
                         </a>
@@ -181,9 +181,10 @@
                 </div>
 
             {% else %}
-                <a href="{{ url_for('team_bp.seleccionar_pokemon_view', idEquipo=equipo.id) }}" 
+                <a href="{{ url_for('team_bp.seleccionar_pokemon_view', id_equipo=equipo.id) }}" 
                     class="pokemon-row-white empty-slot" 
-                    style="text-decoration: none;"> <div class="poke-img-placeholder">
+                    style="text-decoration: none;"> 
+                    <div class="poke-img-placeholder">
                         <img src="{{ url_for('static', filename='img/iconos/simbolo_Añadir.png') }}" alt="Añadir">
                     </div>
                     
@@ -196,18 +197,7 @@
 
 </div>
 
-<div id="modalAdd" class="add-modal">
-    <form class="add-box" action="{{ url_for('team_bp.anadir_pokemon_action', idEquipo=equipo.id) }}" method="POST">
-        <h3 style="color:#ff9eb5">Escribe nombre del Pokemon</h3>
-        <input type="text" name="nombrePokemon" required placeholder="Ej: Pikachu" 
-               style="padding: 10px; border-radius: 10px; border: 1px solid #ccc; margin-bottom: 15px;">
-        <br>
-        <button type="submit" style="background: #ff9eb5; color: white; border: none; padding: 10px 20px; border-radius: 20px; font-weight: bold; cursor: pointer;">Aceptar</button>
-        <button type="button" onclick="closeModal()" style="background: #ccc; border: none; padding: 10px 20px; border-radius: 20px; cursor: pointer;">Cancelar</button>
-    </form>
-</div>
-
-<a href="{{ url_for('team_bp.list_teams') }}" class="btn-back-fixed">
+<a href="{{ url_for('team_bp.consultar_equipos') }}" class="btn-back-fixed">
     <img src="{{ url_for('static', filename='img/iconos/simbolo_Volver.png') }}" alt="Volver">
 </a>
 
