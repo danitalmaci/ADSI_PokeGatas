@@ -24,6 +24,23 @@ def perfil_blueprint(db):
 
         return render_template("perfil.html", data=data)
 
+    # ✅ NUEVO: Ver perfil de otro usuario por nickname (GET)
+    @bp.route("/perfil/<nickname>", methods=["GET"])
+    def ver_perfil_usuario(nickname):
+        nickname = (nickname or "").strip()
+        if not nickname:
+            flash("Usuario inválido.", "error")
+            return redirect(url_for("perfil.perfil"))
+
+        try:
+            data = pokedex.consultar_perfil(nickname)
+        except Exception as e:
+            flash(f"Error consultando perfil: {e}", "error")
+            return redirect(url_for("perfil.perfil"))
+
+        # Reutilizamos el mismo template de perfil para mostrarlo
+        return render_template("perfil.html", data=data)
+
     # ✅ Ver Seguidores (GET)
     @bp.route("/seguidores", methods=["GET"])
     def ver_seguidores():
@@ -40,7 +57,7 @@ def perfil_blueprint(db):
 
         return render_template("seguidores.html", data=data)
 
-    # ✅ NUEVO: Eliminar seguidor (POST)
+    # ✅ Eliminar seguidor (POST)
     @bp.route("/seguidores/eliminar", methods=["POST"])
     def eliminar_seguidor():
         nickname_sesion = session.get("nickname")
@@ -60,7 +77,7 @@ def perfil_blueprint(db):
             flash(f"Error eliminando seguidor: {e}", "error")
 
         return redirect(url_for("perfil.ver_seguidores"))
-    
+
     #---------Ver Seguidos----------------------------------------------------------------------------------------------
     @bp.route("/seguidos", methods=["GET"])
     def ver_seguidos():
@@ -77,7 +94,7 @@ def perfil_blueprint(db):
 
         return render_template("seguidos.html", data=data)
 
-    # ✅ NUEVO: Eliminar seguido 
+    # ✅ Eliminar seguido
     @bp.route("/seguidos/eliminar", methods=["POST"])
     def eliminar_seguido():
         nickname_sesion = session.get("nickname")

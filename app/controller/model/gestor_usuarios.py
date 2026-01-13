@@ -1,6 +1,6 @@
 # app/controller/model/gestor_usuarios.py
 from werkzeug.security import generate_password_hash, check_password_hash
-from flask import request, render_template
+from flask import request
 
 
 class GestorUsuarios:
@@ -142,11 +142,33 @@ class GestorUsuarios:
         except Exception:
             seguidos = 0
 
+        # ✅ FAVORITOS: traemos nombre + imagen desde PokemonPokedex
+        # (JOIN case-insensitive para evitar problemas de mayúsculas)
+        favoritos_rows = []
+        try:
+            favoritos_rows = self.db.select(
+                sentence="""
+                    SELECT p.nombrePokemon AS nombrePokemon, p.imagen AS imagen
+                    FROM PokemonFavoritos f
+                    JOIN PokemonPokedex p
+                      ON LOWER(p.nombrePokemon) = LOWER(f.nombrePokemon)
+                    WHERE f.nombreUsuario = ?
+                    ORDER BY p.pokedexID ASC
+                    LIMIT 6
+                """,
+                parameters=[nickname]
+            )
+        except Exception:
+            favoritos_rows = []
+
+        favoritos = [dict(r) for r in favoritos_rows] if favoritos_rows else []
+
         return {
             "nickname": user_row["nombreUsuario"],
             "foto": user_row.get("foto"),
             "numero_seguidores": int(seguidores),
             "numero_seguidos": int(seguidos),
+            "favoritos": favoritos
         }
 
     # -------------------------------------------------
@@ -241,14 +263,13 @@ class GestorUsuarios:
         return True
 
     # -------------------------------------------------
-    # Caso de uso: Ver seguidores 
+    # Caso de uso: Ver seguidores
     # -------------------------------------------------
     def cargar_seguidores(self, nickname_sesion: str) -> list:
         nickname_sesion = (nickname_sesion or "").strip()
         if not nickname_sesion:
             raise ValueError("Nickname vacío")
 
-        # sql1
         rows = self.db.select(
             sentence="""
                 SELECT nombreUsuarioSeguidor
@@ -263,7 +284,6 @@ class GestorUsuarios:
         for r in rows:
             nickname_seguidor = r["nombreUsuarioSeguidor"]
 
-            # sql2
             row_foto = self.db.select(
                 sentence="""
                     SELECT foto
@@ -274,7 +294,6 @@ class GestorUsuarios:
             )
             foto_seguidor = row_foto[0]["foto"] if row_foto else None
 
-            # sql3
             row_num_seguidores = self.db.select(
                 sentence="""
                     SELECT COUNT(*) AS numero_seguidores
@@ -285,7 +304,6 @@ class GestorUsuarios:
             )
             num_seguidores = int(row_num_seguidores[0]["numero_seguidores"]) if row_num_seguidores else 0
 
-            # sql4
             row_num_seguidos = self.db.select(
                 sentence="""
                     SELECT COUNT(*) AS numero_seguidos
@@ -304,19 +322,15 @@ class GestorUsuarios:
             })
 
         return seguidores_json
-    
+
     # -------------------------------------------------
-    # Caso de uso: Ver seguidores 
+    # Caso de uso: Ver seguidos
     # -------------------------------------------------
-
-
-
     def cargar_seguidos(self, nickname_sesion: str) -> list:
         nickname_sesion = (nickname_sesion or "").strip()
         if not nickname_sesion:
             raise ValueError("Nickname vacío")
 
-        # sql1
         rows = self.db.select(
             sentence="""
                 SELECT nombreUsuarioSeguido
@@ -331,7 +345,6 @@ class GestorUsuarios:
         for r in rows:
             nickname_seguido = r["nombreUsuarioSeguido"]
 
-            # sql2
             row_foto = self.db.select(
                 sentence="""
                     SELECT foto
@@ -342,7 +355,6 @@ class GestorUsuarios:
             )
             foto_seguido = row_foto[0]["foto"] if row_foto else None
 
-            # sql3
             row_num_seguidos = self.db.select(
                 sentence="""
                     SELECT COUNT(*) AS numero_seguidos
@@ -353,7 +365,6 @@ class GestorUsuarios:
             )
             num_seguidos = int(row_num_seguidos[0]["numero_seguidos"]) if row_num_seguidos else 0
 
-            # sql4
             row_num_seguidores = self.db.select(
                 sentence="""
                     SELECT COUNT(*) AS numero_seguidores
@@ -392,7 +403,7 @@ class GestorUsuarios:
             parameters=[nickname_sesion, seguidor]
         )
         return True
-    
+
     # -------------------------------------------------
     # Eliminar seguido
     # -------------------------------------------------
@@ -412,35 +423,30 @@ class GestorUsuarios:
             parameters=[seguido, nickname_sesion]
         )
         return True
+
     # -------------------------------------------------
     # Listado
     # -------------------------------------------------
     def get_all(self):
         rows = self.db.select(sentence="SELECT * FROM Usuario")
         return [dict(row) for row in rows]
-    
+
     # -------------------------------------------------
     # Caso de uso: Mostrar notificaciones
     # -------------------------------------------------
-
-    def mostrar_Notificaciones(self, nickname,):
-        # 1️ Buscar  a quién sigue el usuario
-         # Leer los filtros del formulario
-        nombreUsuarioSeguidor = request.args.get("usuario")  # devuelve None si no se pone
+    def mostrar_Notificaciones(self, nickname):
+        nombreUsuarioSeguidor = request.args.get("usuario")
         filtroFecha = request.args.get("fecha")
-
 
         query_followed = "SELECT nombreUsuarioSeguido FROM Sigue WHERE nombreUsuarioSeguidor = ?"
         followed_rows = self.db.select(query_followed, (nickname,))
-        
-        # Convertir tuplas a dicts
-        usuarios_seguidos = [row[0] for row in followed_rows]  # row[0] es nombreUsuarioSeguido
+
+        usuarios_seguidos = [row[0] for row in followed_rows]
 
         if not usuarios_seguidos:
-            return []  # No sigue a nadie  
+            return []
 
-        # 2️ Construir query para notificaciones de los usuarios seguidos
-        placeholders = ','.join(['?'] * len(usuarios_seguidos))
+        placeholders = ",".join(["?"] * len(usuarios_seguidos))
         query_notif = f"""
             SELECT nombreUsuario, fecha, info_notificacion
             FROM Notificacion
@@ -448,30 +454,22 @@ class GestorUsuarios:
         """
         params = usuarios_seguidos
 
-        # Aplicar filtro opcional por usuario
         if nombreUsuarioSeguidor:
             query_notif += " AND nombreUsuario = ?"
             params.append(nombreUsuarioSeguidor)
 
-        # Aplicar filtro opcional por fecha
         if filtroFecha:
             query_notif += " AND fecha = ?"
             params.append(filtroFecha)
 
-        # 3️⃣ Ejecutar y convertir filas a diccionarios
         rows = self.db.select(query_notif, tuple(params))
         columns = ["nombreUsuario", "fecha", "info_notificacion"]
         notif_list = [dict(zip(columns, row)) for row in rows]
 
         return notif_list
-    
-    # -- FUNCIONES DE ADMINISTRADOR --------------
 
+    # -- FUNCIONES DE ADMINISTRADOR --------------
     def obtenerCuentas(self, filtro_nombre=None):
-        """
-        [ADMIN] Obtiene todos los usuarios que NO están pendientes (rol > 0).
-        Si recibe filtro_nombre, busca por coincidencias (LIKE).
-        """
         query = "SELECT nombreUsuario, foto, rol FROM Usuario WHERE rol > 0"
         params = None
         if filtro_nombre:
@@ -482,19 +480,19 @@ class GestorUsuarios:
             rows = self.db.select(query, params)
             users_list = []
             for row in rows:
-                rol_numero = row['rol']
+                rol_numero = row["rol"]
                 try:
                     rol_numero = int(rol_numero)
-                except:
+                except Exception:
                     rol_numero = 0
-                
+
                 rol_texto = "Entrenador"
                 if rol_numero == 2:
                     rol_texto = "Administrador"
-                
-                users_list.append({ 
-                    "nombreUsuario": row['nombreUsuario'],
-                    "foto": row['foto'] if row['foto'] else 'img/usuario/user1.png',
+
+                users_list.append({
+                    "nombreUsuario": row["nombreUsuario"],
+                    "foto": row["foto"] if row["foto"] else "img/usuario/user1.png",
                     "rol": rol_texto,
                     "rol_num": rol_numero
                 })
@@ -504,16 +502,15 @@ class GestorUsuarios:
             return []
 
     def obtenerCuentasPendientes(self):
-        """[ADMIN] Obtiene solo los usuarios con estado PENDIENTE (rol=0)."""
         query = "SELECT nombreUsuario, foto, rol FROM Usuario WHERE rol = 0"
         try:
             rows = self.db.select(query)
             users_list = []
             for row in rows:
                 users_list.append({
-                    "nombreUsuario": row['nombreUsuario'],
-                    "foto": row['foto'] if row['foto'] else 'img/usuario/user1.png',
-                    "rol": row['rol']
+                    "nombreUsuario": row["nombreUsuario"],
+                    "foto": row["foto"] if row["foto"] else "img/usuario/user1.png",
+                    "rol": row["rol"]
                 })
             return users_list
         except Exception as e:
@@ -521,7 +518,6 @@ class GestorUsuarios:
             return []
 
     def borrarCuenta(self, nickname):
-        """[ADMIN] Elimina la cuenta de un usuario dado su nickname."""
         query = "DELETE FROM Usuario WHERE nombreUsuario = ?"
         try:
             self.db.delete(query, (nickname,))
@@ -531,7 +527,6 @@ class GestorUsuarios:
             return False
 
     def aprobarCuenta(self, nickname):
-        """[ADMIN] Aprueba la cuenta de un usuario (rol 0 -> 1)."""
         query = "UPDATE Usuario SET rol = 1 WHERE nombreUsuario = ?"
         try:
             self.db.update(query, (nickname,))
@@ -541,15 +536,9 @@ class GestorUsuarios:
             print(f"ERROR APROBANDO CUENTA: {e}")
             return False
 
-    #Para modificar perfil, reutilizo el metodo get_datos_actualizar_perfil
-
     def update_user_admin(self, antiguo_nick, nuevo_nick, nombre, ape1, ape2, desc):
-        """
-        Modifica los datos de un usuario desde el panel de administración.
-        Nota: creo que habria que unificar en un solo "actualizar_datos"
-        """
         query = """
-            UPDATE Usuario 
+            UPDATE Usuario
             SET nombreUsuario = ?, nombre = ?, apellido1 = ?, apellido2 = ?, descripcion = ?
             WHERE nombreUsuario = ?
         """
