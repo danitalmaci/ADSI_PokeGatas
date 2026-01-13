@@ -423,7 +423,7 @@ class GestorUsuarios:
     # Caso de uso: Mostrar notificaciones
     # -------------------------------------------------
 
-    def mostrar_Notificaciones(self, nickname, nombreUsuarioSeguidor=None, filtroFecha=None):
+    def mostrar_Notificaciones(self, nickname,):
         # 1️ Buscar  a quién sigue el usuario
          # Leer los filtros del formulario
         nombreUsuarioSeguidor = request.args.get("usuario")  # devuelve None si no se pone
@@ -455,7 +455,7 @@ class GestorUsuarios:
 
         # Aplicar filtro opcional por fecha
         if filtroFecha:
-            query_notif += " AND fecha >= ?"
+            query_notif += " AND fecha = ?"
             params.append(filtroFecha)
 
         # 3️⃣ Ejecutar y convertir filas a diccionarios

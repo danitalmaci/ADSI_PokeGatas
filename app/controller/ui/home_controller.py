@@ -10,7 +10,8 @@ def home_blueprint():
 
     @bp.route('/')
     def index():
-        return render_template('login.html')
+        JSON_Pokedex = pokedex.mostrarPokedex()
+        return render_template('pokedex_inicio.html', pokemons=JSON_Pokedex)
 
     @bp.route('/register', methods=['GET', 'POST'])
     def register():

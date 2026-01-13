@@ -41,7 +41,7 @@ def create_app():
     # Blueprints
     app.register_blueprint(home_blueprint())
     app.register_blueprint(user_blueprint(db))
-    app.register_blueprint(menu_logged_blueprint(db))  # ✅
+    app.register_blueprint(menu_logged_blueprint(db)) 
     app.register_blueprint(perfil_blueprint(db))
     app.register_blueprint(admin_blueprint(db))
     app.register_blueprint(chatbot_blueprint())

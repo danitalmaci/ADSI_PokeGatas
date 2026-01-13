@@ -196,14 +196,14 @@
                 name="usuario"
                 class="filter-input"
                 placeholder="Nombre del seguidor"
-                value="{{ request.args.get('nombreUsuarioSeguidor', '') }}"
+                value="{{ request.args.get('usuario', '') }}"
             >
 
             <input
                 type="date"
                 name="fecha"
                 class="filter-input"
-                value="{{ request.args.get('filtroFecha', '') }}"
+                value="{{ request.args.get('fecha', '') }}"
             >
 
             <button type="submit" class="btn-filtrar">Buscar</button>
