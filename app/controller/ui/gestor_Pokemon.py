@@ -11,7 +11,7 @@ def pokedex_blueprint(db):
     @bp.route('/pokedex', methods=['GET', 'POST'])
     def mostrarPokedex():
         JSON_Pokedex = pokedex.mostrarPokedex()
-        return render_template('pokedex.html', pokemons=JSON_Pokedex)
+        return render_template('pokedex_inicio.html', pokemons=JSON_Pokedex)
 
     @bp.route('/pokedex/<nombrePokemon>') 
     def mostrarPokemon(nombrePokemon): 

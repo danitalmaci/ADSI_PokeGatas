@@ -1,5 +1,6 @@
 # app/controller/model/gestor_usuarios.py
 from werkzeug.security import generate_password_hash, check_password_hash
+from flask import request, render_template
 
 
 class GestorUsuarios:
@@ -307,7 +308,7 @@ class GestorUsuarios:
         return seguidores_json
 
     # -------------------------------------------------
-    # ✅ NUEVO: eliminar seguidor (borrar relación en Sigue)
+    #  NUEVO: eliminar seguidor (borrar relación en Sigue)
     # nickname_sesion = tú (seguidO)
     # seguidor = quien te sigue (seguidor)
     # -------------------------------------------------
@@ -340,7 +341,12 @@ class GestorUsuarios:
     # -------------------------------------------------
 
     def mostrar_Notificaciones(self, nickname, nombreUsuarioSeguidor=None, filtroFecha=None):
-        # 1️⃣ Buscar a quién sigue el usuario
+        # 1️ Buscar  a quién sigue el usuario
+         # Leer los filtros del formulario
+        nombreUsuarioSeguidor = request.args.get("usuario")  # devuelve None si no se pone
+        filtroFecha = request.args.get("fecha")
+
+
         query_followed = "SELECT nombreUsuarioSeguido FROM Sigue WHERE nombreUsuarioSeguidor = ?"
         followed_rows = self.db.select(query_followed, (nickname,))
         
@@ -348,9 +354,9 @@ class GestorUsuarios:
         usuarios_seguidos = [row[0] for row in followed_rows]  # row[0] es nombreUsuarioSeguido
 
         if not usuarios_seguidos:
-            return []  # No sigue a nadie
+            return []  # No sigue a nadie  
 
-        # 2️⃣ Construir query para notificaciones de los usuarios seguidos
+        # 2️ Construir query para notificaciones de los usuarios seguidos
         placeholders = ','.join(['?'] * len(usuarios_seguidos))
         query_notif = f"""
             SELECT nombreUsuario, fecha, info_notificacion

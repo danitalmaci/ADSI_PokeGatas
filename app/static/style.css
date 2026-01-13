@@ -1015,8 +1015,12 @@ body {
     background-color: #f8b3c8;
     border-radius: 30px;
     padding: 30px;
-    max-width: 900px;
-    margin: 0 auto;
+
+    max-width: 1220px;
+    width: 80%;              /* un poco más ancha */
+
+    margin-left: 25%;        /* empuja desde la izquierda */
+    margin-right: 40px;      /* mantiene margen derecho */
 }
 /* TÍTULO */
 .pokedex-title {
@@ -1098,8 +1102,41 @@ body {
 
 /* Opcional: efecto hover bonito */
 .pokemon-name a:hover {
-    color: #e63946;          /* el color que quieras */
+    color: #e63946;        
     text-decoration: none;
+}
+
+.auth-buttons {
+    position: absolute;
+    top: 50px;        
+    right: 60px; 
+    text-align: center;
+    display: flex;
+    flex-direction: column; 
+    gap: 12px;
+}
+
+.auth-buttons a {
+    background-color: #ffd6e4;
+    color: #7a2c45;
+
+    padding: 12px 16px;
+    border-radius: 18px;
+
+    font-family: 'Press Start 2P', monospace;
+    font-size: 0.6rem;
+    letter-spacing: 1px;
+
+    text-decoration: none;
+    box-shadow: 0 4px 0 #e89bb3;
+
+    transition: transform 0.1s ease, box-shadow 0.1s ease;
+}
+
+.auth-buttons a:hover {
+    transform: translateY(2px);
+    box-shadow: 0 2px 0 #e89bb3;
+    color: #e63946;
 }
 
 
