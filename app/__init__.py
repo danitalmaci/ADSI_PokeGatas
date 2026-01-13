@@ -1,6 +1,7 @@
 import os.path
 import sqlite3
 
+
 from flask import Flask
 
 from app.controller.ui.gestor_usuarios import user_blueprint
