@@ -241,9 +241,7 @@ class GestorUsuarios:
         return True
 
     # -------------------------------------------------
-    # Caso de uso: Ver seguidores (doc 9.10)
-    # Devuelve JSON = [ { nombreUsuarioSeguidor, fotoSeguidor,
-    #                     numSeguidoresDelSeguidor, numSeguidosDelSeguidor }, ... ]
+    # Caso de uso: Ver seguidores 
     # -------------------------------------------------
     def cargar_seguidores(self, nickname_sesion: str) -> list:
         nickname_sesion = (nickname_sesion or "").strip()
@@ -306,11 +304,77 @@ class GestorUsuarios:
             })
 
         return seguidores_json
+    
+    # -------------------------------------------------
+    # Caso de uso: Ver seguidores 
+    # -------------------------------------------------
+
+
+
+    def cargar_seguidos(self, nickname_sesion: str) -> list:
+        nickname_sesion = (nickname_sesion or "").strip()
+        if not nickname_sesion:
+            raise ValueError("Nickname vacío")
+
+        # sql1
+        rows = self.db.select(
+            sentence="""
+                SELECT nombreUsuarioSeguido
+                FROM Sigue
+                WHERE nombreUsuarioSeguidor = ?
+            """,
+            parameters=[nickname_sesion]
+        )
+
+        seguidos_json = []
+
+        for r in rows:
+            nickname_seguido = r["nombreUsuarioSeguido"]
+
+            # sql2
+            row_foto = self.db.select(
+                sentence="""
+                    SELECT foto
+                    FROM Usuario
+                    WHERE nombreUsuario = ?
+                """,
+                parameters=[nickname_seguido]
+            )
+            foto_seguido = row_foto[0]["foto"] if row_foto else None
+
+            # sql3
+            row_num_seguidos = self.db.select(
+                sentence="""
+                    SELECT COUNT(*) AS numero_seguidos
+                    FROM Sigue
+                    WHERE nombreUsuarioSeguidor = ?
+                """,
+                parameters=[nickname_seguido]
+            )
+            num_seguidos = int(row_num_seguidos[0]["numero_seguidos"]) if row_num_seguidos else 0
+
+            # sql4
+            row_num_seguidores = self.db.select(
+                sentence="""
+                    SELECT COUNT(*) AS numero_seguidores
+                    FROM Sigue
+                    WHERE nombreUsuarioSeguido = ?
+                """,
+                parameters=[nickname_seguido]
+            )
+            num_seguidores = int(row_num_seguidores[0]["numero_seguidores"]) if row_num_seguidores else 0
+
+            seguidos_json.append({
+                "nombreUsuarioSeguido": nickname_seguido,
+                "fotoSeguido": foto_seguido,
+                "numSeguidoresDelSeguido": num_seguidos,
+                "numSeguidosDelSeguido": num_seguidores
+            })
+
+        return seguidos_json
 
     # -------------------------------------------------
-    #  NUEVO: eliminar seguidor (borrar relación en Sigue)
-    # nickname_sesion = tú (seguidO)
-    # seguidor = quien te sigue (seguidor)
+    # Eliminar seguidor
     # -------------------------------------------------
     def eliminar_seguidor(self, nickname_sesion: str, seguidor: str) -> bool:
         nickname_sesion = (nickname_sesion or "").strip()
@@ -328,7 +392,26 @@ class GestorUsuarios:
             parameters=[nickname_sesion, seguidor]
         )
         return True
+    
+    # -------------------------------------------------
+    # Eliminar seguido
+    # -------------------------------------------------
+    def eliminar_seguido(self, nickname_sesion: str, seguido: str) -> bool:
+        nickname_sesion = (nickname_sesion or "").strip()
+        seguido = (seguido or "").strip()
 
+        if not nickname_sesion or not seguido:
+            raise ValueError("Datos inválidos")
+
+        self.db.delete(
+            sentence="""
+                DELETE FROM Sigue
+                WHERE nombreUsuarioSeguido = ?
+                  AND nombreUsuarioSeguidor = ?
+            """,
+            parameters=[seguido, nickname_sesion]
+        )
+        return True
     # -------------------------------------------------
     # Listado
     # -------------------------------------------------
@@ -381,5 +464,100 @@ class GestorUsuarios:
         notif_list = [dict(zip(columns, row)) for row in rows]
 
         return notif_list
+    
+    # -- FUNCIONES DE ADMINISTRADOR --------------
 
+    def obtenerCuentas(self, filtro_nombre=None):
+        """
+        [ADMIN] Obtiene todos los usuarios que NO están pendientes (rol > 0).
+        Si recibe filtro_nombre, busca por coincidencias (LIKE).
+        """
+        query = "SELECT nombreUsuario, foto, rol FROM Usuario WHERE rol > 0"
+        params = None
+        if filtro_nombre:
+            query += " AND nombreUsuario LIKE ?"
+            params = [f"%{filtro_nombre}%"]
 
+        try:
+            rows = self.db.select(query, params)
+            users_list = []
+            for row in rows:
+                rol_numero = row['rol']
+                try:
+                    rol_numero = int(rol_numero)
+                except:
+                    rol_numero = 0
+                
+                rol_texto = "Entrenador"
+                if rol_numero == 2:
+                    rol_texto = "Administrador"
+                
+                users_list.append({ 
+                    "nombreUsuario": row['nombreUsuario'],
+                    "foto": row['foto'] if row['foto'] else 'img/usuario/user1.png',
+                    "rol": rol_texto,
+                    "rol_num": rol_numero
+                })
+            return users_list
+        except Exception as e:
+            print(f"ERROR EN GESTOR USUARIOS (Active): {e}")
+            return []
+
+    def obtenerCuentasPendientes(self):
+        """[ADMIN] Obtiene solo los usuarios con estado PENDIENTE (rol=0)."""
+        query = "SELECT nombreUsuario, foto, rol FROM Usuario WHERE rol = 0"
+        try:
+            rows = self.db.select(query)
+            users_list = []
+            for row in rows:
+                users_list.append({
+                    "nombreUsuario": row['nombreUsuario'],
+                    "foto": row['foto'] if row['foto'] else 'img/usuario/user1.png',
+                    "rol": row['rol']
+                })
+            return users_list
+        except Exception as e:
+            print(f"ERROR EN PENDIENTES: {e}")
+            return []
+
+    def borrarCuenta(self, nickname):
+        """[ADMIN] Elimina la cuenta de un usuario dado su nickname."""
+        query = "DELETE FROM Usuario WHERE nombreUsuario = ?"
+        try:
+            self.db.delete(query, (nickname,))
+            return True
+        except Exception as e:
+            print(f"ERROR AL BORRAR CUENTA: {e}")
+            return False
+
+    def aprobarCuenta(self, nickname):
+        """[ADMIN] Aprueba la cuenta de un usuario (rol 0 -> 1)."""
+        query = "UPDATE Usuario SET rol = 1 WHERE nombreUsuario = ?"
+        try:
+            self.db.update(query, (nickname,))
+            print(f"Usuario {nickname} APROBADO")
+            return True
+        except Exception as e:
+            print(f"ERROR APROBANDO CUENTA: {e}")
+            return False
+
+    #Para modificar perfil, reutilizo el metodo get_datos_actualizar_perfil
+
+    def update_user_admin(self, antiguo_nick, nuevo_nick, nombre, ape1, ape2, desc):
+        """
+        Modifica los datos de un usuario desde el panel de administración.
+        Nota: creo que habria que unificar en un solo "actualizar_datos"
+        """
+        query = """
+            UPDATE Usuario 
+            SET nombreUsuario = ?, nombre = ?, apellido1 = ?, apellido2 = ?, descripcion = ?
+            WHERE nombreUsuario = ?
+        """
+        try:
+            params = (nuevo_nick, nombre, ape1, ape2, desc, antiguo_nick)
+            self.db.update(query, params)
+            print(f"Usuario {antiguo_nick} actualizado a {nuevo_nick}")
+            return True
+        except Exception as e:
+            print(f"--- ERROR ACTUALIZANDO USUARIO (ADMIN): {e} ---")
+            return False

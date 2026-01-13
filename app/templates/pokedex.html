@@ -1,0 +1,36 @@
+{% extends 'base.html' %}
+
+{% block title %}Pokédex{% endblock %}
+{% block page_class %}bg-pokedex{% endblock %}
+
+{% block content %}
+<link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap" rel="stylesheet">
+
+<div class="pokedex-container">
+
+    <h1 class="pokedex-title">Pokédex</h1>
+
+    <div class="pokedex-grid">
+        {% for pokemon in pokemons %}
+        <div class="pokemon-card">
+            <span class="pokemon-number">
+                #{{ pokemon.pokedexID }}
+            </span>
+
+            <img
+                src="{{ pokemon.imagen }}"
+                alt="{{ pokemon.nombrePokemon }}"
+                class="pokemon-img"
+            >
+
+            <p class="pokemon-name">
+                <a href="{{ url_for('pokedex.mostrarPokemon', nombrePokemon=pokemon.nombrePokemon) }}">
+                    {{ pokemon.nombrePokemon }}
+                </a>
+            </p>
+        </div>
+        {% endfor %}
+    </div>
+
+</div>
+{% endblock %}

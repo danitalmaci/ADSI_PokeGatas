@@ -583,6 +583,7 @@ body {
     justify-content: center;
     align-items: flex-start;
     padding-top: 40px;
+    padding-bottom: 40px;
 }
 
 .edit-form-card {
@@ -1733,3 +1734,34 @@ body {
   object-fit: contain;
   display: block;
 }
+
+.pokedex-header {
+  margin-bottom: 24px;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.pokedex-title-pill {
+  display: inline-block;
+  width: fit-content;
+  padding: 10px 22px;
+  background: #ffd6e0;
+  color: #d94f7c;
+  border-radius: 999px;
+  font-family: "Press Start 2P", system-ui, sans-serif;
+  font-size: 18px;
+  box-shadow: 0 4px 10px rgba(0,0,0,0.08);
+}
+
+.pokedex-subtitle {
+  margin-left: 8px;
+  font-size: 14px;
+  color: #666;
+}
+
+.pokedex-subtitle span {
+  font-weight: 700;
+  color: #444;
+}
+
