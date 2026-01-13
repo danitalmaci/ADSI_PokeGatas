@@ -21,20 +21,23 @@
     box-sizing: border-box;
   }
 
+  .login-header-row {
+    display: flex;
+    justify-content: space-between; 
+    align-items: center;            
+    margin-bottom: 26px;
+    width: 100%;
+  }
+
   /* ÓVALO TÍTULO */
   .login-title {
     font-family: "Press Start 2P", system-ui, sans-serif;
     font-size: 34px;
     color: #ff9eb5;
-    background: white;              /* ✅ OPACO */
+    background: white;
     padding: 16px 22px;
     border-radius: 999px;
-    display: inline-block;
-
-    /* ✅ MOVER A LA IZQUIERDA COMO EN LA FOTO */
-    margin-left: 0px;
-
-    margin-bottom: 26px;
+    margin: 0; 
   }
 
   .login-form {
@@ -69,22 +72,22 @@
     padding: 0 18px;
     font-size: 16px;
     outline: none;
+    width: 100%;
   }
 
   /* BOTÓN ICONO ARRIBA DERECHA */
   .login-submit-icon {
-    position: absolute;
-    top: 20px;
-    right: 20px;
+    position: static; 
     width: 56px;
     height: 56px;
     border-radius: 16px;
     border: 2px solid #ff9eb5;
-    background: white;              /* ✅ OPACO */
+    background: white;
     display: flex;
     align-items: center;
     justify-content: center;
     cursor: pointer;
+    flex-shrink: 0; 
   }
 
   .login-submit-icon img {
@@ -97,6 +100,7 @@
     margin: 22px auto 0;
     display: inline-block;
     text-decoration: none;
+    text-align: center;
     background: white;              /* ✅ OPACO */
     border: 2px solid #ff9eb5;
     color: #ff9eb5;
@@ -115,7 +119,6 @@
     height: 56px;
     border-radius: 50%;
     background: white;              /* ✅ OPACO */
-    border: 2px solid #ff9eb5;
     color: #ff9eb5;
     display: flex;
     align-items: center;
@@ -125,7 +128,11 @@
   }
 
   @media (max-width: 620px) {
-    .login-title { font-size: 22px; margin-left: 0; }
+    .login-header-row {
+        flex-direction: column;
+        gap: 15px;
+    }
+    .login-title { font-size: 22px;}
     .login-row { grid-template-columns: 1fr; }
   }
 </style>
@@ -133,18 +140,16 @@
 <div class="login-screen">
   <div class="login-ui">
 
-    <div class="login-title">Inicio Sesión</div>
+    <div class="login-header-row">
+        <div class="login-title">Inicio Sesión</div>
 
-    <form class="login-form" action="{{ url_for('users.login') }}" method="POST">
+        <button type="submit" form="loginForm" class="login-submit-icon" aria-label="Entrar">
+            <img src="{{ url_for('static', filename='img/iconos/simbolo_Guardar.png') }}" alt="Entrar">
+        </button>
+    </div>
 
-      <!-- BOTÓN ENTRAR (TU ICONO) -->
-      <button type="submit" class="login-submit-icon" aria-label="Entrar">
-        <img
-          src="{{ url_for('static', filename='img/iconos/simbolo_Guardar.png') }}"
-          alt="Entrar"
-        >
-      </button>
-
+    <form id="loginForm" class="login-form" action="{{ url_for('users.login') }}" method="POST">
+      
       <div class="login-row">
         <div class="login-label-pill">NOMBRE</div>
         <input class="login-input-pill" type="text" name="nickname" required>
@@ -154,19 +159,18 @@
         <div class="login-label-pill">CONTRASEÑA</div>
         <input class="login-input-pill" type="password" name="contrasena" required>
       </div>
+
     </form>
 
-    <a class="login-create-pill" href="{{ url_for('users.register') }}">
-      CREAR POKE-CUENTA
+    <div style="text-align: center;"> <a class="login-create-pill" href="{{ url_for('users.register') }}">
+          CREAR POKE-CUENTA
+        </a>
+    </div>
+
+    <a class="login-back" href="{{ url_for('home.index') }}" aria-label="Volver">
+      <img src="{{ url_for('static', filename='img/iconos/simbolo_Volver.png') }}" alt="Volver" style="width: 28px; height: 28px;">
     </a>
 
-     <a class="login-back" href="{{ url_for('home.index') }}" aria-label="Volver">
-  <img
-    src="{{ url_for('static', filename='img/iconos/simbolo_Volver.png') }}"
-    alt="Volver"
-    style="width: 28px; height: 28px;"
-  >
-</a>
   </div>
 </div>
 {% endblock %}

@@ -1,14 +1,15 @@
 from app.controller.model.gestor_usuarios import GestorUsuarios
-from app.controller.model.gestor_Pokemon import gestorPokemon 
+from app.controller.model.gestor_Pokemon import gestorPokemon
+from app.controller.model.gestor_equipos import GestorEquipos
 
 class Pokedex:
     def __init__(self, db):
         self.db = db
         self.gestor_usuarios = GestorUsuarios(db)
-        self.gestor_pokemon = gestorPokemon(db)
-
-    # --- MÉTODOS DE USUARIOS (Intocables) ---
-    def iniciar_sesion(self, nickname, contrasena):
+        self.gestor_Pokemon = gestorPokemon(db)
+        self.gestor_equipos = GestorEquipos(db)
+    # -------- USUARIOS / AUTH --------
+    def iniciar_sesion(self, nickname, contrasena) -> int:
         return self.gestor_usuarios.iniciarSesion(nickname, contrasena)
     def crear_cuenta(self, **kwargs):
         return self.gestor_usuarios.create_account(**kwargs)
@@ -72,8 +73,15 @@ class Pokedex:
     def mostrarPokemon(self, nombrePokemon):
         return self.gestor_pokemon.mostrarPokemon(nombrePokemon)
 
-    # -------- NOTIFICACIONES --------
-    def mostrarNotificaciones(self, nickname):
+    def mostrarPokemon(self,nombrePokemon):
+        return self.gestor_Pokemon.mostrarPokemon(nombrePokemon)
+
+    def obtener_pokemon_por_id(self, pokedex_id):
+        return self.gestor_Pokemon.obtener_pokemon_por_id(pokedex_id)
+
+     # -------- NOTIFICACIONES --------
+
+    def mostrarNotificaciones(self,nickname):
         return self.gestor_usuarios.mostrar_Notificaciones(nickname)
 
     # -------- SEGUIDORES --------
@@ -103,6 +111,39 @@ class Pokedex:
     def mostrarPokemon(self, nombrePokemon):
         return self.gestor_pokemon.mostrarPokemon(nombrePokemon)
 
+    def modificarCuenta(self, **kwargs):
+        return self.gestor_usuarios.update_user_admin(**kwargs)
+
+    # -------- EQUIPOS --------
+    def obtener_equipos_usuario(self, user_id):
+        return self.gestor_equipos.obtener_equipos_usuario(user_id)
+    
+    def eliminar_equipo(self, id_equipo):
+        return self.gestor_equipos.eliminar_equipo(id_equipo)
+    
+    def crear_equipo(self, id_usuario, nombre_equipo, lista_ids):
+        return self.gestor_equipos.crear_equipo(id_usuario, nombre_equipo, lista_ids)
+    
+    def buscar_equipo(self, nombre):
+        return self.gestor_equipos.buscar_equipo(nombre)
+
+    def ver_detalle_equipo(self, nombre_equipo):
+            return self.gestor_equipos.ver_detalle_equipo(nombre_equipo)
+    
+    def cargar_datos_equipo(self, id_equipo):
+        return self.gestor_equipos.cargar_datos_equipo(id_equipo)
+
+    def actualizar_nombre_equipo(self, id_equipo, nuevo_nombre):
+        return self.gestor_equipos.actualizar_nombre_equipo(id_equipo, nuevo_nombre)
+
+    def eliminar_pokemon_de_equipo(self, id_unico):
+        return self.gestor_equipos.eliminar_pokemon_de_equipo(id_unico)
+
+    def insertar_pokemon_en_equipo(self, id_equipo, datos):
+        return self.gestor_equipos.insertar_pokemon_en_equipo(id_equipo, datos)
+
+    def contar_pokemons(self, id_equipo):
+        return self.gestor_equipos.contar_pokemons(id_equipo)
     # --- MÉTODO DEL CHATBOT ---
     def solicitarConsultaCB(self, mensaje_usuario):
         # Delegamos la lógica al gestor

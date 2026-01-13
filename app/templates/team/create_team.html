@@ -234,7 +234,7 @@
         POKEDEX
     </div>
 
-    <form id="createTeamForm" action="{{ url_for('team_bp.create_team') }}" method="POST" class="pokedex-card">
+    <form id="createTeamForm" action="{{ url_for('team_bp.crear_equipo') }}" method="POST" class="pokedex-card">
         
         <div class="inputs-row">
             <input type="text" class="custom-input" name="nombre_equipo" required placeholder="Nombre del Equipo...">
@@ -259,7 +259,7 @@
     </form>
 </div>
 
-<a href="{{ url_for('team_bp.list_teams') }}" class="btn-floating btn-back-fixed">
+<a href="{{ url_for('team_bp.consultar_equipos') }}" class="btn-floating btn-back-fixed">
     <img src="{{ url_for('static', filename='img/iconos/simbolo_Volver.png') }}" alt="Volver">
 </a>
 

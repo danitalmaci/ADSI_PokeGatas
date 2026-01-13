@@ -9,7 +9,7 @@ from app.controller.ui.home_controller import home_blueprint
 from app.controller.ui.chatbot_controller import chatbot_blueprint
 from app.controller.ui.gestor_admin import admin_blueprint
 from app.controller.ui.gestor_Pokemon import pokedex_blueprint
-from app.controller.ui.team_controller import team_blueprint
+from app.controller.ui.gestor_equipos import team_blueprint
 from app.controller.ui.gestor_perfil import perfil_blueprint
 from app.controller.ui.gestor_menu_logged import menu_logged_blueprint
 

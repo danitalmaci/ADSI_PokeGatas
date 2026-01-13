@@ -254,7 +254,7 @@
     <div class="top-bar">
         <div class="pill-label">Mis Equipos</div>
         <input type="text" class="search-bar" placeholder="Buscar Equipo">
-        <a href="{{ url_for('team_bp.create_team') }}" class="btn-crear">Crear equipo</a>
+        <a href="{{ url_for('team_bp.crear_equipo') }}" class="btn-crear">Crear equipo</a>
     </div>
 
     <div class="teams-list">
@@ -294,18 +294,18 @@
                 </div>
 
                 <div class="actions-col">
-    <a href="{{ url_for('team_bp.consultarDetalleEquipo', nombreEquipo=team.nombre_equipo) }}" class="btn-icon">
+    <a href="{{ url_for('team_bp.ver_detalle_equipo', nombre_equipo=team.nombre_equipo) }}" class="btn-icon">
         <img src="{{ url_for('static', filename='img/iconos/simbolo_ver.png') }}" alt="Ver">
     </a>
     
-    <a href="{{ url_for('team_bp.modificar_equipo', idEquipo=team['id']) }}" class="btn-icon">
+    <a href="{{ url_for('team_bp.modificar_equipo', id_equipo=team.id) }}" class="btn-icon">
         <img src="{{ url_for('static', filename='img/iconos/simbolo_Editar.png') }}" alt="Editar">
     </a>
     
-    <a href="{{ url_for('team_bp.delete_team', team_id=team['id']) }}" 
-       class="btn-icon" 
-       onclick="return confirm('¿Borrar este equipo?');">
-        <img src="{{ url_for('static', filename='img/iconos/simbolo_Eliminar_Rosa.png') }}" alt="Borrar">
+    <a href="{{ url_for('team_bp.eliminar_equipo', id_equipo=team['id']) }}" 
+        class="btn-icon" 
+        onclick="return confirm('¿Borrar este equipo?');">
+            <img src="{{ url_for('static', filename='img/iconos/simbolo_Eliminar_Rosa.png') }}" alt="Borrar">
     </a>
 </div>
             </div>
