@@ -1,72 +1,292 @@
 {% extends 'base.html' %}
 
-{% block page_class %}bg-perfil{% endblock %}
-
 {% block content %}
-<div class="perfil-container">
-  <div class="perfil-card">
+<style>
+  body, .main-viewport {
+    background-color: transparent !important;
+    background-image: none !important;
+    min-height: 100vh;
+  }
 
-    <!-- Header pills -->
-    <div class="perfil-header">
-      <!-- ✅ ahora es un link -->
-      <a class="perfil-pill" href="{{ url_for('perfil.ver_seguidores') }}">
-        Seguidores: <span>{{ data.numero_seguidores }}</span>
-      </a>
+  body::before {
+    content: "";
+    position: fixed;
+    top: 0; left: 0;
+    width: 100%; height: 100%;
+    z-index: -1;
+    background-image: url("{{ url_for('static', filename='img/fondos/fondo_5.png') }}");
+    background-size: cover;
+    background-position: center;
+    background-repeat: no-repeat;
+  }
 
-      <div class="perfil-pill">
-        Seguidos: <span>{{ data.numero_seguidos }}</span>
-      </div>
+  .main-panel {
+    background-color: rgba(255, 158, 181, 0.95);
+    border-radius: 40px;
+    padding: 24px 28px;
+    width: 92%;
+    max-width: 1100px;
+    height: 78vh;
+    margin: 40px auto;
+    box-shadow: 0 15px 35px rgba(0,0,0,0.2);
+    position: relative;
+    box-sizing: border-box;
+    display: flex;
+    flex-direction: column;
+  }
 
-      <a class="perfil-pill perfil-pill-action" href="#">
-        Buscar Seguidor
-      </a>
-    </div>
+  /* --- Layout principal --- */
+  .perfil-body {
+    flex: 1;
+    display: grid;
+    grid-template-columns: 240px 1fr;
+    gap: 22px;
+    min-height: 0;
+  }
 
-    <div class="perfil-body">
-      <!-- Left column -->
-      <div class="perfil-left">
-        <div class="perfil-avatar">
+  .perfil-left {
+    display: flex;
+    flex-direction: column;
+    gap: 14px;
+    align-items: flex-start;
+    padding-top: 6px;
+  }
+
+  .avatar-box {
+    width: 160px;
+    height: 160px;
+    border-radius: 26px;
+    background: rgba(255,255,255,0.85);
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    overflow:hidden;
+    box-shadow: 0 5px 14px rgba(0,0,0,0.10);
+  }
+
+  .avatar-box img {
+    width: 150px;
+    height: 150px;
+    object-fit: contain;
+  }
+
+  /* Nick pill SOLO valor */
+  .nick-pill {
+    width: 180px;
+    background: rgba(255,255,255,0.85);
+    border-radius: 26px;
+    padding: 10px 14px;
+    box-shadow: 0 5px 14px rgba(0,0,0,0.08);
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    text-align:center;
+  }
+  .nick-pill .value {
+    color: #ff4f86;
+    font-weight: 900;
+    font-size: 1.05rem;
+    word-break: break-word;
+  }
+
+  /* Botón "Actualizar perfil" en óvalo blanco */
+  .perfil-link-pill {
+    width: 180px;
+    background: rgba(255,255,255,0.85);
+    border-radius: 26px;
+    padding: 12px 14px;
+    box-shadow: 0 5px 14px rgba(0,0,0,0.08);
+    text-decoration: none;
+    color: #ff4f86;
+    font-weight: 900;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+  }
+  .perfil-link-pill:hover { transform: scale(1.02); }
+
+  /* --- Panel derecho: pills arriba + cuadrado favoritos --- */
+  .right-wrap{
+    display:flex;
+    flex-direction: column;
+    min-height: 0;
+  }
+
+  /* ✅ Los 3 botones encima del cuadrado */
+  .top-bar {
+    display: flex;
+    gap: 18px;
+    align-items: center;
+    margin-bottom: 12px;
+    flex-shrink: 0;
+  }
+
+  /* ✅ Tamaño fijo igual para los 3 */
+  .pill-label {
+    width: 170px;
+    background-color: white;
+    color: #ff9eb5;
+    padding: 10px 0;
+    border-radius: 50px;
+    font-weight: bold;
+    font-size: 1.15rem;
+    text-align: center;
+    box-shadow: 0 4px 6px rgba(0,0,0,0.05);
+    text-decoration: none;
+    display: block;
+    white-space: nowrap;
+  }
+
+  /* ✅ Buscar seguidor más corto (igual que los otros) */
+  .search-pill {
+    width: 150px;
+    background-color: rgba(255, 255, 255, 0.4);
+    border: none;
+    border-radius: 50px;
+    padding: 10px 0;
+    color: white;
+    font-weight: bold;
+    font-size: 1.15rem;
+    text-align: center;
+    box-shadow: 0 4px 6px rgba(0,0,0,0.05);
+  }
+  .search-pill::placeholder { color: white; opacity: 0.9; }
+  .search-pill:focus { outline: none; background-color: rgba(255, 255, 255, 0.6); }
+
+  .right-panel {
+    background: rgba(255,255,255,0.65);
+    border-radius: 26px;
+    padding: 18px 18px 14px;
+    box-shadow: inset 0 0 0 2px rgba(255,255,255,0.25);
+    min-height: 0;
+    display: flex;
+    flex-direction: column;
+    flex: 1;
+  }
+
+  .right-title {
+    color: #ff7aa5;
+    font-weight: 900;
+    font-size: 1.6rem;
+    margin: 6px 0 14px 10px;
+  }
+
+  .right-scroll {
+    flex: 1;
+    overflow-y: auto;
+    padding-right: 10px;
+  }
+
+  .right-scroll::-webkit-scrollbar { width: 10px; }
+  .right-scroll::-webkit-scrollbar-track {
+    background: rgba(255, 255, 255, 0.1);
+    border-radius: 10px;
+  }
+  .right-scroll::-webkit-scrollbar-thumb {
+    background-color: rgba(255, 255, 255, 0.85);
+    border-radius: 10px;
+  }
+
+  .slots-grid {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(150px, 1fr));
+    gap: 16px;
+    padding: 6px 10px 10px;
+  }
+  .slot {
+    background: rgba(255, 255, 255, 0.75);
+    border-radius: 22px;
+    height: 110px;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    color: #ff9eb5;
+    font-weight: 900;
+  }
+
+  /* Volver con imagen */
+  .btn-back-home {
+    position: absolute;
+    bottom: 18px;
+    left: 18px;
+    background: white;
+    width: 58px;
+    height: 58px;
+    border-radius: 50%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    box-shadow: 0 5px 15px rgba(0,0,0,0.25);
+    transition: transform 0.2s;
+    z-index: 9999;
+    text-decoration: none;
+  }
+  .btn-back-home:hover { transform: scale(1.08); }
+  .btn-back-home img{
+    width: 30px;
+    height: 30px;
+    object-fit: contain;
+  }
+</style>
+
+<div class="main-panel">
+  <div class="perfil-body">
+
+    <!-- IZQUIERDA -->
+    <div class="perfil-left">
+      <div class="avatar-box">
         {% if data.foto %}
-          <img
-            class="perfil-avatar-img"
-            src="{{ url_for('static', filename=data.foto.replace('static/', '')) }}"
-            alt="Avatar"
-          >
+          {% set ruta = data.foto.replace('/static/', '').replace('static/', '') %}
+          <img src="{{ url_for('static', filename=ruta) }}" alt="Avatar">
         {% else %}
-          <div class="perfil-avatar-placeholder">FOTO</div>
+          <img src="{{ url_for('static', filename='img/usuario/user3.png') }}" alt="Avatar">
         {% endif %}
       </div>
 
-        <div class="perfil-nickname">
-          <div class="perfil-nickname-label">NickName</div>
-          <div class="perfil-nickname-value">{{ data.nickname }}</div>
-        </div>
-
-        <a class="perfil-link" href="{{ url_for('perfil.actualizar_perfil') }}">Actualizar perfil</a>
-
-        <a class="perfil-link" href="/">Volver</a>
+      <div class="nick-pill">
+        <div class="value">{{ data.nickname }}</div>
       </div>
 
-      <!-- Right column -->
-      <div class="perfil-right">
-        <div class="perfil-favs">
-          <div class="perfil-favs-title">Pokemos Favoritos</div>
+      <a class="perfil-link-pill" href="{{ url_for('perfil.actualizar_perfil') }}">
+        Actualizar perfil
+      </a>
+    </div>
 
-          <!-- Zona “scroll” como en el mockup -->
-          <div class="perfil-favs-scroll">
-            <div class="perfil-favs-grid">
-              {% for i in range(6) %}
-                <div class="perfil-poke-slot">
-                  <div class="perfil-poke-placeholder">POK {{ i+1 }}</div>
-                </div>
-              {% endfor %}
-            </div>
+    <!-- DERECHA -->
+    <div class="right-wrap">
+
+      <!-- ✅ Pills encima del panel -->
+      <div class="top-bar">
+        <a class="pill-label" href="{{ url_for('perfil.ver_seguidores') }}">
+          Seguidores: {{ data.numero_seguidores }}
+        </a>
+
+        <a class="pill-label" href="{{ url_for('perfil.ver_seguidos') }}">
+          Seguidos: {{ data.numero_seguidos }}
+        </a>
+
+        <input class="search-pill" type="text" placeholder="Buscar Seguidor" disabled>
+      </div>
+
+      <div class="right-panel">
+        <div class="right-title">Pokemos Favoritos</div>
+
+        <div class="right-scroll">
+          <div class="slots-grid">
+            {% for i in range(6) %}
+              <div class="slot">POK {{ i+1 }}</div>
+            {% endfor %}
           </div>
-
         </div>
       </div>
+
     </div>
 
   </div>
+
+  <a class="btn-back-home" href="/" aria-label="Volver">
+    <img src="{{ url_for('static', filename='img/iconos/simbolo_Volver.png') }}" alt="Volver">
+  </a>
 </div>
+
 {% endblock %}

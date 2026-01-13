@@ -69,7 +69,7 @@ class Pokedex:
         
 
     # -------- SEGUIDORES --------
-    # Ver seguidores (según diagrama 9.10)
+    # Ver seguidores 
     def cargar_seguidores(self, nickname_sesion: str) -> list:
         return self.gestor_usuarios.cargar_seguidores(nickname_sesion)
 
@@ -77,6 +77,15 @@ class Pokedex:
     def eliminar_seguidor(self, nickname_sesion: str, seguidor: str) -> bool:
         return self.gestor_usuarios.eliminar_seguidor(nickname_sesion, seguidor)
 
+
+    # -------- SEGUIDOS --------
+    # Ver seguidos 
+    def cargar_seguidos(self, nickname_sesion: str) -> list:
+        return self.gestor_usuarios.cargar_seguidos(nickname_sesion)
+
+    # ✅ NUEVO: Eliminar seguidor (borrar relación en Sigue)
+    def eliminar_seguido(self, nickname_sesion: str, seguido: str) -> bool:
+        return self.gestor_usuarios.eliminar_seguido(nickname_sesion, seguido)
     #--------- ADMIN --------------
     def obtenerCuentas(self, filtro_nombre=None):
         return self.gestor_usuarios.obtenerCuentas(filtro_nombre)

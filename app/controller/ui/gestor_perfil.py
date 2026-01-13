@@ -60,6 +60,43 @@ def perfil_blueprint(db):
             flash(f"Error eliminando seguidor: {e}", "error")
 
         return redirect(url_for("perfil.ver_seguidores"))
+    
+    #---------Ver Seguidos----------------------------------------------------------------------------------------------
+    @bp.route("/seguidos", methods=["GET"])
+    def ver_seguidos():
+        nickname_sesion = session.get("nickname")
+        if not nickname_sesion:
+            flash("Debes iniciar sesión.", "error")
+            return redirect(url_for("users.login"))
+
+        try:
+            data = pokedex.cargar_seguidos(nickname_sesion)
+        except Exception as e:
+            flash(f"Error cargando seguidos: {e}", "error")
+            return redirect(url_for("perfil.perfil"))
+
+        return render_template("seguidos.html", data=data)
+
+    # ✅ NUEVO: Eliminar seguido 
+    @bp.route("/seguidos/eliminar", methods=["POST"])
+    def eliminar_seguido():
+        nickname_sesion = session.get("nickname")
+        if not nickname_sesion:
+            flash("Debes iniciar sesión.", "error")
+            return redirect(url_for("users.login"))
+
+        seguido = (request.form.get("seguido") or "").strip()
+        if not seguido:
+            flash("Seguido inválido.", "error")
+            return redirect(url_for("perfil.ver_seguidos"))
+
+        try:
+            pokedex.eliminar_seguido(nickname_sesion, seguido)
+            flash(f"{seguido} ya no le sigues.", "success")
+        except Exception as e:
+            flash(f"Error eliminando seguido: {e}", "error")
+
+        return redirect(url_for("perfil.ver_seguidos"))
 
     # ✅ GET: cargar pantalla actualizar
     # ✅ POST: guardar cambios

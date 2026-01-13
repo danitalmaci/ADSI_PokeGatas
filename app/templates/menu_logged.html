@@ -5,18 +5,224 @@
 {% block page_class %}bg-pokedex{% endblock %}
 
 {% block content %}
+<link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap" rel="stylesheet">
 
-    <div class="view-header" align="center" style="color: #ff9eb5">
-        <h2>Menú Principal</h2>
-        <p>Bienvenido, <b>{{ session.get('nickname', 'Entrenador') }}</b></p>
-    </div>
+<style>
+  /* Evita fondo gris del viewport */
+  .main-viewport {
+    background: transparent !important;
+  }
 
-    <div class="menu-central-container" align="center" style="display: flex; gap: 20px; flex-wrap: wrap; margin-top: 40px;">
+  /* ====== WRAPPER DERECHA (estilo mock) ====== */
+  .mock-wrap {
+    position: relative;
+    width: min(980px, 92vw);
+    height: 520px;              /* ajusta si quieres más alto */
+    margin: 30px auto 0;
+  }
 
-        <div style="width: 100%; margin-top: 20px; color: black;">
-            <p>👈 Usa el botón de las 3 rayitas arriba a la izquierda para ver todas las opciones.</p>
+  /* “Pokedex” pill arriba */
+  .mock-title-pill {
+    position: absolute;
+    top: -18px;
+    left: 120px;                /* 🔥 mueve a izquierda/derecha para calcar */
+    background: rgba(255, 158, 181, 0.55);
+    color: rgba(255,255,255,0.95);
+    padding: 16px 28px;
+    border-radius: 999px;
+    font-family: "Press Start 2P", system-ui, sans-serif;
+    font-size: 34px;
+    letter-spacing: 1px;
+    text-shadow: 0 1px 0 rgba(255,255,255,0.2);
+    z-index: 3;
+    user-select: none;
+  }
+
+  /* Icono arriba derecha (solo decorativo como en el mock) */
+  .mock-top-icon {
+    position: absolute;
+    top: -10px;
+    right: 26px;
+    width: 64px;
+    height: 64px;
+    border-radius: 999px;
+    background: rgba(255, 158, 181, 0.55);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 3;
+  }
+  .mock-top-icon span{
+    font-size: 34px;
+    line-height: 1;
+    opacity: .95;
+  }
+
+  /* Panel rosa grande */
+  .mock-panel {
+    position: absolute;
+    top: 40px;
+    left: 80px;                 /* 🔥 mueve para calcar a tu marco negro */
+    right: 30px;
+    bottom: 20px;
+    background: rgba(255, 158, 181, 0.72);
+    border-radius: 34px;
+    box-shadow: 0 10px 30px rgba(0,0,0,0.10);
+    padding: 28px 26px 22px;
+    box-sizing: border-box;
+  }
+
+  /* Píldora “Filtrar” dentro del panel, arriba derecha */
+  .mock-filter-pill {
+    position: absolute;
+    top: 14px;
+    right: 22px;
+    background: rgba(255,255,255,0.35);
+    color: rgba(255,255,255,0.95);
+    padding: 8px 18px;
+    border-radius: 999px;
+    font-family: "Press Start 2P", system-ui, sans-serif;
+    font-size: 14px;
+    user-select: none;
+  }
+
+  /* Zona scroll (contenido) */
+  .mock-scroll {
+    position: absolute;
+    top: 62px;                  /* deja sitio para el “Filtrar” */
+    left: 22px;
+    right: 18px;
+    bottom: 18px;
+    overflow-y: auto;
+    padding-right: 18px;        /* espacio para scrollbar */
+    box-sizing: border-box;
+  }
+
+  /* Scrollbar blanco a la derecha (como mock) */
+  .mock-scroll::-webkit-scrollbar { width: 10px; }
+  .mock-scroll::-webkit-scrollbar-track {
+    background: rgba(255,255,255,0.18);
+    border-radius: 10px;
+  }
+  .mock-scroll::-webkit-scrollbar-thumb {
+    background: rgba(255,255,255,0.75);
+    border-radius: 10px;
+  }
+
+  /* Grid de 3x2 como el mock (pero se adapta si hay más) */
+  .mock-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 22px;
+  }
+
+  /* Tarjeta cuadrada redondeada */
+  .mock-card {
+    background: rgba(255,255,255,0.42);
+    border-radius: 22px;
+    height: 160px;              /* tamaño “mock” */
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    overflow: hidden;
+    position: relative;
+    text-decoration: none;
+  }
+
+  /* Imagen del pokémon centrada */
+  .mock-card img {
+    width: 96px;
+    height: 96px;
+    object-fit: contain;
+    image-rendering: pixelated;
+    filter: drop-shadow(0 4px 0 rgba(0,0,0,0.08));
+  }
+
+  /* ✅ Número arriba izquierda */
+  .mock-number {
+    position: absolute;
+    top: 10px;
+    left: 12px;
+    font-family: "Press Start 2P", system-ui, sans-serif;
+    font-size: 12px;
+    color: #ff6ea0;
+    opacity: 0.9;
+    pointer-events: none;
+  }
+
+  /* ✅ Nombre abajo */
+  .mock-name {
+    position: absolute;
+    bottom: 12px;
+    width: 100%;
+    text-align: center;
+    font-family: "Press Start 2P", system-ui, sans-serif;
+    font-size: 13px;
+    color: #ff6ea0;
+    pointer-events: none;
+  }
+
+  /* Ajuste responsive */
+  @media (max-width: 900px) {
+    .mock-wrap { height: 520px; }
+    .mock-title-pill { left: 24px; font-size: 26px; padding: 14px 20px; }
+    .mock-panel { left: 14px; right: 14px; }
+    .mock-grid { grid-template-columns: repeat(2, 1fr); }
+  }
+  @media (max-width: 520px) {
+    .mock-grid { grid-template-columns: 1fr; }
+    .mock-card { height: 150px; }
+  }
+</style>
+
+<!-- MENÚ LATERAL SIEMPRE VISIBLE -->
+<nav class="side-menu active" aria-label="Menú lateral">
+  <div class="menu-buttons">
+    <a class="menu-btn" href="/perfil">Perfil</a>
+    <a class="menu-btn" href="/equipos">Equipos</a>
+    <a class="menu-btn" href="/notificaciones">Notificaciones</a>
+    <a class="menu-btn" href="/chatbot">Service-Ball</a>
+    <a class="menu-btn" href="/logout">Cerrar sesión</a>
+  </div>
+</nav>
+
+<!-- CONTENIDO PRINCIPAL -->
+<div class="app-interface">
+  <div class="main-viewport shifted">
+
+    <!-- ===== MOCK POKEDEX (como la primera foto) ===== -->
+    <div class="mock-wrap">
+
+      <div class="mock-title-pill">Pokedex</div>
+
+      <div class="mock-top-icon" aria-hidden="true">
+        <!-- si quieres poner una imagen, cambia el span por un <img> -->
+        <span>☺</span>
+      </div>
+
+      <div class="mock-panel">
+        <div class="mock-filter-pill">Filtrar</div>
+
+        <div class="mock-scroll">
+          <div class="mock-grid">
+            {% for pokemon in pokemons %}
+              <a class="mock-card" href="{{ url_for('pokedex.mostrarPokemon', nombrePokemon=pokemon.nombrePokemon) }}">
+
+                <div class="mock-number">#{{ pokemon.pokedexID }}</div>
+
+                <img src="{{ pokemon.imagen }}" alt="{{ pokemon.nombrePokemon }}">
+
+                <div class="mock-name">{{ pokemon.nombrePokemon }}</div>
+
+              </a>
+            {% endfor %}
+          </div>
         </div>
+      </div>
 
     </div>
+
+  </div>
+</div>
 
 {% endblock %}
