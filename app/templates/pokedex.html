@@ -50,7 +50,7 @@
         </form>
         </div>
 
-        <div class="pokedex-grid">
+        <div class="pokedex-grid teams-list">
             {% for pokemon in pokemons %}
             <div class="pokemon-card">
                 <span class="pokemon-number">
@@ -74,5 +74,9 @@
 
     </div>
 </div>
+
+<a href="/" class="btn-back-fixed">
+    <img src="{{ url_for('static', filename='img/iconos/simbolo_Volver.png') }}" alt="Volver">
+</a>
 
 {% endblock %}

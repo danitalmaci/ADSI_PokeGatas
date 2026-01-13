@@ -1323,7 +1323,7 @@ body {
     margin-top: 10px;
 }
 
-.type-icon {
+.type-icon { 
     width: 60px;
     height: 20px;
     margin-right: 10px;
@@ -1340,6 +1340,7 @@ body {
     }
     
 .btn-back-fixed img { width: 60%; height: 60%; object-fit: contain}
+
 
 
 /* ================================================= */

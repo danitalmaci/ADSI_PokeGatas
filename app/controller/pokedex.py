@@ -66,11 +66,11 @@ class Pokedex:
 
     # -------- POKEDEX --------
     def mostrarPokedex(self):
-        return self.gestor_Pokemon.mostrarPokedex()
+        return self.gestor_pokemon.mostrarPokedex()
 
     # -------- POKEMON --------
     def mostrarPokemon(self, nombrePokemon):
-        return self.gestor_Pokemon.mostrarPokemon(nombrePokemon)
+        return self.gestor_pokemon.mostrarPokemon(nombrePokemon)
 
     # -------- NOTIFICACIONES --------
     def mostrarNotificaciones(self, nickname):
