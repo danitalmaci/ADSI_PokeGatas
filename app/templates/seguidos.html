@@ -127,12 +127,18 @@
     min-height: 60px;
   }
 
-  .follower-nick {
+  /* ✅ Nick clickable */
+  .follower-nick a{
     color: #ff6ea0;
     font-weight: 800;
     font-size: 1.2rem;
     min-width: 120px;
+    text-decoration: none;
   }
+  .follower-nick a:hover{
+    text-decoration: underline;
+  }
+
   .follower-stat {
     color: #ff6ea0;
     font-weight: 700;
@@ -198,27 +204,27 @@
 
           <!-- Tarjeta blanca con info -->
           <div class="follower-card">
-            <div class="follower-nick">{{ s.nombreUsuarioSeguido }}</div>
+            <div class="follower-nick">
+              <a href="{{ url_for('perfil.ver_perfil_usuario', nickname=s.nombreUsuarioSeguido) }}">
+                {{ s.nombreUsuarioSeguido }}
+              </a>
+            </div>
+
             <div class="follower-stat">Seguidores: {{ s.numSeguidoresDelSeguido }}</div>
             <div class="follower-stat">Seguidos: {{ s.numSeguidosDelSeguido }}</div>
           </div>
 
-          <!-- Botón icono (placeholder) -->
-           <form
-                method="POST"
-                action="{{ url_for('perfil.eliminar_seguido') }}"
-                style="margin:0;"
-                >
-                <input type="hidden" name="seguido" value="{{ s.nombreUsuarioSeguido }}">
-
-                <button type="submit" class="btn-trash" title="Eliminar seguido">
-                    <img
-                    src="{{ url_for('static', filename='img/iconos/simbolo_Eliminar_Blanco.png') }}"
-                    alt="Eliminar"
-                    style="width: 28px; height: 28px;"
-                    >
-                </button>
-            </form>
+          <!-- Botón eliminar -->
+          <form method="POST" action="{{ url_for('perfil.eliminar_seguido') }}" style="margin:0;">
+            <input type="hidden" name="seguido" value="{{ s.nombreUsuarioSeguido }}">
+            <button type="submit" class="btn-trash" title="Eliminar seguido">
+              <img
+                src="{{ url_for('static', filename='img/iconos/simbolo_Eliminar_Blanco.png') }}"
+                alt="Eliminar"
+                style="width: 28px; height: 28px;"
+              >
+            </button>
+          </form>
 
         </div>
       {% endfor %}
