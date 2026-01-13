@@ -3,14 +3,21 @@ from flask import url_for
 from app.database.connection import Connection
 import unicodedata
 import random
+from volcar_pokedex import seed_pokedex
 
 class gestorPokemon:
     def __init__(self, db):
         self.db = db
 
     def mostrarPokedex(self,):
-        filtroNombre = request.args.get("nombre")        # nombre o habilidad
+        filtroNombre = request.args.get("nombre")      
         filtroTipo = request.args.get("tipo") 
+
+        result = self.db.select("SELECT COUNT(*) AS total FROM PokemonPokedex")
+
+        if result[0]["total"] == 0:
+            seed_pokedex()
+            return self.mostrarPokedex()
 
         query = (
             "SELECT DISTINCT p.pokedexID, p.nombrePokemon, p.imagen "
