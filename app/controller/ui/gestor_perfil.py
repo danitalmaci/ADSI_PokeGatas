@@ -8,23 +8,23 @@ def perfil_blueprint(db):
 
     @bp.route("/perfil", methods=["GET"])
     def perfil():
-        nickname = session.get("nickname")
+        viewer = session.get("nickname")
 
         # TEMPORAL (para pruebas si aún no hay login real)
-        if not nickname:
-            nickname = "junec"
-            session["nickname"] = nickname
+        if not viewer:
+            viewer = "junec"
+            session["nickname"] = viewer
             flash("⚠️ No había sesión, usando nickname de prueba", "error")
 
         try:
-            data = pokedex.consultar_perfil(nickname)
+            data = pokedex.consultar_perfil(viewer, viewer=viewer)
         except Exception as e:
             flash(f"Error consultando perfil: {e}", "error")
             return redirect("/")
 
         return render_template("perfil.html", data=data)
 
-    # ✅ NUEVO: Ver perfil de otro usuario por nickname (GET)
+    # ✅ Ver perfil de otro usuario por nickname (GET)
     @bp.route("/perfil/<nickname>", methods=["GET"])
     def ver_perfil_usuario(nickname):
         nickname = (nickname or "").strip()
@@ -32,16 +32,38 @@ def perfil_blueprint(db):
             flash("Usuario inválido.", "error")
             return redirect(url_for("perfil.perfil"))
 
+        viewer = session.get("nickname")  # puede ser None si no hay sesión
         try:
-            data = pokedex.consultar_perfil(nickname)
+            data = pokedex.consultar_perfil(nickname, viewer=viewer)
         except Exception as e:
             flash(f"Error consultando perfil: {e}", "error")
             return redirect(url_for("perfil.perfil"))
 
-        # Reutilizamos el mismo template de perfil para mostrarlo
         return render_template("perfil.html", data=data)
 
-    # ✅ Ver Seguidores (GET)
+    # ✅ NUEVO: Seguir a un usuario (POST)
+    @bp.route("/perfil/<nickname>/seguir", methods=["POST"])
+    def seguir_usuario(nickname):
+        nickname_objetivo = (nickname or "").strip()
+        nickname_sesion = session.get("nickname")
+
+        if not nickname_sesion:
+            flash("Debes iniciar sesión.", "error")
+            return redirect(url_for("users.login"))
+
+        if not nickname_objetivo or nickname_objetivo == nickname_sesion:
+            flash("Usuario inválido.", "error")
+            return redirect(url_for("perfil.perfil"))
+
+        try:
+            pokedex.seguir_usuario(nickname_sesion, nickname_objetivo)
+            flash(f"Ahora sigues a {nickname_objetivo}.", "success")
+        except Exception as e:
+            flash(f"Error siguiendo a {nickname_objetivo}: {e}", "error")
+
+        return redirect(url_for("perfil.ver_perfil_usuario", nickname=nickname_objetivo))
+
+    # ✅ Ver Seguidores (GET) + buscador ?q=
     @bp.route("/seguidores", methods=["GET"])
     def ver_seguidores():
         nickname_sesion = session.get("nickname")
@@ -49,13 +71,18 @@ def perfil_blueprint(db):
             flash("Debes iniciar sesión.", "error")
             return redirect(url_for("users.login"))
 
+        q = (request.args.get("q") or "").strip().lower()
+
         try:
             data = pokedex.cargar_seguidores(nickname_sesion)
         except Exception as e:
             flash(f"Error cargando seguidores: {e}", "error")
             return redirect(url_for("perfil.perfil"))
 
-        return render_template("seguidores.html", data=data)
+        if q:
+            data = [s for s in data if q in (s.get("nombreUsuarioSeguidor", "").lower())]
+
+        return render_template("seguidores.html", data=data, q=q)
 
     # ✅ Eliminar seguidor (POST)
     @bp.route("/seguidores/eliminar", methods=["POST"])
@@ -78,7 +105,7 @@ def perfil_blueprint(db):
 
         return redirect(url_for("perfil.ver_seguidores"))
 
-    #---------Ver Seguidos----------------------------------------------------------------------------------------------
+    # ✅ Ver Seguidos (GET) + buscador ?q=
     @bp.route("/seguidos", methods=["GET"])
     def ver_seguidos():
         nickname_sesion = session.get("nickname")
@@ -86,15 +113,20 @@ def perfil_blueprint(db):
             flash("Debes iniciar sesión.", "error")
             return redirect(url_for("users.login"))
 
+        q = (request.args.get("q") or "").strip().lower()
+
         try:
             data = pokedex.cargar_seguidos(nickname_sesion)
         except Exception as e:
             flash(f"Error cargando seguidos: {e}", "error")
             return redirect(url_for("perfil.perfil"))
 
-        return render_template("seguidos.html", data=data)
+        if q:
+            data = [s for s in data if q in (s.get("nombreUsuarioSeguido", "").lower())]
 
-    # ✅ Eliminar seguido
+        return render_template("seguidos.html", data=data, q=q)
+
+    # ✅ Eliminar seguido (POST)
     @bp.route("/seguidos/eliminar", methods=["POST"])
     def eliminar_seguido():
         nickname_sesion = session.get("nickname")
@@ -156,7 +188,6 @@ def perfil_blueprint(db):
                 foto=foto
             )
 
-            # Si cambió el nickname, actualizamos sesión
             session["nickname"] = nuevo_nickname
 
             flash("Perfil actualizado correctamente.", "success")

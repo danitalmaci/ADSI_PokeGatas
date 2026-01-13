@@ -127,7 +127,6 @@
     min-height: 60px;
   }
 
-  /* ✅ Nick clickable */
   .follower-nick a{
     color: #ff6ea0;
     font-weight: 800;
@@ -184,7 +183,18 @@
 <div class="main-panel">
   <div class="top-bar">
     <div class="pill-label">Seguidos</div>
-    <input class="search-bar" type="text" placeholder="Buscar Seguido" disabled>
+
+    <!-- ✅ Buscador real (GET /seguidos?q=...) -->
+    <form method="GET" action="{{ url_for('perfil.ver_seguidos') }}" style="margin:0;">
+      <input
+        class="search-bar"
+        type="text"
+        name="q"
+        placeholder="Buscar Seguido"
+        value="{{ q|default('') }}"
+        autocomplete="off"
+      >
+    </form>
   </div>
 
   <div class="followers-list">
@@ -230,7 +240,11 @@
       {% endfor %}
     {% else %}
       <div style="color:white; font-weight:800; font-size:1.2rem; padding: 10px 6px;">
-        No tienes seguidos todavía.
+        {% if q %}
+          No hay resultados para "{{ q }}".
+        {% else %}
+          No tienes seguidos todavía.
+        {% endif %}
       </div>
     {% endif %}
   </div>
