@@ -6,31 +6,77 @@
 {% block content %}
 <link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap" rel="stylesheet">
 
-<div class="pokedex-container">
 
-    <h1 class="pokedex-title">Pokédex</h1>
+<div class="pokedex-layout">
+    <div class="pokedex-container">
 
-    <div class="pokedex-grid">
-        {% for pokemon in pokemons %}
-        <div class="pokemon-card">
-            <span class="pokemon-number">
-                #{{ pokemon.pokedexID }}
-            </span>
+        <div class="pokedex-header">
+        <h1 class="pokedex-title">Pokédex</h1>
 
-            <img
-                src="{{ pokemon.imagen }}"
-                alt="{{ pokemon.nombrePokemon }}"
-                class="pokemon-img"
+        <form method="GET" class="pokedex-filters">
+            <input
+                type="text"
+                name="nombre"
+                class="filter-input"
+                placeholder="Nombre"
+                value="{{ request.args.get('nombre', '') }}"
             >
 
-            <p class="pokemon-name">
-                <a href="{{ url_for('pokedex.mostrarPokemon', nombrePokemon=pokemon.nombrePokemon) }}">
-                    {{ pokemon.nombrePokemon }}
-                </a>
-            </p>
-        </div>
-        {% endfor %}
-    </div>
+            <select name="tipo" class="filter-input">
+                <option value="">Todos los tipos</option>
 
+                <option value="Normal" {% if request.args.get('tipo') == 'Normal' %}selected{% endif %}>Normal</option>
+                <option value="Fire" {% if request.args.get('tipo') == 'Fire' %}selected{% endif %}>Fuego</option>
+                <option value="Water" {% if request.args.get('tipo') == 'Water' %}selected{% endif %}>Agua</option>
+                <option value="Grass" {% if request.args.get('tipo') == 'Grass' %}selected{% endif %}>Planta</option>
+                <option value="Electric" {% if request.args.get('tipo') == 'Electric' %}selected{% endif %}>Eléctrico</option>
+                <option value="Ice" {% if request.args.get('tipo') == 'Ice' %}selected{% endif %}>Hielo</option>
+                <option value="Fighting" {% if request.args.get('tipo') == 'Fighting' %}selected{% endif %}>Lucha</option>
+                <option value="Poison" {% if request.args.get('tipo') == 'Poison' %}selected{% endif %}>Veneno</option>
+                <option value="Ground" {% if request.args.get('tipo') == 'Ground' %}selected{% endif %}>Tierra</option>
+                <option value="Flying" {% if request.args.get('tipo') == 'Flying' %}selected{% endif %}>Volador</option>
+                <option value="Psychic" {% if request.args.get('tipo') == 'Psychic' %}selected{% endif %}>Psíquico</option>
+                <option value="Bug" {% if request.args.get('tipo') == 'Bug' %}selected{% endif %}>Bicho</option>
+                <option value="Rock" {% if request.args.get('tipo') == 'Rock' %}selected{% endif %}>Roca</option>
+                <option value="Ghost" {% if request.args.get('tipo') == 'Ghost' %}selected{% endif %}>Fantasma</option>
+                <option value="Dragon" {% if request.args.get('tipo') == 'Dragon' %}selected{% endif %}>Dragón</option>
+                <option value="Dark" {% if request.args.get('tipo') == 'Dark' %}selected{% endif %}>Siniestro</option>
+                <option value="Steel" {% if request.args.get('tipo') == 'Steel' %}selected{% endif %}>Acero</option>
+                <option value="Fairy" {% if request.args.get('tipo') == 'Fairy' %}selected{% endif %}>Hada</option>
+            </select>
+
+
+            <button type="submit" class="btn-filtrar">Buscar</button>
+        </form>
+        </div>
+
+        <div class="pokedex-grid teams-list">
+            {% for pokemon in pokemons %}
+            <div class="pokemon-card">
+                <span class="pokemon-number">
+                    #{{ pokemon.pokedexID }}
+                </span>
+
+                <img
+                    src="{{ pokemon.imagen }}"
+                    alt="{{ pokemon.nombrePokemon }}"
+                    class="pokemon-img"
+                >
+
+                <p class="pokemon-name">
+                    <a href="{{ url_for('pokedex.mostrarPokemon', nombrePokemon=pokemon.nombrePokemon) }}">
+                        {{ pokemon.nombrePokemon }}
+                    </a>
+                </p>
+            </div>
+            {% endfor %}
+        </div>
+
+    </div>
 </div>
+
+<a href="/" class="btn-back-fixed">
+    <img src="{{ url_for('static', filename='img/iconos/simbolo_Volver.png') }}" alt="Volver">
+</a>
+
 {% endblock %}

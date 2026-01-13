@@ -4,6 +4,8 @@
 {% block title %}{{ pokemon.nombrePokemon }}{% endblock %}
 
 {% block content %}
+
+<link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap" rel="stylesheet">
 <div class="pokemon-detail">
 
   <div class="pokemon-info">
@@ -37,63 +39,36 @@
 
     </div>
 
+    
     <div class="stats">
+      {% set stats = ['ps','ataque','ataqueEspecial','defensa','defensaEspecial','velocidad'] %}
+      {% for stat in stats %}
       <div class="stat">
-        <div class="stat-label">PS</div>
+        <div class="stat-label">{{ stat|capitalize }}</div>
         <div class="stat-bar">
-          <div class="stat-fill" style="width:{{ pokemon.ps }}%"></div>
-          <span class="stat-number">{{ pokemon.ps }}</span>
+          <div class="stat-fill" style="width:{{ pokemon[stat] }}%"></div>
+          <span class="stat-number">{{ pokemon[stat] }}</span>
         </div>
       </div>
-      <div class="stat">
-        <div class="stat-label">Ataque</div>
-        <div class="stat-bar">
-          <div class="stat-fill" style="width:{{ pokemon.ataque }}%"></div>
-          <span class="stat-number">{{ pokemon.ataque }}</span>
-        </div>
-      </div>
-      <div class="stat">
-        <div class="stat-label">Ataque Especial</div>
-        <div class="stat-bar">
-          <div class="stat-fill" style="width:{{ pokemon.ataqueEspecial }}%"></div>
-          <span class="stat-number">{{ pokemon.ataqueEspecial }}</span>
-        </div>
-      </div>
-      <div class="stat">
-        <div class="stat-label">Defensa</div>
-        <div class="stat-bar">
-          <div class="stat-fill" style="width:{{ pokemon.defensa }}%"></div>
-          <span class="stat-number">{{ pokemon.defensa }}</span>
-          
-        </div>
-      </div>
-      <div class="stat">
-        <div class="stat-label">Defensa Especial</div>
-        <div class="stat-bar">
-          <div class="stat-fill" style="width:{{ pokemon.defensaEspecial }}%"></div>
-          <span class="stat-number">{{ pokemon.defensaEspecial }}</span>
-        </div>
-      </div>
-      <div class="stat">
-        <div class="stat-label">Velocidad</div>
-        <div class="stat-bar">
-          <div class="stat-fill" style="width:{{ pokemon.velocidad }}%"></div>
-          <span class="stat-number">{{ pokemon.velocidad }}</span>
-        </div>
-      </div>
+      {% endfor %}
     </div>
   </div>
 
+  <!-- Visual del Pokémon -->
   <div class="pokemon-visual">
     <img src="{{ pokemon.imagen }}" class="pokemon-sprite">
     <div class="pokemon-name">{{ pokemon.nombrePokemon }}</div>
     <div class="pokemon-id">Nº {{ pokemon.pokedexID }}</div>
     <div class="pokemon-type">
-    {% for tipo in pokemon.tipos %}
-      <img src="{{ tipo.imagenTipo }}" class="type-icon" alt="{{ tipo.nombreTipo }}">
-    {% endfor %}
-    </div>  
+      {% for tipo in pokemon.tipos %}
+        <img src="{{ url_for('static', filename=tipo.imagenTipo|replace('static/', '')) }}" class="type-icon" alt="{{ tipo.nombreTipo }}">
+      {% endfor %}
+    </div>
   </div>
 
 </div>
+
+<a href="/" class="btn-back-fixed">
+    <img src="{{ url_for('static', filename='img/iconos/simbolo_Volver.png') }}" alt="Volver">
+</a>
 {% endblock %}

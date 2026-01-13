@@ -10,11 +10,20 @@ def anadir_usuarios():
     # Aseguramos que la tabla exista
     try:
         db.init_schema()
-        # Limpiamos tablas para no duplicar
+
+        # Limpiamos tablas para no duplicar (orden: relaciones primero)
+        db.delete("DELETE FROM PokemonFavoritos")
         db.delete("DELETE FROM Sigue")
         db.delete("DELETE FROM Usuario")
-        db.delete("DELETE FROM sqlite_sequence WHERE name='Usuario'")
-        print("Tablas Usuario y Sigue limpiadas.")
+
+        # Nota: Usuario NO es AUTOINCREMENT (es TEXT PK), así que sqlite_sequence no aplica.
+        # Si te da error esta línea, bórrala sin problema.
+        try:
+            db.delete("DELETE FROM sqlite_sequence WHERE name='Usuario'")
+        except Exception:
+            pass
+
+        print("Tablas Usuario, Sigue y PokemonFavoritos limpiadas.")
     except Exception as e:
         print(f"Nota: {e}")
 
@@ -121,6 +130,47 @@ def anadir_usuarios():
             print(f"{seguidor} sigue a {seguido}")
         except Exception as e:
             print(f"Error en relación {seguidor} -> {seguido}: {e}")
+
+    # ---------- INSERT FAVORITOS ----------
+    print("\nIniciando carga de POKEMON FAVORITOS...")
+
+    # OJO: estos nombres deben existir en PokemonPokedex(nombrePokemon)
+    # En tu seed: nombre = data['name'].capitalize() -> Ej: "Pikachu", "Bulbasaur"
+    favoritos_fake = [
+        ("ash_ketchum", "Pikachu"),
+        ("ash_ketchum", "Bulbasaur"),
+        ("ash_ketchum", "Charizard"),
+
+        ("gary_oak", "Eevee"),
+        ("gary_oak", "Blastoise"),
+
+        ("jessie_rocket", "Meowth"),
+        ("jessie_rocket", "Wobbuffet"),
+
+        ("admin_jefe", "Mew"),
+        ("admin_jefe", "Mewtwo"),
+    ]
+
+    query_fav = """
+        INSERT OR IGNORE INTO PokemonFavoritos (nombreUsuario, nombrePokemon)
+        VALUES (?, ?)
+    """
+
+    for nick, nombre_poke in favoritos_fake:
+        try:
+            # (Opcional) Comprobación rápida de que existe el Pokémon en la Pokedex
+            existe = db.select(
+                sentence="SELECT 1 FROM PokemonPokedex WHERE nombrePokemon = ? LIMIT 1",
+                parameters=[nombre_poke]
+            )
+            if not existe:
+                print(f"⚠️ No existe en PokemonPokedex: {nombre_poke} (no se inserta favorito para {nick})")
+                continue
+
+            db.insert(query_fav, (nick, nombre_poke))
+            print(f"Favorito insertado: {nick} -> {nombre_poke}")
+        except Exception as e:
+            print(f"Error insertando favorito {nick} -> {nombre_poke}: {e}")
 
     print("\nCarga de datos finalizada correctamente.")
 

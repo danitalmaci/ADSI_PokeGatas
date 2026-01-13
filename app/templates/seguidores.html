@@ -127,12 +127,18 @@
     min-height: 60px;
   }
 
-  .follower-nick {
+  /* ✅ Ahora el nick es enlace */
+  .follower-nick a{
     color: #ff6ea0;
     font-weight: 800;
     font-size: 1.2rem;
     min-width: 120px;
+    text-decoration: none;
   }
+  .follower-nick a:hover{
+    text-decoration: underline;
+  }
+
   .follower-stat {
     color: #ff6ea0;
     font-weight: 700;
@@ -176,9 +182,21 @@
 </style>
 
 <div class="main-panel">
+
   <div class="top-bar">
     <div class="pill-label">Seguidores</div>
-    <input class="search-bar" type="text" placeholder="Buscar Seguidor" disabled>
+
+    <!-- ✅ Buscador real (GET /seguidores?q=...) -->
+    <form method="GET" action="{{ url_for('perfil.ver_seguidores') }}" style="margin:0;">
+      <input
+        class="search-bar"
+        type="text"
+        name="q"
+        placeholder="Buscar Seguidor"
+        value="{{ q|default('') }}"
+        autocomplete="off"
+      >
+    </form>
   </div>
 
   <div class="followers-list">
@@ -198,33 +216,37 @@
 
           <!-- Tarjeta blanca con info -->
           <div class="follower-card">
-            <div class="follower-nick">{{ s.nombreUsuarioSeguidor }}</div>
+            <div class="follower-nick">
+              <a href="{{ url_for('perfil.ver_perfil_usuario', nickname=s.nombreUsuarioSeguidor) }}">
+                {{ s.nombreUsuarioSeguidor }}
+              </a>
+            </div>
+
             <div class="follower-stat">Seguidores: {{ s.numSeguidoresDelSeguidor }}</div>
             <div class="follower-stat">Seguidos: {{ s.numSeguidosDelSeguidor }}</div>
           </div>
 
-          <!-- Botón icono (placeholder) -->
-           <form
-                method="POST"
-                action="{{ url_for('perfil.eliminar_seguidor') }}"
-                style="margin:0;"
-                >
-                <input type="hidden" name="seguidor" value="{{ s.nombreUsuarioSeguidor }}">
-
-                <button type="submit" class="btn-trash" title="Eliminar seguidor">
-                    <img
-                    src="{{ url_for('static', filename='img/iconos/simbolo_Eliminar_Blanco.png') }}"
-                    alt="Eliminar"
-                    style="width: 28px; height: 28px;"
-                    >
-                </button>
-            </form>
+          <!-- Botón eliminar -->
+          <form method="POST" action="{{ url_for('perfil.eliminar_seguidor') }}" style="margin:0;">
+            <input type="hidden" name="seguidor" value="{{ s.nombreUsuarioSeguidor }}">
+            <button type="submit" class="btn-trash" title="Eliminar seguidor">
+              <img
+                src="{{ url_for('static', filename='img/iconos/simbolo_Eliminar_Blanco.png') }}"
+                alt="Eliminar"
+                style="width: 28px; height: 28px;"
+              >
+            </button>
+          </form>
 
         </div>
       {% endfor %}
     {% else %}
       <div style="color:white; font-weight:800; font-size:1.2rem; padding: 10px 6px;">
-        No tienes seguidores todavía.
+        {% if q %}
+          No hay resultados para "{{ q }}".
+        {% else %}
+          No tienes seguidores todavía.
+        {% endif %}
       </div>
     {% endif %}
   </div>

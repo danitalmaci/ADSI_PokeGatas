@@ -1,5 +1,6 @@
 # app/controller/model/gestor_usuarios.py
 from werkzeug.security import generate_password_hash, check_password_hash
+from flask import request
 
 
 class GestorUsuarios:
@@ -29,7 +30,6 @@ class GestorUsuarios:
             return 0
 
         password_hash = rows[0]["contrasena"]
-
         if check_password_hash(password_hash, contrasena):
             return 1
 
@@ -65,7 +65,6 @@ class GestorUsuarios:
         if len(contrasena) < 8:
             raise ValueError("Datos no válidos. Contraseña mínimo 8 caracteres.")
 
-        # comprobar nickname
         rows = self.db.select(
             sentence="SELECT COUNT(*) AS cantidad FROM Usuario WHERE nombreUsuario = ?",
             parameters=[nickname]
@@ -73,7 +72,6 @@ class GestorUsuarios:
         if rows and rows[0]["cantidad"] > 0:
             raise ValueError("El nombre de usuario ya está en uso.")
 
-        # comprobar correo
         rows2 = self.db.select(
             sentence="SELECT COUNT(*) AS cantidad FROM Usuario WHERE correo = ?",
             parameters=[correo]
@@ -103,10 +101,76 @@ class GestorUsuarios:
         )
 
     # -------------------------------------------------
+    # ✅ comprobar si "viewer" sigue a "target"
+    # -------------------------------------------------
+    def le_sigue(self, viewer: str, target: str) -> bool:
+        viewer = (viewer or "").strip()
+        target = (target or "").strip()
+        if not viewer or not target or viewer == target:
+            return False
+
+        rows = self.db.select(
+            sentence="""
+                SELECT 1
+                FROM Sigue
+                WHERE nombreUsuarioSeguido = ?
+                  AND nombreUsuarioSeguidor = ?
+                LIMIT 1
+            """,
+            parameters=[target, viewer]
+        )
+        return bool(rows)
+
+    # -------------------------------------------------
+    # ✅ seguir usuario
+    # -------------------------------------------------
+    def seguir_usuario(self, viewer: str, target: str) -> bool:
+        viewer = (viewer or "").strip()
+        target = (target or "").strip()
+
+        if not viewer or not target:
+            raise ValueError("Datos inválidos")
+        if viewer == target:
+            raise ValueError("No puedes seguirte a ti mismo.")
+
+        self.db.insert(
+            sentence="""
+                INSERT OR IGNORE INTO Sigue (nombreUsuarioSeguido, nombreUsuarioSeguidor)
+                VALUES (?, ?)
+            """,
+            parameters=[target, viewer]
+        )
+        return True
+
+    # -------------------------------------------------
+    # ✅ dejar de seguir usuario
+    # -------------------------------------------------
+    def dejar_seguir_usuario(self, viewer: str, target: str) -> bool:
+        viewer = (viewer or "").strip()
+        target = (target or "").strip()
+
+        if not viewer or not target:
+            raise ValueError("Datos inválidos")
+        if viewer == target:
+            return True
+
+        self.db.delete(
+            sentence="""
+                DELETE FROM Sigue
+                WHERE nombreUsuarioSeguido = ?
+                  AND nombreUsuarioSeguidor = ?
+            """,
+            parameters=[target, viewer]
+        )
+        return True
+
+    # -------------------------------------------------
     # Caso de uso: Consultar perfil (doc 9.8)
     # -------------------------------------------------
-    def consultar_perfil(self, nickname: str) -> dict:
+    def consultar_perfil(self, nickname: str, viewer: str = None) -> dict:
         nickname = (nickname or "").strip()
+        viewer = (viewer or "").strip() if viewer else None
+
         if not nickname:
             raise ValueError("Nickname vacío")
 
@@ -114,7 +178,6 @@ class GestorUsuarios:
             sentence="SELECT nombreUsuario, foto FROM Usuario WHERE nombreUsuario = ?",
             parameters=[nickname]
         )
-
         if not rows_user:
             raise ValueError("Usuario no encontrado")
 
@@ -141,11 +204,34 @@ class GestorUsuarios:
         except Exception:
             seguidos = 0
 
+        favoritos = []
+        try:
+            fav_rows = self.db.select(
+                sentence="""
+                    SELECT p.nombrePokemon, p.imagen
+                    FROM PokemonFavoritos f
+                    JOIN PokemonPokedex p ON p.nombrePokemon = f.nombrePokemon
+                    WHERE f.nombreUsuario = ?
+                    LIMIT 6
+                """,
+                parameters=[nickname]
+            )
+            favoritos = [dict(r) for r in fav_rows] if fav_rows else []
+        except Exception:
+            favoritos = []
+
+        es_mio = (viewer is not None and viewer == nickname)
+        le_sigo = (self.le_sigue(viewer, nickname) if viewer else False)
+
         return {
             "nickname": user_row["nombreUsuario"],
             "foto": user_row.get("foto"),
             "numero_seguidores": int(seguidores),
             "numero_seguidos": int(seguidos),
+            "favoritos": favoritos,
+            "es_mio": bool(es_mio),
+            "le_sigo": bool(le_sigo),
+            "viewer": viewer
         }
 
     # -------------------------------------------------
@@ -164,12 +250,10 @@ class GestorUsuarios:
             """,
             parameters=[nickname]
         )
-
         if not rows:
             raise ValueError("Usuario no encontrado")
 
         row = dict(rows[0])
-
         return {
             "nickname": row.get("nombreUsuario"),
             "nombre": row.get("nombre"),
@@ -181,9 +265,6 @@ class GestorUsuarios:
             "foto": row.get("foto"),
         }
 
-    # -------------------------------------------------
-    # sql2: comprobarNicknameRepe
-    # -------------------------------------------------
     def comprobar_nickname_repe(self, nickname: str) -> int:
         rows = self.db.select(
             sentence="SELECT COUNT(*) AS cantidad FROM Usuario WHERE nombreUsuario = ?",
@@ -193,9 +274,6 @@ class GestorUsuarios:
             return 0
         return int(rows[0]["cantidad"])
 
-    # -------------------------------------------------
-    # sql3: actualizarDatos
-    # -------------------------------------------------
     def actualizar_datos(
         self,
         nickname_sesion: str,
@@ -214,7 +292,6 @@ class GestorUsuarios:
         if not nickname_sesion or not nuevo_nickname:
             raise ValueError("Nickname vacío")
 
-        # sql2 solo si cambia el nickname
         if nuevo_nickname != nickname_sesion:
             if self.comprobar_nickname_repe(nuevo_nickname) > 0:
                 raise ValueError("El nombre de usuario ya está en uso.")
@@ -240,145 +317,90 @@ class GestorUsuarios:
         return True
 
     # -------------------------------------------------
-    # Caso de uso: Ver seguidores 
+    # ✅ helper: escapar para LIKE (evita que % y _ “rompan” el filtro)
     # -------------------------------------------------
-    def cargar_seguidores(self, nickname_sesion: str) -> list:
+    def _escape_like(self, text: str) -> str:
+        text = (text or "")
+        return text.replace("\\", "\\\\").replace("%", "\\%").replace("_", "\\_")
+
+    # -------------------------------------------------
+    # ✅ Seguidores con filtro por prefix (q)
+    # -------------------------------------------------
+    def cargar_seguidores(self, nickname_sesion: str, q: str = None) -> list:
         nickname_sesion = (nickname_sesion or "").strip()
+        q = (q or "").strip()
+
         if not nickname_sesion:
             raise ValueError("Nickname vacío")
 
-        # sql1
+        params = [nickname_sesion]
+        where_extra = ""
+
+        if q:
+            q_esc = self._escape_like(q)
+            where_extra = " AND u.nombreUsuario LIKE ? ESCAPE '\\' "
+            params.append(q_esc + "%")  # prefix
+
         rows = self.db.select(
-            sentence="""
-                SELECT nombreUsuarioSeguidor
-                FROM Sigue
-                WHERE nombreUsuarioSeguido = ?
+            sentence=f"""
+                SELECT
+                    u.nombreUsuario AS nombreUsuarioSeguidor,
+                    u.foto         AS fotoSeguidor,
+                    (SELECT COUNT(*) FROM Sigue s2 WHERE s2.nombreUsuarioSeguido   = u.nombreUsuario) AS numSeguidoresDelSeguidor,
+                    (SELECT COUNT(*) FROM Sigue s3 WHERE s3.nombreUsuarioSeguidor = u.nombreUsuario) AS numSeguidosDelSeguidor
+                FROM Sigue s
+                JOIN Usuario u ON u.nombreUsuario = s.nombreUsuarioSeguidor
+                WHERE s.nombreUsuarioSeguido = ?
+                {where_extra}
+                ORDER BY u.nombreUsuario COLLATE NOCASE
             """,
-            parameters=[nickname_sesion]
+            parameters=params
         )
 
-        seguidores_json = []
+        return [dict(r) for r in rows] if rows else []
 
-        for r in rows:
-            nickname_seguidor = r["nombreUsuarioSeguidor"]
-
-            # sql2
-            row_foto = self.db.select(
-                sentence="""
-                    SELECT foto
-                    FROM Usuario
-                    WHERE nombreUsuario = ?
-                """,
-                parameters=[nickname_seguidor]
-            )
-            foto_seguidor = row_foto[0]["foto"] if row_foto else None
-
-            # sql3
-            row_num_seguidores = self.db.select(
-                sentence="""
-                    SELECT COUNT(*) AS numero_seguidores
-                    FROM Sigue
-                    WHERE nombreUsuarioSeguido = ?
-                """,
-                parameters=[nickname_seguidor]
-            )
-            num_seguidores = int(row_num_seguidores[0]["numero_seguidores"]) if row_num_seguidores else 0
-
-            # sql4
-            row_num_seguidos = self.db.select(
-                sentence="""
-                    SELECT COUNT(*) AS numero_seguidos
-                    FROM Sigue
-                    WHERE nombreUsuarioSeguidor = ?
-                """,
-                parameters=[nickname_seguidor]
-            )
-            num_seguidos = int(row_num_seguidos[0]["numero_seguidos"]) if row_num_seguidos else 0
-
-            seguidores_json.append({
-                "nombreUsuarioSeguidor": nickname_seguidor,
-                "fotoSeguidor": foto_seguidor,
-                "numSeguidoresDelSeguidor": num_seguidores,
-                "numSeguidosDelSeguidor": num_seguidos
-            })
-
-        return seguidores_json
-    
     # -------------------------------------------------
-    # Caso de uso: Ver seguidores 
+    # ✅ Seguidos con filtro por prefix (q)
     # -------------------------------------------------
-
-
-
-    def cargar_seguidos(self, nickname_sesion: str) -> list:
+    def cargar_seguidos(self, nickname_sesion: str, q: str = None) -> list:
         nickname_sesion = (nickname_sesion or "").strip()
+        q = (q or "").strip()
+
         if not nickname_sesion:
             raise ValueError("Nickname vacío")
 
-        # sql1
+        params = [nickname_sesion]
+        where_extra = ""
+
+        if q:
+            q_esc = self._escape_like(q)
+            where_extra = " AND u.nombreUsuario LIKE ? ESCAPE '\\' "
+            params.append(q_esc + "%")  # prefix
+
         rows = self.db.select(
-            sentence="""
-                SELECT nombreUsuarioSeguido
-                FROM Sigue
-                WHERE nombreUsuarioSeguidor = ?
+            sentence=f"""
+                SELECT
+                    u.nombreUsuario AS nombreUsuarioSeguido,
+                    u.foto         AS fotoSeguido,
+                    (SELECT COUNT(*) FROM Sigue s2 WHERE s2.nombreUsuarioSeguido   = u.nombreUsuario) AS numSeguidoresDelSeguido,
+                    (SELECT COUNT(*) FROM Sigue s3 WHERE s3.nombreUsuarioSeguidor = u.nombreUsuario) AS numSeguidosDelSeguido
+                FROM Sigue s
+                JOIN Usuario u ON u.nombreUsuario = s.nombreUsuarioSeguido
+                WHERE s.nombreUsuarioSeguidor = ?
+                {where_extra}
+                ORDER BY u.nombreUsuario COLLATE NOCASE
             """,
-            parameters=[nickname_sesion]
+            parameters=params
         )
 
-        seguidos_json = []
-
-        for r in rows:
-            nickname_seguido = r["nombreUsuarioSeguido"]
-
-            # sql2
-            row_foto = self.db.select(
-                sentence="""
-                    SELECT foto
-                    FROM Usuario
-                    WHERE nombreUsuario = ?
-                """,
-                parameters=[nickname_seguido]
-            )
-            foto_seguido = row_foto[0]["foto"] if row_foto else None
-
-            # sql3
-            row_num_seguidos = self.db.select(
-                sentence="""
-                    SELECT COUNT(*) AS numero_seguidos
-                    FROM Sigue
-                    WHERE nombreUsuarioSeguidor = ?
-                """,
-                parameters=[nickname_seguido]
-            )
-            num_seguidos = int(row_num_seguidos[0]["numero_seguidos"]) if row_num_seguidos else 0
-
-            # sql4
-            row_num_seguidores = self.db.select(
-                sentence="""
-                    SELECT COUNT(*) AS numero_seguidores
-                    FROM Sigue
-                    WHERE nombreUsuarioSeguido = ?
-                """,
-                parameters=[nickname_seguido]
-            )
-            num_seguidores = int(row_num_seguidores[0]["numero_seguidores"]) if row_num_seguidores else 0
-
-            seguidos_json.append({
-                "nombreUsuarioSeguido": nickname_seguido,
-                "fotoSeguido": foto_seguido,
-                "numSeguidoresDelSeguido": num_seguidos,
-                "numSeguidosDelSeguido": num_seguidores
-            })
-
-        return seguidos_json
+        return [dict(r) for r in rows] if rows else []
 
     # -------------------------------------------------
-    # Eliminar seguidor
+    # Eliminar seguidor / seguido (igual)
     # -------------------------------------------------
     def eliminar_seguidor(self, nickname_sesion: str, seguidor: str) -> bool:
         nickname_sesion = (nickname_sesion or "").strip()
         seguidor = (seguidor or "").strip()
-
         if not nickname_sesion or not seguidor:
             raise ValueError("Datos inválidos")
 
@@ -391,14 +413,10 @@ class GestorUsuarios:
             parameters=[nickname_sesion, seguidor]
         )
         return True
-    
-    # -------------------------------------------------
-    # Eliminar seguido
-    # -------------------------------------------------
+
     def eliminar_seguido(self, nickname_sesion: str, seguido: str) -> bool:
         nickname_sesion = (nickname_sesion or "").strip()
         seguido = (seguido or "").strip()
-
         if not nickname_sesion or not seguido:
             raise ValueError("Datos inválidos")
 
@@ -411,29 +429,22 @@ class GestorUsuarios:
             parameters=[seguido, nickname_sesion]
         )
         return True
-    # -------------------------------------------------
-    # Listado
-    # -------------------------------------------------
+
     def get_all(self):
         rows = self.db.select(sentence="SELECT * FROM Usuario")
         return [dict(row) for row in rows]
-    
-    # -------------------------------------------------
-    # Caso de uso: Mostrar notificaciones
-    # -------------------------------------------------
 
-    def mostrar_Notificaciones(self, nickname, nombreUsuarioSeguidor=None, filtroFecha=None):
-        # 1️⃣ Buscar a quién sigue el usuario
+    def mostrar_Notificaciones(self, nickname,):
+        nombreUsuarioSeguidor = request.args.get("usuario")
+        filtroFecha = request.args.get("fecha")
+
         query_followed = "SELECT nombreUsuarioSeguido FROM Sigue WHERE nombreUsuarioSeguidor = ?"
         followed_rows = self.db.select(query_followed, (nickname,))
-        
-        # Convertir tuplas a dicts
-        usuarios_seguidos = [row[0] for row in followed_rows]  # row[0] es nombreUsuarioSeguido
+        usuarios_seguidos = [row[0] for row in followed_rows]
 
         if not usuarios_seguidos:
-            return []  # No sigue a nadie
+            return []
 
-        # 2️⃣ Construir query para notificaciones de los usuarios seguidos
         placeholders = ','.join(['?'] * len(usuarios_seguidos))
         query_notif = f"""
             SELECT nombreUsuario, fecha, info_notificacion
@@ -442,30 +453,21 @@ class GestorUsuarios:
         """
         params = usuarios_seguidos
 
-        # Aplicar filtro opcional por usuario
         if nombreUsuarioSeguidor:
             query_notif += " AND nombreUsuario = ?"
             params.append(nombreUsuarioSeguidor)
 
-        # Aplicar filtro opcional por fecha
         if filtroFecha:
-            query_notif += " AND fecha >= ?"
+            query_notif += " AND fecha = ?"
             params.append(filtroFecha)
 
-        # 3️⃣ Ejecutar y convertir filas a diccionarios
         rows = self.db.select(query_notif, tuple(params))
         columns = ["nombreUsuario", "fecha", "info_notificacion"]
         notif_list = [dict(zip(columns, row)) for row in rows]
-
         return notif_list
-    
-    # -- FUNCIONES DE ADMINISTRADOR --------------
 
+    # admin (tu código igual)
     def obtenerCuentas(self, filtro_nombre=None):
-        """
-        [ADMIN] Obtiene todos los usuarios que NO están pendientes (rol > 0).
-        Si recibe filtro_nombre, busca por coincidencias (LIKE).
-        """
         query = "SELECT nombreUsuario, foto, rol FROM Usuario WHERE rol > 0"
         params = None
         if filtro_nombre:
@@ -481,12 +483,12 @@ class GestorUsuarios:
                     rol_numero = int(rol_numero)
                 except:
                     rol_numero = 0
-                
+
                 rol_texto = "Entrenador"
                 if rol_numero == 2:
                     rol_texto = "Administrador"
-                
-                users_list.append({ 
+
+                users_list.append({
                     "nombreUsuario": row['nombreUsuario'],
                     "foto": row['foto'] if row['foto'] else 'img/usuario/user1.png',
                     "rol": rol_texto,
@@ -498,7 +500,6 @@ class GestorUsuarios:
             return []
 
     def obtenerCuentasPendientes(self):
-        """[ADMIN] Obtiene solo los usuarios con estado PENDIENTE (rol=0)."""
         query = "SELECT nombreUsuario, foto, rol FROM Usuario WHERE rol = 0"
         try:
             rows = self.db.select(query)
@@ -515,7 +516,6 @@ class GestorUsuarios:
             return []
 
     def borrarCuenta(self, nickname):
-        """[ADMIN] Elimina la cuenta de un usuario dado su nickname."""
         query = "DELETE FROM Usuario WHERE nombreUsuario = ?"
         try:
             self.db.delete(query, (nickname,))
@@ -525,7 +525,6 @@ class GestorUsuarios:
             return False
 
     def aprobarCuenta(self, nickname):
-        """[ADMIN] Aprueba la cuenta de un usuario (rol 0 -> 1)."""
         query = "UPDATE Usuario SET rol = 1 WHERE nombreUsuario = ?"
         try:
             self.db.update(query, (nickname,))
@@ -535,15 +534,9 @@ class GestorUsuarios:
             print(f"ERROR APROBANDO CUENTA: {e}")
             return False
 
-    #Para modificar perfil, reutilizo el metodo get_datos_actualizar_perfil
-
     def update_user_admin(self, antiguo_nick, nuevo_nick, nombre, ape1, ape2, desc):
-        """
-        Modifica los datos de un usuario desde el panel de administración.
-        Nota: creo que habria que unificar en un solo "actualizar_datos"
-        """
         query = """
-            UPDATE Usuario 
+            UPDATE Usuario
             SET nombreUsuario = ?, nombre = ?, apellido1 = ?, apellido2 = ?, descripcion = ?
             WHERE nombreUsuario = ?
         """

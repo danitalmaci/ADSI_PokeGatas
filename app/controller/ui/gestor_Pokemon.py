@@ -14,12 +14,14 @@ def pokedex_blueprint(db):
         return render_template('pokedex.html', pokemons=JSON_Pokedex)
 
     @bp.route('/pokedex/<nombrePokemon>') 
-    def mostrarPokemon(nombrePokemon): 
-        JSON_Pokemon = pokedex.mostrarPokemon(nombrePokemon) 
-        if JSON_Pokemon: 
-            pokemon_data = JSON_Pokemon[0] 
-        else: 
-            pokemon_data = {} 
-        return render_template('pokemon.html', pokemon=pokemon_data) 
+    def mostrarPokemon(nombrePokemon):
+        # Obtener el JSON del Pokémon
+        pokemon_data = pokedex.mostrarPokemon(nombrePokemon)  # ya es dict
+        if not pokemon_data:
+            # Si no existe el Pokémon, puedes redirigir, mostrar error o un dict vacío
+            pokemon_data = {}
+
+        # Renderizar el template con el dict
+        return render_template('pokemon.html', pokemon=pokemon_data)
     
     return bp

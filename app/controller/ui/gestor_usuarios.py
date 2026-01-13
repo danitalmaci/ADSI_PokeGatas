@@ -22,7 +22,7 @@ def user_blueprint(db):
         if ok == 1:
             session['nickname'] = nickname
             flash("Sesión iniciada correctamente.", "success")
-            return redirect('/menu_logged')
+            return redirect('pokedex')
 
         flash("Nickname o contraseña incorrectos.", "error")
         return redirect(url_for('users.login'))

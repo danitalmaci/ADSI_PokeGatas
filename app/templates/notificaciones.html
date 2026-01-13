@@ -3,34 +3,28 @@
 {% block content %}
 
 <style>
-
+    /* ====== RESET Y BODY ====== */
     body, .main-viewport {
         background-color: transparent !important;
         background-image: none !important;
         min-height: 100vh;
+        margin: 0; padding: 0;
+        font-family: 'Arial', sans-serif;
     }
 
     body::before {
         content: "";
         position: fixed;
-        top: 0;
-        left: 0;
-        width: 100%;
-        height: 100%;
+        top: 0; left: 0;
+        width: 100%; height: 100%;
         z-index: -1; 
-        background-image: url("{{ url_for('static', filename='img/fondos/fondo_5.png') }}"); 
+        background-image: url("{{ url_for('static', filename='img/fondos/fondo_5.png') }}");
         background-size: cover;
         background-position: center;
         background-repeat: no-repeat;
     }
 
-    body {
-        font-family: 'Arial', sans-serif;
-        margin: 0; padding: 0;
-        background-color: transparent;
-        min-height: 100vh;
-    }
-
+    /* ====== PANEL PRINCIPAL ====== */
     .main-panel {
         background-color: rgba(255, 158, 181, 0.95);
         border-radius: 40px;
@@ -40,169 +34,124 @@
         height: 85vh;
         margin: 30px auto;
         box-shadow: 0 15px 35px rgba(0,0,0,0.2);
-        position: relative;
         display: flex;
         flex-direction: column;
         box-sizing: border-box;
+        position: relative;
     }
 
+    /* ====== TOP BAR ====== */
     .top-bar {
-        display: grid;
-        grid-template-columns: 1fr 2fr 1fr;
-        gap: 20px;
+        display: flex;
         align-items: center;
+        gap: 20px;
         margin-bottom: 20px;
+    }
+
+    .filtrar1 {
+        background-color: white;
+        color: #ff9eb5;
+        border-radius: 50px;
+        padding: 12px 28px;
+        font-weight: bold;
+        font-size: 1.6rem;
+        box-shadow: 0 4px 6px rgba(0,0,0,0.08);
+        text-align: center;
         flex-shrink: 0;
     }
 
-    .pill-label, .btn-crear {
-        background-color: white;
-        color: #ff9eb5;
-        padding: 12px 0;
-        border-radius: 50px;
-        font-weight: bold;
-        font-size: 1.3rem;
-        text-align: center;
-        box-shadow: 0 4px 6px rgba(0,0,0,0.05);
-        text-decoration: none;
-        display: block;
+    .filters-form {
+        display: flex;             
+        align-items: center;
+        gap: 15px;
+        width: 100%;
     }
 
-    .search-bar {
-        background-color: rgba(255, 255, 255, 0.4);
-        border: none;
+    .filter-input {
+        background-color: rgba(255, 255, 255, 0.9);
+        border: 2px solid #ff9eb5;
         border-radius: 50px;
         padding: 12px 20px;
-        color: white;
         font-weight: bold;
-        font-size: 1.3rem;
+        font-size: 1.2rem;
         text-align: center;
-        width: 100%;
-        box-sizing: border-box;
-    }
-    .search-bar::placeholder { color: white; opacity: 0.9; }
-    .search-bar:focus { outline: none; background-color: rgba(255, 255, 255, 0.6); }
-
-    .btn-crear:hover { transform: scale(1.05); color: #ff6b95; }
-
-    .teams-list {
-        flex-grow: 1;
-        overflow-y: auto;
-        padding-right: 15px;
-        padding-left: 10px;
+        flex: 1;
+        min-width: 150px;
+        color: #ff9eb5;
     }
 
-    .teams-list::-webkit-scrollbar {
-        width: 10px;
-    }
-    .teams-list::-webkit-scrollbar-track {
-        background: rgba(255, 255, 255, 0.1); 
-        border-radius: 10px;
-    }
-    .teams-list::-webkit-scrollbar-thumb {
-        background-color: rgba(255, 255, 255, 0.8); 
-        border-radius: 10px;
+    .filter-input::placeholder {
+        color: #ff9eb5;
+        opacity: 0.7;
     }
 
-    .team-row {
-        margin-bottom: 35px;
+    .filter-input:focus {
+        outline: none;
+        background-color: rgba(255, 255, 255, 1);
+        border-color: #ff6b95;
     }
 
-    .team-container {
-        display: flex;
-        align-items: center; 
-        gap: 25px;
-        width: 100%;
-    }
-
-    .pokemon-box {
-        background-color: white;
-        border-radius: 45px;
-        padding: 30px; 
-        /* Flex-grow asegura que llene el espacio horizontal disponible */
-        flex-grow: 1;
-        display: flex;
-        flex-direction: column;
-        justify-content: center;
-        align-items: center; /* Centra el contenido (las bolas) en la caja grande */
-        box-shadow: 0 5px 10px rgba(0,0,0,0.05);
-        min-height: 280px; /* Un poco más alto para acomodar las bolas grandes */
-    }
-
-    .rows-wrapper {
-        display: flex;
-        flex-direction: column;
-        gap: 15px; /* Espacio vertical entre filas */
-    }
-
-    .poke-row {
-        display: flex;
-        gap: 90px; /* HUECOS MUCHO MÁS GRANDES */
-    }
-
-    .poke-row.bottom {
-        /* Para el zig-zag perfecto con gap 50 y ancho 125: (125+50)/2 = 87.5px */
-        margin-left: 88px; 
-    }
-
-    .poke-circle {
-        width: 125px; /* BOLAS MÁS GRANDES */
-        height: 125px; 
-        border-radius: 50%;
+    .btn-filtrar {
         background-color: #ff9eb5;
-        display: flex;
-        justify-content: center;
-        align-items: center;
-        overflow: hidden;
+        color: white;
         border: none;
-        box-shadow: inset 0 0 0 0 transparent; 
+        border-radius: 50px;
+        padding: 12px 28px;
+        font-weight: bold;
+        font-size: 1.2rem;
+        cursor: pointer;
+        box-shadow: 0 4px 6px rgba(0,0,0,0.08);
+        transition: transform 0.2s, background-color 0.2s;
         flex-shrink: 0;
     }
-    
-    .poke-img {
-        width: 100%;
-        height: 100%;
-        object-fit: contain;
-        background: white;
-        border-radius: 50%;
-        border: 4px solid #ff9eb5;
+
+    .btn-filtrar:hover {
+        transform: scale(1.05);
+        background-color: #ff6b95;
     }
 
-    .actions-col {
+    /* ====== NOTIFICACIONES ====== */
+    .notifications-list {
+        flex-grow: 1;
+        overflow-y: auto;
+        padding-right: 10px;
         display: flex;
         flex-direction: column;
-        gap: 50px;
-        justify-content: center;
-        justify-content: flex-start;
-        padding-top: 10px;
+        gap: 15px;
     }
 
-    .btn-icon {
+    .notification-row {
         background-color: white;
-        border: none;
-        border-radius: 50%;
-        width: 60px; 
-        height: 60px;
+        border-radius: 15px;
+        padding: 15px 20px;
+        box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+    }
+
+    .notif-header {
         display: flex;
-        justify-content: center;
+        justify-content: space-between;
         align-items: center;
-        text-decoration: none;
-        font-size: 1.8rem;
+        margin-bottom: 8px;
+        font-weight: bold;
+    }
+
+    .notif-user {
         color: #ff9eb5;
-        box-shadow: 0 4px 6px rgba(0,0,0,0.1);
-        transition: all 0.2s;
-        padding: 12px;
-        box-sizing: border-box;
+        font-size: 1.2rem;
     }
 
-    .btn-icon img {
-        width: 100%;
-        height: 100%;
-        object-fit: contain;
+    .notif-date {
+        color: #999;
+        font-size: 1rem;
     }
 
-    .btn-icon:hover { transform: scale(1.1); background-color: #fff0f5; }
+    .notif-info {
+        font-size: 1rem;
+        color: #333;
+        margin-top: 5px;
+    }
 
+    /* ====== BOTÓN VOLVER ====== */
     .btn-back-home {
         position: absolute;
         bottom: 20px;
@@ -230,98 +179,59 @@
         object-fit: contain;
     }
 
-    .btn-back-home:hover { transform: scale(1.1); }
-
-    .modal-overlay {
-        position: fixed; top: 0; left: 0; width: 100%; height: 100%;
-        background-color: rgba(0, 0, 0, 0.4); 
-        z-index: 9999;
-        display: flex; justify-content: center; align-items: center;
+    .btn-back-home:hover {
+        transform: scale(1.1);
     }
-    .notification-box {
-        background-color: white;
-        border-radius: 25px;
-        padding: 40px;
-        width: 500px;
-        text-align: center;
-        position: relative;
-        box-shadow: 0 20px 50px rgba(0,0,0,0.2);
-    }
-    .notification-text { color: #ff9eb5; font-size: 1.4rem; font-weight: bold; margin: 10px 0; }
-    .close-modal-btn { position: absolute; top: 15px; right: 20px; background: none; border: none; font-size: 1.5rem; color: #aaa; cursor: pointer; }
-    .hidden { display: none !important; }
-
-    .team-name-label {
-        color: white; font-weight: bold; font-size: 1.8rem; margin-bottom: 10px; margin-left: 20px;
-    }
-
 </style>
+
 
 <div class="main-panel">
 
-    {% with messages = get_flashed_messages(with_categories=true) %}
-      {% if messages %}
-        <div id="notificacionModal" class="modal-overlay">
-            <div class="notification-box">
-                <button class="close-modal-btn" onclick="cerrarNotificacion()">✖</button>
-                {% for category, message in messages %}
-                    <p class="notification-text">{{ message }}</p>
-                {% endfor %}
-            </div>
-        </div>
-      {% endif %}
-    {% endwith %}
-
     <div class="top-bar">
-        <div class="pill-label">Notificaciones</div>
-        <input type="text" class="search-bar" placeholder="Buscar Notificación">
+    <div class="filtrar1">Notificaciones</div>
+
+        <form method="GET" class="filters-form">
+            <input  
+                type="text"
+                name="usuario"
+                class="filter-input"
+                placeholder="Nombre del seguidor"
+                value="{{ request.args.get('usuario', '') }}"
+            >
+
+            <input
+                type="date"
+                name="fecha"
+                class="filter-input"
+                value="{{ request.args.get('fecha', '') }}"
+            >
+
+            <button type="submit" class="btn-filtrar">Buscar</button>
+        </form>
     </div>
+
 
     <div class="notifications-list">
-        {% for notif in notificaciones %}
-        <div class="notification-row" style="background-color: #f7a9be; color: white; padding: 15px; border-radius: 10px; margin-bottom: 10px;">
-            <div class="notif-header" style="display:flex; justify-content: space-between; font-weight:bold;">
-                <span class="notif-user">{{ notif.nombreUsuario }}</span>
-                <span class="notif-date">{{ notif.fecha }}</span>
-            </div>
-            <div class="notif-info" style="margin-top:5px;">
-                {{ notif.info_notificacion }}
-            </div>
+    {% for notif in notificaciones %}
+    <div class="notification-row">
+        <div class="notif-header">
+            <span class="notif-user">{{ notif.nombreUsuario }}</span>
+            <span class="notif-date">{{ notif.fecha }}</span>
         </div>
-        {% else %}
-        <div style="text-align: center; color: white; margin-top: 100px;">
-            <h2 style="font-size: 2rem;">No hay notificaciones nuevas.</h2>
+        <div class="notif-info">
+            {{ notif.info_notificacion }}
         </div>
-        {% endfor %}
     </div>
+    {% else %}
+    <div style="text-align: center; margin-top: 100px;">
+        <h2 style="font-size: 2rem; color: white;">No hay notificaciones nuevas.</h2>
+    </div>
+    {% endfor %}
+</div>
 </div>
 
 <a href="/" class="btn-back-home">
     <img src="{{ url_for('static', filename='img/iconos/simbolo_Volver.png') }}" alt="Volver">
 </a>
 
-<script>
-function cerrarNotificacion() {
-    const modal = document.getElementById('notificacionModal');
-    if (modal) {
-        modal.classList.add('hidden');
-    }
-}
-
-document.addEventListener('DOMContentLoaded', function() {
-    const searchInput = document.querySelector('.search-bar');
-    
-    searchInput.addEventListener('keyup', function(e) {
-        const query = e.target.value.toLowerCase();
-        const container = document.querySelector('.notifications-list');
-        const rows = container.querySelectorAll('.notification-row');
-
-        rows.forEach(row => {
-            const user = row.querySelector('.notif-user').textContent.toLowerCase();
-            const info = row.querySelector('.notif-info').textContent.toLowerCase();
-            row.style.display = (user.includes(query) || info.includes(query)) ? 'block' : 'none';
-        });
-    });
-});
-</script>
 {% endblock %}

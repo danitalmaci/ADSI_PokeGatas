@@ -11,22 +11,23 @@ class Pokedex:
     # -------- USUARIOS / AUTH --------
     def iniciar_sesion(self, nickname, contrasena) -> int:
         return self.gestor_usuarios.iniciarSesion(nickname, contrasena)
-
     def crear_cuenta(self, **kwargs):
         return self.gestor_usuarios.create_account(**kwargs)
-
+    def consultar_perfil(self, nickname):
+        return self.gestor_usuarios.consultar_perfil(nickname)
     def listar_usuarios(self):
         return self.gestor_usuarios.get_all()
 
     # -------- PERFIL --------
-    def consultar_perfil(self, nickname: str) -> dict:
-        return self.gestor_usuarios.consultar_perfil(nickname)
+    # ✅ IMPORTANTE: ahora acepta viewer para saber si "yo" sigo a ese perfil
+    def consultar_perfil(self, nickname: str, viewer: str = None) -> dict:
+        return self.gestor_usuarios.consultar_perfil(nickname, viewer=viewer)
 
-    # Cargar datos para la pantalla "Actualizar Perfil" (sql1)
+    # Cargar datos para la pantalla "Actualizar Perfil"
     def get_datos_actualizar_perfil(self, nickname: str) -> dict:
         return self.gestor_usuarios.get_datos_actualizar_perfil(nickname)
 
-    # Guardar cambios del perfil (sql2 + sql3)
+    # Guardar cambios del perfil
     def actualizar_datos_perfil(
         self,
         nickname_sesion: str,
@@ -50,13 +51,27 @@ class Pokedex:
             correo=correo,
             foto=foto
         )
-    
-    # -------- POKEDEX --------
 
+    # -------- SEGUIR / COMPROBAR SEGUIR --------
+    # ✅ seguir usuario
+    def seguir_usuario(self, nickname_sesion: str, nickname_objetivo: str) -> bool:
+        return self.gestor_usuarios.seguir_usuario(nickname_sesion, nickname_objetivo)
+
+    # ✅ dejar de seguir usuario
+    def dejar_seguir_usuario(self, nickname_sesion: str, nickname_objetivo: str) -> bool:
+        return self.gestor_usuarios.dejar_seguir_usuario(nickname_sesion, nickname_objetivo)
+
+    # ✅ comprobar si ya le sigue (en tu gestor se llama le_sigue)
+    def ya_sigo_a(self, nickname_sesion: str, nickname_objetivo: str) -> bool:
+        return self.gestor_usuarios.le_sigue(nickname_sesion, nickname_objetivo)
+
+    # -------- POKEDEX --------
     def mostrarPokedex(self):
-        return self.gestor_Pokemon.mostrarPokedex()
+        return self.gestor_pokemon.mostrarPokedex()
 
     # -------- POKEMON --------
+    def mostrarPokemon(self, nombrePokemon):
+        return self.gestor_pokemon.mostrarPokemon(nombrePokemon)
 
     def mostrarPokemon(self,nombrePokemon):
         return self.gestor_Pokemon.mostrarPokemon(nombrePokemon)
@@ -69,27 +84,21 @@ class Pokedex:
     def mostrarNotificaciones(self,nickname):
         return self.gestor_usuarios.mostrar_Notificaciones(nickname)
 
-        
-
     # -------- SEGUIDORES --------
-    # Ver seguidores 
     def cargar_seguidores(self, nickname_sesion: str) -> list:
         return self.gestor_usuarios.cargar_seguidores(nickname_sesion)
 
-    # ✅ NUEVO: Eliminar seguidor (borrar relación en Sigue)
     def eliminar_seguidor(self, nickname_sesion: str, seguidor: str) -> bool:
         return self.gestor_usuarios.eliminar_seguidor(nickname_sesion, seguidor)
 
-
     # -------- SEGUIDOS --------
-    # Ver seguidos 
     def cargar_seguidos(self, nickname_sesion: str) -> list:
         return self.gestor_usuarios.cargar_seguidos(nickname_sesion)
 
-    # ✅ NUEVO: Eliminar seguidor (borrar relación en Sigue)
     def eliminar_seguido(self, nickname_sesion: str, seguido: str) -> bool:
         return self.gestor_usuarios.eliminar_seguido(nickname_sesion, seguido)
-    #--------- ADMIN --------------
+
+    # -------- ADMIN --------
     def obtenerCuentas(self, filtro_nombre=None):
         return self.gestor_usuarios.obtenerCuentas(filtro_nombre)
 
@@ -99,8 +108,8 @@ class Pokedex:
     def aprobarCuenta(self, nickname):
         return self.gestor_usuarios.aprobarCuenta(nickname)
 
-    def borrarCuenta(self, nickname):
-        return self.gestor_usuarios.borrarCuenta(nickname)
+    def mostrarPokemon(self, nombrePokemon):
+        return self.gestor_pokemon.mostrarPokemon(nombrePokemon)
 
     def modificarCuenta(self, **kwargs):
         return self.gestor_usuarios.update_user_admin(**kwargs)
@@ -135,3 +144,7 @@ class Pokedex:
 
     def contar_pokemons(self, id_equipo):
         return self.gestor_equipos.contar_pokemons(id_equipo)
+    # --- MÉTODO DEL CHATBOT ---
+    def solicitarConsultaCB(self, mensaje_usuario):
+        # Delegamos la lógica al gestor
+        return self.gestor_pokemon.procesar_mensaje_chatbot(mensaje_usuario)
