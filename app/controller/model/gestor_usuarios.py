@@ -240,9 +240,7 @@ class GestorUsuarios:
         return True
 
     # -------------------------------------------------
-    # Caso de uso: Ver seguidores (doc 9.10)
-    # Devuelve JSON = [ { nombreUsuarioSeguidor, fotoSeguidor,
-    #                     numSeguidoresDelSeguidor, numSeguidosDelSeguidor }, ... ]
+    # Caso de uso: Ver seguidores 
     # -------------------------------------------------
     def cargar_seguidores(self, nickname_sesion: str) -> list:
         nickname_sesion = (nickname_sesion or "").strip()
@@ -305,11 +303,77 @@ class GestorUsuarios:
             })
 
         return seguidores_json
+    
+    # -------------------------------------------------
+    # Caso de uso: Ver seguidores 
+    # -------------------------------------------------
+
+
+
+    def cargar_seguidos(self, nickname_sesion: str) -> list:
+        nickname_sesion = (nickname_sesion or "").strip()
+        if not nickname_sesion:
+            raise ValueError("Nickname vacío")
+
+        # sql1
+        rows = self.db.select(
+            sentence="""
+                SELECT nombreUsuarioSeguido
+                FROM Sigue
+                WHERE nombreUsuarioSeguidor = ?
+            """,
+            parameters=[nickname_sesion]
+        )
+
+        seguidos_json = []
+
+        for r in rows:
+            nickname_seguido = r["nombreUsuarioSeguido"]
+
+            # sql2
+            row_foto = self.db.select(
+                sentence="""
+                    SELECT foto
+                    FROM Usuario
+                    WHERE nombreUsuario = ?
+                """,
+                parameters=[nickname_seguido]
+            )
+            foto_seguido = row_foto[0]["foto"] if row_foto else None
+
+            # sql3
+            row_num_seguidos = self.db.select(
+                sentence="""
+                    SELECT COUNT(*) AS numero_seguidos
+                    FROM Sigue
+                    WHERE nombreUsuarioSeguidor = ?
+                """,
+                parameters=[nickname_seguido]
+            )
+            num_seguidos = int(row_num_seguidos[0]["numero_seguidos"]) if row_num_seguidos else 0
+
+            # sql4
+            row_num_seguidores = self.db.select(
+                sentence="""
+                    SELECT COUNT(*) AS numero_seguidores
+                    FROM Sigue
+                    WHERE nombreUsuarioSeguido = ?
+                """,
+                parameters=[nickname_seguido]
+            )
+            num_seguidores = int(row_num_seguidores[0]["numero_seguidores"]) if row_num_seguidores else 0
+
+            seguidos_json.append({
+                "nombreUsuarioSeguido": nickname_seguido,
+                "fotoSeguido": foto_seguido,
+                "numSeguidoresDelSeguido": num_seguidos,
+                "numSeguidosDelSeguido": num_seguidores
+            })
+
+        return seguidos_json
 
     # -------------------------------------------------
-    # ✅ NUEVO: eliminar seguidor (borrar relación en Sigue)
-    # nickname_sesion = tú (seguidO)
-    # seguidor = quien te sigue (seguidor)
+    # Eliminar seguidor
     # -------------------------------------------------
     def eliminar_seguidor(self, nickname_sesion: str, seguidor: str) -> bool:
         nickname_sesion = (nickname_sesion or "").strip()
@@ -327,7 +391,26 @@ class GestorUsuarios:
             parameters=[nickname_sesion, seguidor]
         )
         return True
+    
+    # -------------------------------------------------
+    # Eliminar seguido
+    # -------------------------------------------------
+    def eliminar_seguido(self, nickname_sesion: str, seguido: str) -> bool:
+        nickname_sesion = (nickname_sesion or "").strip()
+        seguido = (seguido or "").strip()
 
+        if not nickname_sesion or not seguido:
+            raise ValueError("Datos inválidos")
+
+        self.db.delete(
+            sentence="""
+                DELETE FROM Sigue
+                WHERE nombreUsuarioSeguido = ?
+                  AND nombreUsuarioSeguidor = ?
+            """,
+            parameters=[seguido, nickname_sesion]
+        )
+        return True
     # -------------------------------------------------
     # Listado
     # -------------------------------------------------
