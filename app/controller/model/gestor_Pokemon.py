@@ -8,10 +8,31 @@ class gestorPokemon:
     def __init__(self, db):
         self.db = db
 
-    # --- MÉTODOS ESTÁNDAR (Pokedex) ---
-    def mostrarPokedex(self):
-        sql = "SELECT * FROM PokemonPokedex"
-        return self.db.select(sql)
+    def mostrarPokedex(self,):
+        filtroNombre = request.args.get("nombre")        # nombre o habilidad
+        filtroTipo = request.args.get("tipo") 
+
+        query = (
+            "SELECT DISTINCT p.pokedexID, p.nombrePokemon, p.imagen "
+            "FROM PokemonPokedex p "
+            "LEFT JOIN Contiene t ON p.nombrePokemon = t.nombrePokemon "
+            "LEFT JOIN TipoPokemon tp ON t.nombreTipo = tp.nombreTipo "
+            "WHERE 1=1 "
+        )
+        params = []
+
+        if filtroNombre:
+            query += " AND p.nombrePokemon LIKE ?"
+            params.append(f"%{filtroNombre}%")
+
+        if filtroTipo:
+            query += " AND t.nombreTipo = ?"
+            params.append(filtroTipo)
+
+        rows = self.db.select(query, tuple(params))
+
+        return [dict(row) for row in rows]
+
     
     def mostrarPokemon(self, nombrePokemon):
         query = (
@@ -64,6 +85,8 @@ class gestorPokemon:
         JSON_Pokemon["tipos"] = [{"nombreTipo": t, "imagenTipo": img} for t, img in tipos_set.items()]
         
         return JSON_Pokemon
+    
+    
     # --- MÉTODOS AUXILIARES ---
 
     def limpiar_texto(self, texto):
