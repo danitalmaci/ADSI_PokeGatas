@@ -90,6 +90,27 @@
     display: block;
   }
 
+  /* ✅ Botón seguir / le sigues */
+  .follow-btn {
+    width: 180px;
+    border: none;
+    border-radius: 26px;
+    padding: 12px;
+    font-weight: 900;
+    cursor: pointer;
+    box-shadow: 0 5px 14px rgba(0,0,0,0.08);
+  }
+  .follow-btn.following {
+    background: rgba(255,255,255,0.85);
+    color: #ff4f86;
+    cursor: default;
+  }
+  .follow-btn.follow {
+    background: #ff6ea0;
+    color: white;
+  }
+  .follow-btn.follow:hover { transform: scale(1.02); }
+
   /* DERECHA */
   .right-wrap {
     display:flex;
@@ -117,7 +138,6 @@
     white-space: nowrap;
   }
 
-  /* cuando son “solo texto” (perfil ajeno) */
   .pill-label.disabled {
     pointer-events: none;
     cursor: default;
@@ -185,16 +205,16 @@
   }
 </style>
 
-{# Fallbacks #}
 {% set fallback_avatar = url_for('static', filename='img/usuario/user3.png') %}
 {% set fallback_poke   = url_for('static', filename='img/usuario/user3.png') %}
 
-{# favoritos seguros #}
 {% set favs = data.favoritos if data and data.favoritos is defined and data.favoritos else [] %}
 
-{# detectar si es mi perfil o perfil ajeno #}
 {% set mi_nick = session.get('nickname') %}
 {% set es_ajeno = (mi_nick is not none) and (data.nickname != mi_nick) %}
+
+{# ✅ CORRECTO: la flag del backend se llama le_sigo #}
+{% set ya_lo_sigues = data.le_sigo if data and data.le_sigo is defined else False %}
 
 <div class="main-panel">
   <div class="perfil-body">
@@ -219,8 +239,16 @@
 
       <div class="nick-pill">{{ data.nickname }}</div>
 
-      {# ✅ Solo en mi perfil #}
-      {% if not es_ajeno %}
+      {# ✅ SOLO perfil ajeno: Seguir / Le sigues #}
+      {% if es_ajeno %}
+        {% if ya_lo_sigues %}
+          <button class="follow-btn following" type="button" disabled>Le sigues</button>
+        {% else %}
+          <form method="POST" action="{{ url_for('perfil.seguir_usuario', nickname=data.nickname) }}" style="margin:0;">
+            <button class="follow-btn follow" type="submit">Seguir</button>
+          </form>
+        {% endif %}
+      {% else %}
         <a class="perfil-link-pill" href="{{ url_for('perfil.actualizar_perfil') }}">
           Actualizar perfil
         </a>
@@ -231,7 +259,6 @@
     <div class="right-wrap">
       <div class="top-bar">
 
-        {# ✅ Si es mi perfil: links a mis listas. Si es ajeno: pill sin link #}
         {% if not es_ajeno %}
           <a class="pill-label" href="{{ url_for('perfil.ver_seguidores') }}">
             Seguidores: {{ data.numero_seguidores }}
@@ -274,7 +301,6 @@
 
   </div>
 
-  {# ✅ si es ajeno, volver a seguidores; si es mío, volver home #}
   {% if es_ajeno %}
     <a class="btn-back-home" href="{{ url_for('perfil.ver_seguidores') }}" aria-label="Volver">
       <img src="{{ url_for('static', filename='img/iconos/simbolo_Volver.png') }}" alt="Volver">
