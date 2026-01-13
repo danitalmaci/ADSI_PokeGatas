@@ -67,13 +67,10 @@ class Pokedex:
 
     # -------- POKEDEX --------
     def mostrarPokedex(self):
-        return self.gestor_pokemon.mostrarPokedex()
+        return self.gestor_Pokemon.mostrarPokedex()
 
     # -------- POKEMON --------
     def mostrarPokemon(self, nombrePokemon):
-        return self.gestor_pokemon.mostrarPokemon(nombrePokemon)
-
-    def mostrarPokemon(self,nombrePokemon):
         return self.gestor_Pokemon.mostrarPokemon(nombrePokemon)
 
     def obtener_pokemon_por_id(self, pokedex_id):
@@ -107,9 +104,6 @@ class Pokedex:
 
     def aprobarCuenta(self, nickname):
         return self.gestor_usuarios.aprobarCuenta(nickname)
-
-    def mostrarPokemon(self, nombrePokemon):
-        return self.gestor_pokemon.mostrarPokemon(nombrePokemon)
 
     def modificarCuenta(self, **kwargs):
         return self.gestor_usuarios.update_user_admin(**kwargs)
