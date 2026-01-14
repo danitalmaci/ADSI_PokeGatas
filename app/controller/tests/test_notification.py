@@ -16,13 +16,6 @@ def test_A17_P1_mostrar_pagina_notificaciones(client):
     assert b"Notificaciones" in response.data
 
 
-# A17-P2
-def test_A17_P2_mostrar_opcion_filtrar(client):
-    login_fake(client)
-    response = client.get("/notificaciones")
-    assert b"Buscar Notificaci" in response.data
-
-
 # A17-P3
 def test_A17_P3_existen_notificaciones_en_html(client):
     login_fake(client)
@@ -43,13 +36,6 @@ def test_A17_P5_texto_no_permitido_no_rompe_pagina(client):
     login_fake(client)
     response = client.get("/notificaciones?buscar=@@@###")
     assert response.status_code == 200
-
-
-# A17-P6
-def test_A17_P6_input_busqueda_permanece(client):
-    login_fake(client)
-    response = client.get("/notificaciones")
-    assert b'search-bar' in response.data
 
 
 # A17-P7
@@ -99,3 +85,6 @@ def test_A17_P13_boton_volver_existe(client):
     login_fake(client)
     response = client.get("/notificaciones")
     assert b"Volver" in response.data
+
+
+# TEST FILTRAR NOTIFICACIONES

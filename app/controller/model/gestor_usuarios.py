@@ -433,6 +433,10 @@ class GestorUsuarios:
     def get_all(self):
         rows = self.db.select(sentence="SELECT * FROM Usuario")
         return [dict(row) for row in rows]
+    
+    # -------------------------------------------------
+    # MOSTRAR NOTIFICACIONES
+    # -------------------------------------------------
 
     def mostrar_Notificaciones(self, nickname,):
         nombreUsuarioSeguidor = request.args.get("usuario")
@@ -465,6 +469,9 @@ class GestorUsuarios:
         columns = ["nombreUsuario", "fecha", "info_notificacion"]
         notif_list = [dict(zip(columns, row)) for row in rows]
         return notif_list
+
+    # -------------------------------------------------
+    # -------------------------------------------------
 
     # admin (tu código igual)
     def obtenerCuentas(self, filtro_nombre=None):

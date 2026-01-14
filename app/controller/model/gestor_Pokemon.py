@@ -33,7 +33,7 @@ class gestorPokemon:
             "LEFT JOIN Contiene t ON p.nombrePokemon = t.nombrePokemon "
             "LEFT JOIN TipoPokemon tp ON t.nombreTipo = tp.nombreTipo "
             "WHERE 1=1 "
-        )
+        ) 
         # Lista donde se almacenan los valores de los filtros para la consulta
         params = []
 
