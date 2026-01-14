@@ -6,92 +6,64 @@ class Pokedex:
     def __init__(self, db):
         self.db = db
         self.gestor_usuarios = GestorUsuarios(db)
-        self.gestor_Pokemon = gestorPokemon(db)
+        # --- CORRECCIÓN AQUÍ: P mayúscula a p minúscula ---
+        self.gestor_pokemon = gestorPokemon(db) 
+        # --------------------------------------------------
         self.gestor_equipos = GestorEquipos(db)
+
     # -------- USUARIOS / AUTH --------
     def iniciar_sesion(self, nickname, contrasena) -> int:
         return self.gestor_usuarios.iniciarSesion(nickname, contrasena)
     def crear_cuenta(self, **kwargs):
         return self.gestor_usuarios.create_account(**kwargs)
-    def consultar_perfil(self, nickname):
-        return self.gestor_usuarios.consultar_perfil(nickname)
+    def consultar_perfil(self, nickname, viewer: str = None) -> dict:
+        return self.gestor_usuarios.consultar_perfil(nickname, viewer=viewer)
     def listar_usuarios(self):
         return self.gestor_usuarios.get_all()
 
     # -------- PERFIL --------
-    # ✅ IMPORTANTE: ahora acepta viewer para saber si "yo" sigo a ese perfil
-    def consultar_perfil(self, nickname: str, viewer: str = None) -> dict:
-        return self.gestor_usuarios.consultar_perfil(nickname, viewer=viewer)
-
-    # Cargar datos para la pantalla "Actualizar Perfil"
     def get_datos_actualizar_perfil(self, nickname: str) -> dict:
         return self.gestor_usuarios.get_datos_actualizar_perfil(nickname)
 
-    # Guardar cambios del perfil
-    def actualizar_datos_perfil(
-        self,
-        nickname_sesion: str,
-        nuevo_nickname: str,
-        nombre: str,
-        apellido1: str,
-        apellido2: str,
-        descripcion: str,
-        fecha_nacimiento: str,
-        correo: str,
-        foto: str = None
-    ):
-        return self.gestor_usuarios.actualizar_datos(
-            nickname_sesion=nickname_sesion,
-            nuevo_nickname=nuevo_nickname,
-            nombre=nombre,
-            apellido1=apellido1,
-            apellido2=apellido2,
-            descripcion=descripcion,
-            fecha_nacimiento=fecha_nacimiento,
-            correo=correo,
-            foto=foto
-        )
+    def actualizar_datos_perfil(self, nickname_sesion: str, nuevo_nickname: str, nombre: str, apellido1: str, apellido2: str, descripcion: str, fecha_nacimiento: str, correo: str, foto: str = None):
+        return self.gestor_usuarios.actualizar_datos(nickname_sesion=nickname_sesion, nuevo_nickname=nuevo_nickname, nombre=nombre, apellido1=apellido1, apellido2=apellido2, descripcion=descripcion, fecha_nacimiento=fecha_nacimiento, correo=correo, foto=foto)
 
     # -------- SEGUIR / COMPROBAR SEGUIR --------
-    # ✅ seguir usuario
     def seguir_usuario(self, nickname_sesion: str, nickname_objetivo: str) -> bool:
         return self.gestor_usuarios.seguir_usuario(nickname_sesion, nickname_objetivo)
 
-    # ✅ dejar de seguir usuario
     def dejar_seguir_usuario(self, nickname_sesion: str, nickname_objetivo: str) -> bool:
         return self.gestor_usuarios.dejar_seguir_usuario(nickname_sesion, nickname_objetivo)
 
-    # ✅ comprobar si ya le sigue (en tu gestor se llama le_sigue)
     def ya_sigo_a(self, nickname_sesion: str, nickname_objetivo: str) -> bool:
         return self.gestor_usuarios.le_sigue(nickname_sesion, nickname_objetivo)
 
     # -------- POKEDEX --------
     def mostrarPokedex(self):
-        return self.gestor_Pokemon.mostrarPokedex()
+        # Aquí también hay que usar la minúscula corregida
+        return self.gestor_pokemon.mostrarPokedex()
 
     # -------- POKEMON --------
     def mostrarPokemon(self, nombrePokemon):
-        return self.gestor_Pokemon.mostrarPokemon(nombrePokemon)
+        return self.gestor_pokemon.mostrarPokemon(nombrePokemon)
 
     def obtener_pokemon_por_id(self, pokedex_id):
-        return self.gestor_Pokemon.obtener_pokemon_por_id(pokedex_id)
+        return self.gestor_pokemon.obtener_pokemon_por_id(pokedex_id)
 
      # -------- NOTIFICACIONES --------
-
     def mostrarNotificaciones(self,nickname):
         return self.gestor_usuarios.mostrar_Notificaciones(nickname)
 
     def crear_notificacion(self, nickname, mensaje):
         return self.gestor_usuarios.crear_notificacion(nickname, mensaje)
 
-    # -------- SEGUIDORES --------
+    # -------- SEGUIDORES / SEGUIDOS --------
     def cargar_seguidores(self, nickname_sesion: str) -> list:
         return self.gestor_usuarios.cargar_seguidores(nickname_sesion)
 
     def eliminar_seguidor(self, nickname_sesion: str, seguidor: str) -> bool:
         return self.gestor_usuarios.eliminar_seguidor(nickname_sesion, seguidor)
 
-    # -------- SEGUIDOS --------
     def cargar_seguidos(self, nickname_sesion: str) -> list:
         return self.gestor_usuarios.cargar_seguidos(nickname_sesion)
 
@@ -144,7 +116,8 @@ class Pokedex:
 
     def contar_pokemons(self, id_equipo):
         return self.gestor_equipos.contar_pokemons(id_equipo)
+
     # --- MÉTODO DEL CHATBOT ---
     def solicitarConsultaCB(self, mensaje_usuario):
-        # Delegamos la lógica al gestor
+        # Delegamos la lógica al gestor (ahora coincide con el init)
         return self.gestor_pokemon.procesar_mensaje_chatbot(mensaje_usuario)
