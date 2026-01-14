@@ -6,97 +6,142 @@
 {% block content %}
 
 <style>
-    body::before {
-        content: "";
-        position: fixed;
-        top: 0;
-        left: 0;
-        width: 100%;
-        height: 100%;
-        z-index: -1;
-        background-image: url("{{ url_for('static', filename='img/fondos/fondo_1.png') }}");
-        background-size: cover;
-        background-position: center;
-        background-repeat: no-repeat;
-    }
+  body::before {
+    content: "";
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    z-index: -1;
+    background-image: url("{{ url_for('static', filename='img/fondos/fondo_1.png') }}");
+    background-size: cover;
+    background-position: center;
+    background-repeat: no-repeat;
+  }
 
-    body, .main-viewport, .bg-pokedex {
-        background: transparent !important;
-        background-color: transparent !important;
-    }
+  body, .main-viewport, .bg-pokedex {
+    background: transparent !important;
+    background-color: transparent !important;
+  }
+
+  /* ====== NOMBRE + ESTRELLA EN LA MISMA LINEA ====== */
+  .name-row{
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+  }
+
+  .fav-form{
+    display: inline-flex;
+    margin: 0 !important;
+    padding: 0 !important;
+  }
+
+  .fav-btn{
+    background: none !important;
+    border: none !important;
+    cursor: pointer;
+
+    padding: 0 !important;
+    margin: 0 !important;
+
+    font-size: 26px !important;
+    line-height: 1 !important;
+
+    font-family: system-ui, "Segoe UI Emoji", "Apple Color Emoji", "Noto Color Emoji", sans-serif !important;
+
+    color: #ffcc00;
+    text-shadow: 0 2px 0 rgba(0,0,0,0.10);
+    transform: translateY(1px);
+  }
+
+  .fav-btn:hover{
+    transform: translateY(1px) scale(1.15);
+  }
 </style>
 
 <link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap" rel="stylesheet">
 
-
 <div class="pokedex-layout">
-    <div class="pokedex-container">
+  <div class="pokedex-container">
 
-        <div class="pokedex-header">
-        <h1 class="pokedex-title">Pokédex</h1>
+    <div class="pokedex-header">
+      <h1 class="pokedex-title">Pokédex</h1>
 
-        <form method="GET" class="pokedex-filters">
-            <input
-                type="text"
-                name="nombre"
-                class="filter-input"
-                placeholder="Nombre"
-                value="{{ request.args.get('nombre', '') }}"
-            >
+      <form method="GET" class="pokedex-filters">
+        <input
+          type="text"
+          name="nombre"
+          class="filter-input"
+          placeholder="Nombre"
+          value="{{ request.args.get('nombre', '') }}"
+        >
 
-            <select name="tipo" class="filter-input">
-                <option value="">Todos los tipos</option>
+        <select name="tipo" class="filter-input">
+          <option value="">Todos los tipos</option>
 
-                <option value="Normal" {% if request.args.get('tipo') == 'Normal' %}selected{% endif %}>Normal</option>
-                <option value="Fire" {% if request.args.get('tipo') == 'Fire' %}selected{% endif %}>Fuego</option>
-                <option value="Water" {% if request.args.get('tipo') == 'Water' %}selected{% endif %}>Agua</option>
-                <option value="Grass" {% if request.args.get('tipo') == 'Grass' %}selected{% endif %}>Planta</option>
-                <option value="Electric" {% if request.args.get('tipo') == 'Electric' %}selected{% endif %}>Eléctrico</option>
-                <option value="Ice" {% if request.args.get('tipo') == 'Ice' %}selected{% endif %}>Hielo</option>
-                <option value="Fighting" {% if request.args.get('tipo') == 'Fighting' %}selected{% endif %}>Lucha</option>
-                <option value="Poison" {% if request.args.get('tipo') == 'Poison' %}selected{% endif %}>Veneno</option>
-                <option value="Ground" {% if request.args.get('tipo') == 'Ground' %}selected{% endif %}>Tierra</option>
-                <option value="Flying" {% if request.args.get('tipo') == 'Flying' %}selected{% endif %}>Volador</option>
-                <option value="Psychic" {% if request.args.get('tipo') == 'Psychic' %}selected{% endif %}>Psíquico</option>
-                <option value="Bug" {% if request.args.get('tipo') == 'Bug' %}selected{% endif %}>Bicho</option>
-                <option value="Rock" {% if request.args.get('tipo') == 'Rock' %}selected{% endif %}>Roca</option>
-                <option value="Ghost" {% if request.args.get('tipo') == 'Ghost' %}selected{% endif %}>Fantasma</option>
-                <option value="Dragon" {% if request.args.get('tipo') == 'Dragon' %}selected{% endif %}>Dragón</option>
-                <option value="Dark" {% if request.args.get('tipo') == 'Dark' %}selected{% endif %}>Siniestro</option>
-                <option value="Steel" {% if request.args.get('tipo') == 'Steel' %}selected{% endif %}>Acero</option>
-                <option value="Fairy" {% if request.args.get('tipo') == 'Fairy' %}selected{% endif %}>Hada</option>
-            </select>
+          <option value="Normal" {% if request.args.get('tipo') == 'Normal' %}selected{% endif %}>Normal</option>
+          <option value="Fire" {% if request.args.get('tipo') == 'Fire' %}selected{% endif %}>Fuego</option>
+          <option value="Water" {% if request.args.get('tipo') == 'Water' %}selected{% endif %}>Agua</option>
+          <option value="Grass" {% if request.args.get('tipo') == 'Grass' %}selected{% endif %}>Planta</option>
+          <option value="Electric" {% if request.args.get('tipo') == 'Electric' %}selected{% endif %}>Eléctrico</option>
+          <option value="Ice" {% if request.args.get('tipo') == 'Ice' %}selected{% endif %}>Hielo</option>
+          <option value="Fighting" {% if request.args.get('tipo') == 'Fighting' %}selected{% endif %}>Lucha</option>
+          <option value="Poison" {% if request.args.get('tipo') == 'Poison' %}selected{% endif %}>Veneno</option>
+          <option value="Ground" {% if request.args.get('tipo') == 'Ground' %}selected{% endif %}>Tierra</option>
+          <option value="Flying" {% if request.args.get('tipo') == 'Flying' %}selected{% endif %}>Volador</option>
+          <option value="Psychic" {% if request.args.get('tipo') == 'Psychic' %}selected{% endif %}>Psíquico</option>
+          <option value="Bug" {% if request.args.get('tipo') == 'Bug' %}selected{% endif %}>Bicho</option>
+          <option value="Rock" {% if request.args.get('tipo') == 'Rock' %}selected{% endif %}>Roca</option>
+          <option value="Ghost" {% if request.args.get('tipo') == 'Ghost' %}selected{% endif %}>Fantasma</option>
+          <option value="Dragon" {% if request.args.get('tipo') == 'Dragon' %}selected{% endif %}>Dragón</option>
+          <option value="Dark" {% if request.args.get('tipo') == 'Dark' %}selected{% endif %}>Siniestro</option>
+          <option value="Steel" {% if request.args.get('tipo') == 'Steel' %}selected{% endif %}>Acero</option>
+          <option value="Fairy" {% if request.args.get('tipo') == 'Fairy' %}selected{% endif %}>Hada</option>
+        </select>
 
-
-            <button type="submit" class="btn-filtrar">Buscar</button>
-        </form>
-        </div>
-
-        <div class="pokedex-grid teams-list">
-            {% for pokemon in pokemons %}
-            <div class="pokemon-card">
-                <span class="pokemon-number">
-                    #{{ pokemon.pokedexID }}
-                </span>
-
-                <img
-                    src="{{ pokemon.imagen }}"
-                    alt="{{ pokemon.nombrePokemon }}"
-                    class="pokemon-img"
-                >
-
-                <p class="pokemon-name">
-                    <a href="{{ url_for('pokedex.mostrarPokemon', nombrePokemon=pokemon.nombrePokemon) }}">
-                        {{ pokemon.nombrePokemon }}
-                    </a>
-                </p>
-            </div>
-            {% endfor %}
-        </div>
-
+        <button type="submit" class="btn-filtrar">Buscar</button>
+      </form>
     </div>
+
+    <div class="pokedex-grid teams-list">
+      {% for pokemon in pokemons %}
+      <div class="pokemon-card">
+        <span class="pokemon-number">#{{ pokemon.pokedexID }}</span>
+
+        <img
+          src="{{ pokemon.imagen }}"
+          alt="{{ pokemon.nombrePokemon }}"
+          class="pokemon-img"
+        >
+
+        <p class="pokemon-name">
+          <span class="name-row">
+            <a href="{{ url_for('pokedex.mostrarPokemon', nombrePokemon=pokemon.nombrePokemon) }}">
+              {{ pokemon.nombrePokemon }}
+            </a>
+
+            <!-- ⭐ Favorito (★ si esFavorito, ☆ si no) -->
+            <form class="fav-form"
+                  method="POST"
+                  action="{{ url_for('pokedex.anadir_favorito', nombrePokemon=pokemon.nombrePokemon) }}">
+              <!-- mantener filtros -->
+              <input type="hidden" name="nombre" value="{{ request.args.get('nombre', '') }}">
+              <input type="hidden" name="tipo" value="{{ request.args.get('tipo', '') }}">
+
+              <button class="fav-btn" type="submit" title="Favorito">
+                {% if pokemon.esFavorito %}★{% else %}☆{% endif %}
+              </button>
+            </form>
+          </span>
+        </p>
+      </div>
+      {% endfor %}
+    </div>
+
+  </div>
 </div>
-
-
 
 {% endblock %}

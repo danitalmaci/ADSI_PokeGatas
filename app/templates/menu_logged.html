@@ -8,24 +8,19 @@
 <link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap" rel="stylesheet">
 
 <style>
-  /* Evita fondo gris del viewport */
-  .main-viewport {
-    background: transparent !important;
-  }
+  .main-viewport { background: transparent !important; }
 
-  /* ====== WRAPPER DERECHA (estilo mock) ====== */
   .mock-wrap {
     position: relative;
     width: min(980px, 92vw);
-    height: 520px;              /* ajusta si quieres más alto */
+    height: 520px;
     margin: 30px auto 0;
   }
 
-  /* “Pokedex” pill arriba */
   .mock-title-pill {
     position: absolute;
     top: -18px;
-    left: 120px;                /* 🔥 mueve a izquierda/derecha para calcar */
+    left: 120px;
     background: rgba(255, 158, 181, 0.55);
     color: rgba(255,255,255,0.95);
     padding: 16px 28px;
@@ -38,7 +33,6 @@
     user-select: none;
   }
 
-  /* Icono arriba derecha (solo decorativo como en el mock) */
   .mock-top-icon {
     position: absolute;
     top: -10px;
@@ -52,17 +46,12 @@
     justify-content: center;
     z-index: 3;
   }
-  .mock-top-icon span{
-    font-size: 34px;
-    line-height: 1;
-    opacity: .95;
-  }
+  .mock-top-icon span{ font-size: 34px; line-height: 1; opacity: .95; }
 
-  /* Panel rosa grande */
   .mock-panel {
     position: absolute;
     top: 40px;
-    left: 80px;                 /* 🔥 mueve para calcar a tu marco negro */
+    left: 80px;
     right: 30px;
     bottom: 20px;
     background: rgba(255, 158, 181, 0.72);
@@ -72,7 +61,6 @@
     box-sizing: border-box;
   }
 
-  /* Píldora “Filtrar” dentro del panel, arriba derecha */
   .mock-filter-pill {
     position: absolute;
     top: 14px;
@@ -86,59 +74,56 @@
     user-select: none;
   }
 
-  /* Zona scroll (contenido) */
   .mock-scroll {
     position: absolute;
-    top: 62px;                  /* deja sitio para el “Filtrar” */
+    top: 62px;
     left: 22px;
     right: 18px;
     bottom: 18px;
     overflow-y: auto;
-    padding-right: 18px;        /* espacio para scrollbar */
+    padding-right: 18px;
     box-sizing: border-box;
   }
 
-  /* Scrollbar blanco a la derecha (como mock) */
   .mock-scroll::-webkit-scrollbar { width: 10px; }
-  .mock-scroll::-webkit-scrollbar-track {
-    background: rgba(255,255,255,0.18);
-    border-radius: 10px;
-  }
-  .mock-scroll::-webkit-scrollbar-thumb {
-    background: rgba(255,255,255,0.75);
-    border-radius: 10px;
-  }
+  .mock-scroll::-webkit-scrollbar-track { background: rgba(255,255,255,0.18); border-radius: 10px; }
+  .mock-scroll::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.75); border-radius: 10px; }
 
-  /* Grid de 3x2 como el mock (pero se adapta si hay más) */
   .mock-grid {
     display: grid;
     grid-template-columns: repeat(3, 1fr);
     gap: 22px;
   }
 
-  /* Tarjeta cuadrada redondeada */
+  /* 🔥 ahora .mock-card es un contenedor, y el link es una capa */
   .mock-card {
     background: rgba(255,255,255,0.42);
     border-radius: 22px;
-    height: 160px;              /* tamaño “mock” */
+    height: 160px;
     display: flex;
     align-items: center;
     justify-content: center;
     overflow: hidden;
     position: relative;
-    text-decoration: none;
   }
 
-  /* Imagen del pokémon centrada */
+  /* capa clicable para abrir detalle */
+  .mock-card-link{
+    position: absolute;
+    inset: 0;
+    text-decoration: none;
+    z-index: 1;
+  }
+
   .mock-card img {
     width: 96px;
     height: 96px;
     object-fit: contain;
     image-rendering: pixelated;
     filter: drop-shadow(0 4px 0 rgba(0,0,0,0.08));
+    z-index: 0;
   }
 
-  /* ✅ Número arriba izquierda */
   .mock-number {
     position: absolute;
     top: 10px;
@@ -148,21 +133,52 @@
     color: #ff6ea0;
     opacity: 0.9;
     pointer-events: none;
+    z-index: 2;
   }
 
-  /* ✅ Nombre abajo */
-  .mock-name {
+  /* ✅ FILA inferior: nombre + estrella AL LADO */
+  .mock-name-row{
     position: absolute;
     bottom: 12px;
-    width: 100%;
-    text-align: center;
+    left: 50%;
+    transform: translateX(-50%);
+    display: inline-flex;
+    align-items: center;
+    gap: 10px;
+    z-index: 3;
+    white-space: nowrap;
+  }
+
+  .mock-name-text{
     font-family: "Press Start 2P", system-ui, sans-serif;
     font-size: 13px;
     color: #ff6ea0;
     pointer-events: none;
   }
 
-  /* Ajuste responsive */
+  /* ⭐ Form + botón estrella */
+  .fav-form{ margin: 0; z-index: 3; }
+
+  .fav-btn{
+    background: none;
+    border: none;
+    cursor: pointer;
+    padding: 0 !important;
+    margin: 0 !important;
+
+    font-size: 28px !important;   /* 🔥 más grande (y vence tu style.css global) */
+    line-height: 1 !important;
+
+    color: #ffcc00;
+    text-shadow: 0 2px 0 rgba(0,0,0,0.10);
+    transform: translateY(1px);
+  }
+
+  .fav-btn:hover{ transform: translateY(1px) scale(1.15); }
+
+  /* para que al pulsar la estrella no se active el link debajo */
+  .fav-form, .fav-btn{ position: relative; z-index: 4; }
+
   @media (max-width: 900px) {
     .mock-wrap { height: 520px; }
     .mock-title-pill { left: 24px; font-size: 26px; padding: 14px 20px; }
@@ -175,7 +191,6 @@
   }
 </style>
 
-<!-- MENÚ LATERAL SIEMPRE VISIBLE -->
 <nav class="side-menu active" aria-label="Menú lateral">
   <div class="menu-buttons">
     <a class="menu-btn" href="/perfil">Perfil</a>
@@ -186,17 +201,13 @@
   </div>
 </nav>
 
-<!-- CONTENIDO PRINCIPAL -->
 <div class="app-interface">
   <div class="main-viewport shifted">
 
-    <!-- ===== MOCK POKEDEX (como la primera foto) ===== -->
     <div class="mock-wrap">
-
       <div class="mock-title-pill">Pokedex</div>
 
       <div class="mock-top-icon" aria-hidden="true">
-        <!-- si quieres poner una imagen, cambia el span por un <img> -->
         <span>☺</span>
       </div>
 
@@ -206,15 +217,35 @@
         <div class="mock-scroll">
           <div class="mock-grid">
             {% for pokemon in pokemons %}
-              <a class="mock-card" href="{{ url_for('pokedex.mostrarPokemon', nombrePokemon=pokemon.nombrePokemon) }}">
+
+              <div class="mock-card">
+
+                <!-- link a detalle (capa inferior) -->
+                <a class="mock-card-link"
+                   href="{{ url_for('pokedex.mostrarPokemon', nombrePokemon=pokemon.nombrePokemon) }}"
+                   aria-label="Ver {{ pokemon.nombrePokemon }}"></a>
 
                 <div class="mock-number">#{{ pokemon.pokedexID }}</div>
 
                 <img src="{{ pokemon.imagen }}" alt="{{ pokemon.nombrePokemon }}">
 
-                <div class="mock-name">{{ pokemon.nombrePokemon }}</div>
+                <!-- ✅ nombre + estrella al lado -->
+                <div class="mock-name-row">
+                  <span class="mock-name-text">{{ pokemon.nombrePokemon }}</span>
 
-              </a>
+                  <form class="fav-form"
+                        method="POST"
+                        action="{{ url_for('pokedex.anadir_favorito', nombrePokemon=pokemon.nombrePokemon) }}">
+                    <!-- ✅ mantener filtros -->
+                    <input type="hidden" name="nombre" value="{{ request.args.get('nombre','') }}">
+                    <input type="hidden" name="tipo" value="{{ request.args.get('tipo','') }}">
+
+                    <button class="fav-btn" type="submit" title="Añadir a favoritos">★</button>
+                  </form>
+                </div>
+
+              </div>
+
             {% endfor %}
           </div>
         </div>

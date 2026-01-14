@@ -485,6 +485,8 @@ class GestorUsuarios:
         except Exception as e:
             print(f"Error (Posible duplicado en el mismo segundo): {e}")
             return False
+        
+        
 
     # -------------------------------------------------
     # -------------------------------------------------

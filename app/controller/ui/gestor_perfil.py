@@ -9,8 +9,6 @@ def perfil_blueprint(db):
     @bp.route("/perfil", methods=["GET"])
     def perfil():
         viewer = session.get("nickname")
-
-        # TEMPORAL (para pruebas si aún no hay login real)
         if not viewer:
             viewer = "junec"
             session["nickname"] = viewer
@@ -24,7 +22,7 @@ def perfil_blueprint(db):
 
         return render_template("perfil.html", data=data)
 
-    # ✅ Ver perfil de otro usuario por nickname (GET)
+    #Ver perfil de otro usuario por nickname 
     @bp.route("/perfil/<nickname>", methods=["GET"])
     def ver_perfil_usuario(nickname):
         nickname = (nickname or "").strip()
@@ -41,7 +39,7 @@ def perfil_blueprint(db):
 
         return render_template("perfil.html", data=data)
 
-    # ✅ NUEVO: Seguir a un usuario (POST)
+    # Seguir a un usuario 
     @bp.route("/perfil/<nickname>/seguir", methods=["POST"])
     def seguir_usuario(nickname):
         nickname_objetivo = (nickname or "").strip()
@@ -63,7 +61,7 @@ def perfil_blueprint(db):
 
         return redirect(url_for("perfil.ver_perfil_usuario", nickname=nickname_objetivo))
 
-    # ✅ Ver Seguidores (GET) + buscador ?q=
+    #Ver Seguidores (GET) + buscador ?q=
     @bp.route("/seguidores", methods=["GET"])
     def ver_seguidores():
         nickname_sesion = session.get("nickname")
@@ -84,7 +82,7 @@ def perfil_blueprint(db):
 
         return render_template("seguidores.html", data=data, q=q)
 
-    # ✅ Eliminar seguidor (POST)
+    #Eliminar seguidor
     @bp.route("/seguidores/eliminar", methods=["POST"])
     def eliminar_seguidor():
         nickname_sesion = session.get("nickname")
@@ -105,7 +103,7 @@ def perfil_blueprint(db):
 
         return redirect(url_for("perfil.ver_seguidores"))
 
-    # ✅ Ver Seguidos (GET) + buscador ?q=
+    #Ver Seguidos (GET) + buscador ?q=
     @bp.route("/seguidos", methods=["GET"])
     def ver_seguidos():
         nickname_sesion = session.get("nickname")
@@ -126,7 +124,7 @@ def perfil_blueprint(db):
 
         return render_template("seguidos.html", data=data, q=q)
 
-    # ✅ Eliminar seguido (POST)
+    #Eliminar seguido (POST)
     @bp.route("/seguidos/eliminar", methods=["POST"])
     def eliminar_seguido():
         nickname_sesion = session.get("nickname")
@@ -147,8 +145,8 @@ def perfil_blueprint(db):
 
         return redirect(url_for("perfil.ver_seguidos"))
 
-    # ✅ GET: cargar pantalla actualizar
-    # ✅ POST: guardar cambios
+    # cargar pantalla actualizar
+    # guardar cambios
     @bp.route("/perfil/actualizar", methods=["GET", "POST"])
     def actualizar_perfil():
         nickname_sesion = session.get("nickname")
