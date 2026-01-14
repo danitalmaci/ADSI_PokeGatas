@@ -1,5 +1,5 @@
 {% extends 'base.html' %}
-
+{% block menu_lateral_btn %}{% endblock %}
 {% block content %}
 
 <style>
@@ -99,14 +99,6 @@
         background: white; padding: 30px; border-radius: 20px; text-align: center;
     }
 
-    .btn-back-fixed {
-        position: fixed; bottom: 20px; left: 20px;
-        background: white; width: 60px; height: 60px; border-radius: 50%;
-        display: flex; justify-content: center; align-items: center;
-        box-shadow: 0 5px 15px rgba(0,0,0,0.3); z-index: 9999;
-    }
-    .btn-back-fixed img { width: 60%; height: 60%; object-fit: contain;}
-
     .input-name-pill {
         background-color: white; color: #ff9eb5;
         padding: 10px 30px; border-radius: 30px;
@@ -196,10 +188,6 @@
     </div>
 
 </div>
-
-<a href="{{ url_for('team_bp.consultar_equipos') }}" class="btn-back-fixed">
-    <img src="{{ url_for('static', filename='img/iconos/simbolo_Volver.png') }}" alt="Volver">
-</a>
 
 <script>
     function openModal() { document.getElementById('modalAdd').style.display = 'flex'; }

@@ -304,11 +304,11 @@
   </div>
 
   {% if es_ajeno %}
-    <a class="btn-back-home" href="{{ url_for('perfil.ver_seguidores') }}" aria-label="Volver">
+    <a class="btn-back-fixed" href="{{ url_for('perfil.ver_seguidores') }}" aria-label="Volver">
       <img src="{{ url_for('static', filename='img/iconos/simbolo_Volver.png') }}" alt="Volver">
     </a>
   {% else %}
-    <a class="btn-back-home" href="/" aria-label="Volver">
+    <a class="btn-back-fixed" href="{{ url_for('pokedex.mostrarPokedex') }}" aria-label="Volver">
       <img src="{{ url_for('static', filename='img/iconos/simbolo_Volver.png') }}" alt="Volver">
     </a>
   {% endif %}

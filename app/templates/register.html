@@ -1,6 +1,31 @@
 {% extends 'base.html' %}
-
+{% block menu_lateral_btn %}{% endblock %}
 {% block content %}
+
+<style>
+    .register-container {
+        position: fixed; 
+        top: 0;
+        left: 0;
+        width: 100vw;  
+        height: 100vh; 
+        margin: 0;
+        padding: 0;
+        z-index: 50; 
+        display: flex;
+        justify-content: center;
+        align-items: center;
+    }
+
+    .register-card {
+        position: relative;
+        z-index: 51; 
+        max-height: 95vh; 
+        overflow-y: auto;
+    }
+</style>
+
+<div class="register-container bg-register">
 <div class="register-container bg-register">
   <div class="register-card">
 
@@ -26,8 +51,10 @@
           Cambiar foto
         </button>
 
-        <a class="register-back-link" href="/">Volver</a>
-      </div>
+        <a class="login-back" href="{{ url_for('home.index') }}" aria-label="Volver">
+            <img src="{{ url_for('static', filename='img/iconos/simbolo_Volver.png') }}" alt="Volver" style="width: 28px; height: 28px;">
+        </a>
+        </div>
 
       <!-- Columna derecha: formulario -->
       <form class="register-form" action="/register" method="POST">

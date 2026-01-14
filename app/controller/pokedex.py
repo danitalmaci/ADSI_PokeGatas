@@ -81,6 +81,9 @@ class Pokedex:
     def mostrarNotificaciones(self,nickname):
         return self.gestor_usuarios.mostrar_Notificaciones(nickname)
 
+    def crear_notificacion(self, nickname, mensaje):
+        return self.gestor_usuarios.crear_notificacion(nickname, mensaje)
+
     # -------- SEGUIDORES --------
     def cargar_seguidores(self, nickname_sesion: str) -> list:
         return self.gestor_usuarios.cargar_seguidores(nickname_sesion)
@@ -104,6 +107,9 @@ class Pokedex:
 
     def aprobarCuenta(self, nickname):
         return self.gestor_usuarios.aprobarCuenta(nickname)
+    
+    def borrarCuenta(self, nickname):
+        return self.gestor_usuarios.borrarCuenta(nickname)
 
     def modificarCuenta(self, **kwargs):
         return self.gestor_usuarios.update_user_admin(**kwargs)

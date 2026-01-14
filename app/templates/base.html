@@ -9,11 +9,11 @@
 <body>
 
     {# MENÚ LATERAL    #}
-    
+    {% block menu_lateral_btn %}
     <button class="hamburger-btn" id="menuToggle">
         <img src="{{ url_for('static', filename='img/iconos/simbolo_Tres_Rayas.png') }}" alt="Menu">
     </button>
-
+    {% endblock %}
     <aside class="side-menu" id="sidebar">
         <button class="close-btn" id="menuClose">×</button>
 
@@ -40,11 +40,32 @@
 
         {% with messages = get_flashed_messages(with_categories=true) %}
           {% if messages %}
-            <div class="flash-container">
-              {% for category, message in messages %}
-                 <div class="flash-message">{{ message }}</div>
-              {% endfor %}
+            <div class="toast-container">
+                {% for category, message in messages %}
+                    <div class="toast-box {{ category }}" id="toast-{{ loop.index }}">
+                        <span class="toast-text">{{ message }}</span>
+                        <button class="toast-close" onclick="cerrarToast('toast-{{ loop.index }}')">✖</button>
+                    </div>
+                {% endfor %}
             </div>
+
+            <script>
+                function cerrarToast(id) {
+                    const el = document.getElementById(id);
+                    if (el) {
+                        el.style.opacity = '0';
+                        setTimeout(() => el.remove(), 300);
+                    }
+                }
+                // Auto-cierre a los 4 segundos
+                setTimeout(() => {
+                    document.querySelectorAll('.toast-box').forEach(t => {
+                        t.style.transition = 'opacity 0.5s ease';
+                        t.style.opacity = '0';
+                        setTimeout(() => t.remove(), 500);
+                    });
+                }, 4000); 
+            </script>
           {% endif %}
         {% endwith %}
 
