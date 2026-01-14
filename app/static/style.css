@@ -1049,7 +1049,7 @@ body {
 
     height: 95vh;
     display: flex;
-    flex-direction: column;
+    flex-direction: column; 
 }
 /* TÍTULO */
 .pokedex-title {
@@ -1069,8 +1069,9 @@ body {
 /* GRID DE POKÉMON */
 .pokedex-grid {
     display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+    grid-template-columns: repeat(auto-fit, 190px);
     gap: 20px;
+    justify-content: center;
 }
 
 .teams-list {
