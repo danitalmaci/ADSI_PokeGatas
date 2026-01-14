@@ -71,14 +71,8 @@ class Pokedex:
 
     # -------- POKEMON --------
     def mostrarPokemon(self, nombrePokemon):
-<<<<<<< HEAD
         return self.gestor_Pokemon.mostrarPokemon(nombrePokemon)
-
-    def mostrarPokemon(self,nombrePokemon):
-=======
->>>>>>> 748e463cbba687c14b458d32a562db4544653ab1
-        return self.gestor_Pokemon.mostrarPokemon(nombrePokemon)
-
+    
     def obtener_pokemon_por_id(self, pokedex_id):
         return self.gestor_Pokemon.obtener_pokemon_por_id(pokedex_id)
 

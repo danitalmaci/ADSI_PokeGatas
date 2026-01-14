@@ -1114,7 +1114,6 @@ body {
 .pokemon-img {
     width: 96px;
     height: 96px;
-    image-rendering: pixelated;
     margin-top: 10px;
 }
 
