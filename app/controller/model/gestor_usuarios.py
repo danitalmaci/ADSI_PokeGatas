@@ -18,19 +18,20 @@ class GestorUsuarios:
             return 0
 
         rows = self.db.select(
-            sentence="""
-                SELECT contrasena
-                FROM Usuario
-                WHERE nombreUsuario = ?
-            """,
+            sentence="SELECT contrasena, rol FROM Usuario WHERE nombreUsuario = ?",
             parameters=[nickname]
         )
 
         if not rows:
             return 0
 
-        password_hash = rows[0]["contrasena"]
+        usuario = rows[0]
+        password_hash = usuario["contrasena"]
+        rol = usuario["rol"]
         if check_password_hash(password_hash, contrasena):
+            if rol == 0:
+                return -1 
+            
             return 1
 
         return 0
@@ -536,6 +537,17 @@ class GestorUsuarios:
         except Exception as e:
             print(f"ERROR EN PENDIENTES: {e}")
             return []
+
+    def obtener_id_por_nickname(self, nickname):
+        sql = "SELECT id FROM Usuario WHERE nombreUsuario = ?"
+        rows = self.db.select(sql, [nickname])
+        
+        if rows:
+            item = rows[0]
+            if isinstance(item, dict):
+                return item['id']
+            return item[0]
+        return None
 
     def borrarCuenta(self, nickname):
         query = "DELETE FROM Usuario WHERE nombreUsuario = ?"
