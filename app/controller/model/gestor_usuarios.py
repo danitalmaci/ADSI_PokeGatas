@@ -1,7 +1,7 @@
 # app/controller/model/gestor_usuarios.py
 from werkzeug.security import generate_password_hash, check_password_hash
 from flask import request
-
+import datetime
 
 class GestorUsuarios:
     def __init__(self, db):
@@ -435,36 +435,51 @@ class GestorUsuarios:
         return [dict(row) for row in rows]
 
     def mostrar_Notificaciones(self, nickname,):
-        nombreUsuarioSeguidor = request.args.get("usuario")
-        filtroFecha = request.args.get("fecha")
-
+        # 1. Recuperamos a quién sigue
         query_followed = "SELECT nombreUsuarioSeguido FROM Sigue WHERE nombreUsuarioSeguidor = ?"
         followed_rows = self.db.select(query_followed, (nickname,))
-        usuarios_seguidos = [row[0] for row in followed_rows]
+        usuarios_lista = [row[0] for row in followed_rows]
 
-        if not usuarios_seguidos:
+        # 2. AÑADIMOS AL PROPIO USUARIO para que vea sus notificaciones
+        if nickname not in usuarios_lista:
+            usuarios_lista.append(nickname)
+
+        if not usuarios_lista:
             return []
 
-        placeholders = ','.join(['?'] * len(usuarios_seguidos))
-        query_notif = f"""
-            SELECT nombreUsuario, fecha, info_notificacion
-            FROM Notificacion
-            WHERE nombreUsuario IN ({placeholders})
-        """
-        params = usuarios_seguidos
+        # 3. Consulta
+        placeholders = ','.join(['?'] * len(usuarios_lista))
+        
+        # Filtros
+        nombreUsuarioFiltro = request.args.get("usuario")
+        filtroFecha = request.args.get("fecha")
+        
+        query_notif = f"SELECT nombreUsuario, fecha, info_notificacion FROM Notificacion WHERE nombreUsuario IN ({placeholders})"
+        params = usuarios_lista
 
-        if nombreUsuarioSeguidor:
+        if nombreUsuarioFiltro:
             query_notif += " AND nombreUsuario = ?"
-            params.append(nombreUsuarioSeguidor)
+            params.append(nombreUsuarioFiltro)
 
         if filtroFecha:
             query_notif += " AND fecha = ?"
             params.append(filtroFecha)
+            
+        query_notif += " ORDER BY fecha DESC, rowid DESC"
 
         rows = self.db.select(query_notif, tuple(params))
         columns = ["nombreUsuario", "fecha", "info_notificacion"]
-        notif_list = [dict(zip(columns, row)) for row in rows]
-        return notif_list
+        return [dict(zip(columns, row)) for row in rows]
+
+    def crear_notificacion(self, nickname, mensaje):
+        try:
+            fecha_actual = datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+            sql = "INSERT INTO Notificacion (nombreUsuario, fecha, info_notificacion) VALUES (?, ?, ?)"
+            self.db.insert(sql, [nickname, fecha_actual, mensaje])
+            return True
+        except Exception:
+            print(f"Error (Posible duplicado en el mismo segundo): {e}")
+            return False
 
     # admin (tu código igual)
     def obtenerCuentas(self, filtro_nombre=None):

@@ -204,7 +204,7 @@
     .btn-icon:hover { transform: scale(1.1); background-color: #fff0f5; }
 
     .btn-back-fixed {
-        position: fixed; bottom: 20px; left: 20px;
+        position: absolute; bottom: 20px; left: 20px;
         background: white; width: 60px; height: 60px; border-radius: 50%;
         display: flex; justify-content: center; align-items: center;
         box-shadow: 0 5px 15px rgba(0,0,0,0.3); z-index: 9999;
@@ -239,16 +239,16 @@
 <div class="main-panel">
 
     {% with messages = get_flashed_messages(with_categories=true) %}
-      {% if messages %}
-        <div id="notificacionModal" class="modal-overlay">
-            <div class="notification-box">
-                <button class="close-modal-btn" onclick="cerrarNotificacion()">✖</button>
-                {% for category, message in messages %}
-                    <p class="notification-text">{{ message }}</p>
-                {% endfor %}
-            </div>
+        {% if messages %}
+        <div class="toast-container">
+            {% for category, message in messages %}
+                <div class="toast-box" id="toast-{{ loop.index }}">
+                    <span class="toast-text">{{ message }}</span>
+                    <button class="toast-close" onclick="cerrarToast('toast-{{ loop.index }}')">✖</button>
+                </div>
+            {% endfor %}
         </div>
-      {% endif %}
+        {% endif %}
     {% endwith %}
 
     <div class="top-bar">
@@ -294,20 +294,20 @@
                 </div>
 
                 <div class="actions-col">
-    <a href="{{ url_for('team_bp.ver_detalle_equipo', nombre_equipo=team.nombre_equipo) }}" class="btn-icon">
-        <img src="{{ url_for('static', filename='img/iconos/simbolo_ver.png') }}" alt="Ver">
-    </a>
-    
-    <a href="{{ url_for('team_bp.modificar_equipo', id_equipo=team.id) }}" class="btn-icon">
-        <img src="{{ url_for('static', filename='img/iconos/simbolo_Editar.png') }}" alt="Editar">
-    </a>
-    
-    <a href="{{ url_for('team_bp.eliminar_equipo', id_equipo=team['id']) }}" 
-        class="btn-icon" 
-        onclick="return confirm('¿Borrar este equipo?');">
-            <img src="{{ url_for('static', filename='img/iconos/simbolo_Eliminar_Rosa.png') }}" alt="Borrar">
-    </a>
-</div>
+                    <a href="{{ url_for('team_bp.ver_detalle_equipo', nombre_equipo=team.nombre_equipo) }}" class="btn-icon">
+                        <img src="{{ url_for('static', filename='img/iconos/simbolo_ver.png') }}" alt="Ver">
+                    </a>
+                    
+                    <a href="{{ url_for('team_bp.modificar_equipo', id_equipo=team.id) }}" class="btn-icon">
+                        <img src="{{ url_for('static', filename='img/iconos/simbolo_Editar.png') }}" alt="Editar">
+                    </a>
+                    
+                    <a href="{{ url_for('team_bp.eliminar_equipo', id_equipo=team['id']) }}" 
+                        class="btn-icon" 
+                        onclick="return confirm('¿Borrar este equipo?');">
+                            <img src="{{ url_for('static', filename='img/iconos/simbolo_Eliminar_Rosa.png') }}" alt="Borrar">
+                    </a>
+                </div>
             </div>
         </div>
         {% else %}
@@ -319,18 +319,30 @@
 
 </div>
 
-<a href="/" class="btn-back-fixed">
+<a href="{{ url_for('pokedex.mostrarPokedex') }}" class="btn-back-fixed">
     <img src="{{ url_for('static', filename='img/iconos/simbolo_Volver.png') }}" alt="Volver">
 </a>
 
 <script>
-    function cerrarNotificacion() {
-        const modal = document.getElementById('notificacionModal');
-        if (modal) {
-            modal.classList.add('hidden');
+    function cerrarToast(id) {
+        const el = document.getElementById(id);
+        if (el) {
+            el.style.opacity = '0';
+            setTimeout(() => el.remove(), 300);
         }
     }
+
+    // Auto-cierre a los 4 segundos
+    setTimeout(() => {
+        const toasts = document.querySelectorAll('.toast-box');
+        toasts.forEach(t => {
+            t.style.transition = 'opacity 0.5s ease';
+            t.style.opacity = '0';
+            setTimeout(() => t.remove(), 500);
+        });
+    }, 4000); 
 </script>
+
 <script>
     document.addEventListener('DOMContentLoaded', function() {
         const searchInput = document.querySelector('.search-bar');

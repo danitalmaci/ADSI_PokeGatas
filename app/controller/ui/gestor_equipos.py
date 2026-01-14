@@ -15,21 +15,30 @@ def consultar_equipos():
     
 @team_blueprint.route('/eliminar/<int:id_equipo>')
 def eliminar_equipo(id_equipo):
-        db = Connection()
-        sistema = Pokedex(db)
-        success = sistema.eliminar_equipo(id_equipo)
-        
-        if success:
-            flash("Equipo eliminado correctamente", "success")
-        else:
-            flash("Error al eliminar el equipo", "error")
-        
-        return redirect(url_for('team_bp.consultar_equipos'))
+    db = Connection()
+    sistema = Pokedex(db)
+    nickname = session.get('nickname') # Recuperamos nickname
+
+    # Obtenemos nombre para la notificación antes de borrar
+    datos = sistema.cargar_datos_equipo(id_equipo)
+    nombre_viejo = datos['nombreEquipo'] if datos else "un equipo"
+
+    success = sistema.eliminar_equipo(id_equipo)
+    
+    if success:
+        # Creamos notificación si hay nickname
+        if nickname:
+            sistema.crear_notificacion(nickname, f"Ha eliminado el equipo '{nombre_viejo}'.")
+        flash("Equipo eliminado correctamente", "success")
+    else:
+        flash("Error al eliminar el equipo", "error")
+    
+    return redirect(url_for('team_bp.consultar_equipos'))
 
 @team_blueprint.route('/crear', methods=['GET', 'POST'])
 def crear_equipo():
-    # Usamos user_id = 1 simulando el nickname
     user_id = session.get('user_id', 1)
+    nickname = session.get('nickname') # Recuperamos nickname
     
     db = Connection()
     sistema = Pokedex(db)
@@ -45,6 +54,10 @@ def crear_equipo():
         exito = sistema.crear_equipo(user_id, nombre_equipo, lista_pok)
         
         if exito:
+            # Creamos notificación
+            if nickname:
+                sistema.crear_notificacion(nickname, f"Ha creado el equipo '{nombre_equipo}' con {len(lista_pok)} Pokémon.")
+            flash("Equipo creado correctamente", "success")
             return redirect(url_for('team_bp.consultar_equipos'))
         else:
             flash("Error al crear equipo", "error")
@@ -102,12 +115,18 @@ def eliminar_pokemon(id_equipo, id_unico):
 @team_blueprint.route('/modificar/guardar/<int:id_equipo>', methods=['POST'])
 def guardar_cambios_equipo(id_equipo):
     nuevo_nombre = request.form.get('nuevoNombre')
+    nickname = session.get('nickname') # Recuperamos nickname
     
     db = Connection()
     sistema = Pokedex(db)
     
     sistema.actualizar_nombre_equipo(id_equipo, nuevo_nombre)
     
+    # Creamos notificación
+    if nickname:
+        sistema.crear_notificacion(nickname, f"Ha modificado el equipo '{nuevo_nombre}'.")
+    
+    flash("Equipo modificado correctamente", "success")
     return redirect(url_for('team_bp.consultar_equipos'))
 
 @team_blueprint.route('/modificar/seleccionar/<int:id_equipo>')
