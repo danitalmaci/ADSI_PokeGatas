@@ -7,7 +7,10 @@ team_blueprint = Blueprint('team_bp', __name__, url_prefix='/equipos')
 
 @team_blueprint.route('/')
 def consultar_equipos():
-    user_id = session.get('user_id', 1) 
+    user_id = session.get('user_id') 
+    if not user_id:
+        flash("Debes iniciar sesión para ver tus equipos", "error")
+        return redirect(url_for('users.login'))
     db = Connection()
     sistema = Pokedex(db)
     teams_data = sistema.obtener_equipos_usuario(user_id)
@@ -37,7 +40,11 @@ def eliminar_equipo(id_equipo):
 
 @team_blueprint.route('/crear', methods=['GET', 'POST'])
 def crear_equipo():
-    user_id = session.get('user_id', 1)
+    user_id = session.get('user_id')
+    if not user_id:
+        flash("Debes iniciar sesión para crear un equipo", "error")
+        return redirect(url_for('users.login'))
+    
     nickname = session.get('nickname') # Recuperamos nickname
     
     db = Connection()

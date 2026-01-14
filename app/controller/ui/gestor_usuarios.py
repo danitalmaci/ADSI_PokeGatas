@@ -21,11 +21,18 @@ def user_blueprint(db):
 
         if ok == 1:
             session['nickname'] = nickname
-            flash("Sesión iniciada correctamente.", "success")
-            return redirect('pokedex')
+            user_id = pokedex.gestor_usuarios.obtener_id_por_nickname(nickname)
+            session['user_id'] = user_id 
 
-        flash("Nickname o contraseña incorrectos.", "error")
-        return redirect(url_for('users.login'))
+            flash("Sesión iniciada correctamente.", "success")
+            return redirect('/pokedex') 
+
+        elif ok == -1:
+            flash("Tu cuenta está pendiente de aprobación por el admin.", "warning")
+            return redirect(url_for('users.login'))
+        else:
+            flash("Nickname o contraseña incorrectos.", "error")
+            return redirect(url_for('users.login'))
 
     @bp.route('/register', methods=['GET', 'POST'])
     def register():
@@ -61,4 +68,5 @@ def user_blueprint(db):
         JSON_Notificaciones = pokedex.mostrarNotificaciones(nickname)
         return render_template('notificaciones.html', notificaciones=JSON_Notificaciones)
 
+    
     return bp
