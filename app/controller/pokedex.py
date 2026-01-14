@@ -72,7 +72,7 @@ class Pokedex:
     # -------- POKEMON --------
     def mostrarPokemon(self, nombrePokemon):
         return self.gestor_Pokemon.mostrarPokemon(nombrePokemon)
-    
+
     def obtener_pokemon_por_id(self, pokedex_id):
         return self.gestor_Pokemon.obtener_pokemon_por_id(pokedex_id)
 
