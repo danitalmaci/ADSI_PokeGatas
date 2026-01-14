@@ -1914,6 +1914,61 @@ body {
     }
     .toast-close:hover { color: #ff8fab; }
 
+    /* ================================================= */
+/* ============ FAVORITOS (ESTRELLA) =============== */
+/* ================================================= */
+
+/* Contenedor nombre + estrella en una misma línea */
+.mock-name-row{
+  position: absolute;
+  bottom: 12px;
+  left: 50%;
+  transform: translateX(-50%);
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  z-index: 4;
+  white-space: nowrap;
+}
+
+/* Texto del nombre (mantiene tu fuente pixel) */
+.mock-name-text{
+  font-family: 'Press Start 2P', cursive, sans-serif !important;
+  font-size: 13px;
+  color: #ff6ea0;
+}
+
+/* El formulario no debe romper el layout */
+.fav-form{
+  margin: 0 !important;
+  padding: 0 !important;
+  display: inline-flex;
+}
+
+/* ⭐ La estrella usa fuente de EMOJI, para que se vea SIEMPRE */
+.fav-btn{
+  background: none !important;
+  border: none !important;
+  cursor: pointer;
+
+  padding: 0 !important;
+  margin: 0 !important;
+
+  font-size: 28px !important;
+  line-height: 1 !important;
+
+  font-family: system-ui, "Segoe UI Emoji", "Apple Color Emoji", "Noto Color Emoji", sans-serif !important;
+
+  color: #ffcc00;
+  text-shadow: 0 2px 0 rgba(0,0,0,0.10);
+  transform: translateY(1px);
+}
+
+.fav-btn:hover{
+  transform: translateY(1px) scale(1.15);
+}
+
+
     /* Animación de entrada suave desde la derecha */
     @keyframes slideInRight {
         from { transform: translateX(100%); opacity: 0; }
