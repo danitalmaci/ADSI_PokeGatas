@@ -481,7 +481,7 @@ class GestorUsuarios:
             sql = "INSERT INTO Notificacion (nombreUsuario, fecha, info_notificacion) VALUES (?, ?, ?)"
             self.db.insert(sql, [nickname, fecha_actual, mensaje])
             return True
-        except Exception:
+        except Exception as e:
             print(f"Error (Posible duplicado en el mismo segundo): {e}")
             return False
 
