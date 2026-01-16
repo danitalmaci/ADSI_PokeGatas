@@ -19,7 +19,7 @@ Requisitos: Python 3.12+, Flask y sqlite3.
 
 Para facilitar la corrección, se proporcionan los siguientes usuarios pre-cargados en la base de datos:
 
-| Rol | Usuario | Contraseña |
-| :--- | :--- | :--- |
-| **Administrador** | `admin_jefe` | *admin123* |
-| **Entrenador** | `ash_ketchum` | *pikachu* |
+| Avatar | Rol | Usuario | Contraseña |
+| :---: | :--- | :--- | :--- |
+| <img src="app/static/img/usuario/user4.1.png" width="50"> | **Administrador** | `admin_jefe` | *admin123* |
+| <img src="app/static/img/usuario/user3.1.png" width="50"> | **Entrenador** | `ash_ketchum` | *pikachu* |
