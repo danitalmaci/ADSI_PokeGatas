@@ -1,6 +1,7 @@
 /*esta tabla habria que revisar, es un  boceto */
 CREATE TABLE IF NOT EXISTS Usuario (
-    nombreUsuario TEXT PRIMARY KEY NOT NULL,
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    nombreUsuario TEXT UNIQUE NOT NULL,
     nombre TEXT NOT NULL,
     apellido1 TEXT NOT NULL,
     apellido2 TEXT NOT NULL,
