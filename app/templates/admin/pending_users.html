@@ -24,10 +24,12 @@
                     
                     <div class="avatar-container">
                         {% if user.foto %}
-                             <img src="{{ url_for('static', filename=user.foto.replace('static/', '')) }}" alt="Avatar">
-                        {% else %}
-                             <img src="{{ url_for('static', filename='img/avatar_placeholder.png') }}" alt="Avatar">
-                        {% endif %}
+                            <img src="{{ url_for('static', filename=user.foto.replace('static/', '')) }}" 
+                                alt="Avatar" 
+                                style="width: 100%; height: 100%; object-fit: contain;"> {% else %}
+                            <img src="{{ url_for('static', filename='img/avatar_placeholder.png') }}" 
+                                alt="Avatar" 
+                                style="width: 100%; height: 100%; object-fit: contain;"> {% endif %}
                     </div>
 
                     <div class="user-info">
