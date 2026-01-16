@@ -39,7 +39,7 @@ def anadir_usuarios():
             "mail": "boss@rocket.com",
             "nac": "2005-09-01",
             "rol": 2,
-            "foto": "static/img/usuario/user4.png"
+            "foto": "static/img/usuario/user4.1.png"
         },
         {
             "user": "ash_ketchum",
@@ -51,7 +51,7 @@ def anadir_usuarios():
             "mail": "ash@pokemon.com",
             "nac": "1997-04-01",
             "rol": 1,
-            "foto": "static/img/usuario/user3.png"
+            "foto": "static/img/usuario/user3.1.png"
         },
         {
             "user": "gary_oak",
@@ -63,7 +63,7 @@ def anadir_usuarios():
             "mail": "gary@oaklab.com",
             "nac": "1997-05-01",
             "rol": 0,
-            "foto": "static/img/usuario/user10.png"
+            "foto": "static/img/usuario/user9.1.png"
         },
         {
             "user": "jessie_rocket",
@@ -75,7 +75,7 @@ def anadir_usuarios():
             "mail": "jessie@rocket.com",
             "nac": "1995-10-12",
             "rol": 0,
-            "foto": "static/img/usuario/user5.png"
+            "foto": "static/img/usuario/user5.2.png"
         }
     ]
 

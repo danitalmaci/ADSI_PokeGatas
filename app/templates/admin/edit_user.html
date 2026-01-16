@@ -24,12 +24,14 @@
 
             <div class="current-avatar-preview">
                 {% if user.foto %}
-                    <img src="{{ url_for('static', filename=user.foto.replace('static/', '')) }}" 
-                        alt="Avatar actual" 
-                        style="width: 100%; height: 100%; object-fit: contain;"> {% else %}
-                    <img src="{{ url_for('static', filename='img/avatar_placeholder.png') }}" 
-                        alt="Avatar actual" 
-                        style="width: 100%; height: 100%; object-fit: contain;"> {% endif %}
+                    <img src="{{ url_for('static', filename=user.foto | replace('static/', '') | replace('\\', '/')) }}" 
+                        alt="Avatar de {{ user.nombreUsuario }}" 
+                        style="width: 100%; height: 100%; object-fit: contain;">
+                {% else %}
+                    <img src="{{ url_for('static', filename='img/usuario/user1.png') }}" 
+                        alt="Avatar por defecto" 
+                        style="width: 100%; height: 100%; object-fit: contain;">
+                {% endif %}
             </div>
 
             <div class="form-group">

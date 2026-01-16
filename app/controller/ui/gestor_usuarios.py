@@ -19,8 +19,10 @@ def user_blueprint(db):
 
         ok = pokedex.iniciar_sesion(nickname, contrasena)
 
-        if ok == 1:
+        if ok >= 1: # Si es 1 (Entrenador) o 2 (Admin)
             session['nickname'] = nickname
+            session['rol'] = ok
+            
             user_id = pokedex.gestor_usuarios.obtener_id_por_nickname(nickname)
             session['user_id'] = user_id 
 

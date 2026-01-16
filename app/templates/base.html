@@ -30,7 +30,9 @@
             <a href="{{ url_for('team_bp.consultar_equipos') }}" class="menu-btn">Equipos</a>
             <a href="{{ url_for('users.mostrarNotificaciones') }}" class="menu-btn">Notificaciones</a>
            
+            {% if session.get('rol') == 2 %}
             <a href="{{ url_for('admin.admin_users') }}" class="menu-btn admin">Admin</a>
+            {% endif %}
            
             <a href="{{ url_for('home.logout') }}" class="menu-btn">Cerrar Sesión</a>
         </div>

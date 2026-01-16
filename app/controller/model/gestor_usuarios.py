@@ -32,7 +32,7 @@ class GestorUsuarios:
             if rol == 0:
                 return -1 
             
-            return 1
+            return rol
 
         return 0
 
