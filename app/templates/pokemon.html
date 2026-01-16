@@ -1,0 +1,93 @@
+{% extends 'base.html' %}
+
+
+{% block page_class %}bg-pokemon{% endblock %}
+{% block title %}{{ pokemon.nombrePokemon }}{% endblock %}
+
+
+{% block content %}
+
+
+<link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap" rel="stylesheet">
+<div class="pokemon-detail">
+
+
+  <div class="pokemon-info">
+    <div class="info-panel">
+
+
+      <div class="info-grid">
+        <div>
+          <div class="info-label">Altura</div>
+          <div class="info-value">{{ pokemon.altura }} m</div>
+        </div>
+        <div>
+          <div class="info-label">Peso</div>
+          <div class="info-value">{{ pokemon.peso }} kg</div>
+        </div>
+        <div>
+          <div class="info-label">Sexo</div>
+          <div class="info-value">{{ pokemon.sexo }}</div>
+        </div>
+        <div>
+          <div class="info-label">Categoría</div>
+          <div class="info-value">{{ pokemon.nombreCategoria }}</div>
+        </div>
+      </div>
+
+
+      <div class="abilities">
+        <h4>Habilidades</h4>
+        {% for habilidad in pokemon.habilidades %}
+          <p>{{ habilidad.nombreHabilidad }}</p>
+        {% endfor %}
+      </div>
+
+
+    </div>
+
+
+   
+    <div class="stats">
+      {% set stats = ['ps','ataque','ataqueEspecial','defensa','defensaEspecial','velocidad'] %}
+      {% for stat in stats %}
+      <div class="stat">
+        <div class="stat-label">{{ stat|capitalize }}</div>
+        <div class="stat-bar">
+          <div class="stat-fill" style="width:{{ pokemon[stat] }}%"></div>
+          <span class="stat-number">{{ pokemon[stat] }}</span>
+        </div>
+      </div>
+      {% endfor %}
+    </div>
+  </div>
+
+
+  <!-- Visual del Pokémon -->
+  <div class="pokemon-visual">
+    <img src="{{ pokemon.imagen }}" class="pokemon-sprite">
+    <div class="pokemon-name">{{ pokemon.nombrePokemon }}</div>
+    <div class="pokemon-id">Nº {{ pokemon.pokedexID }}</div>
+    <div class="pokemon-type">
+      {% for tipo in pokemon.tipos %}
+        <img src="{{ url_for('static', filename=tipo.imagenTipo|replace('static/', '')) }}" class="type-icon" alt="{{ tipo.nombreTipo }}">
+      {% endfor %}
+    </div>
+  </div>
+
+
+</div>
+
+
+{% if nickname %}
+    {# OPCIÓN A: Si el usuario ESTÁ LOGUEADO -> Va a su Pokedex interna #}
+    <a href="{{ url_for('pokedex.mostrarPokedex') }}" class="btn-back-fixed">
+        <img src="{{ url_for('static', filename='img/iconos/simbolo_Volver.png') }}" alt="Volver">
+    </a>
+{% else %}
+    {# OPCIÓN B: Si NO hay usuario -> Va a la portada (Home) #}
+    <a href="{{ url_for('home.index') }}" class="btn-back-fixed">
+        <img src="{{ url_for('static', filename='img/iconos/simbolo_Volver.png') }}" alt="Volver">
+    </a>
+{% endif %}
+{% endblock %}

@@ -1,0 +1,186 @@
+{% extends 'base.html' %}
+{% block menu_lateral_btn %}{% endblock %}
+{% block content %}
+
+<style>
+    .register-container {
+        position: fixed; 
+        top: 0;
+        left: 0;
+        width: 100vw;  
+        height: 100vh; 
+        margin: 0;
+        padding: 0;
+        z-index: 50; 
+        display: flex;
+        justify-content: center;
+        align-items: center;
+    }
+
+    .register-card {
+        position: relative;
+        z-index: 51; 
+        max-height: 95vh; 
+        overflow-y: auto;
+    }
+</style>
+
+<div class="register-container bg-register">
+  <div class="register-card">
+
+    <div class="register-header">
+      <div class="register-title-pill">Crear Cuenta</div>
+    </div>
+
+    <div class="register-body">
+
+      <!-- Columna izquierda: avatar + cambiar foto -->
+      <div class="register-left">
+        <div class="register-avatar-box" style="overflow: hidden; display: flex; align-items: center; justify-content: center;">
+          <img
+            id="avatarPreview"
+            class="register-avatar-img"
+            src="{{ url_for('static', filename='img/usuario/user3.png') }}"
+            alt="Avatar"
+            style="width: 100%; height: 100%; object-fit: contain;"
+          />
+        </div>
+
+        <!-- Botón: abre modal -->
+        <button type="button" id="openAvatarModal" class="register-change-photo-pill">
+          Cambiar foto
+        </button>
+
+        <a class="login-back" href="{{ url_for('home.index') }}" aria-label="Volver">
+            <img src="{{ url_for('static', filename='img/iconos/simbolo_Volver.png') }}" alt="Volver" style="width: 28px; height: 28px;">
+        </a>
+        </div>
+
+      <!-- Columna derecha: formulario -->
+      <form class="register-form" action="/register" method="POST">
+        <!-- ✅ Aquí se guarda la ruta elegida para enviarla al backend -->
+        <input
+          type="hidden"
+          name="foto"
+          id="fotoInput"
+          value="{{ url_for('static', filename='img/usuario/user3.png') }}"
+        >
+
+        <div class="register-grid">
+          <input class="form-control-pill" type="text" name="nombre" placeholder="Nombre" required>
+          <input class="form-control-pill" type="text" name="apellido1" placeholder="1er Apellido" required>
+          <input class="form-control-pill" type="text" name="apellido2" placeholder="2º Apellido" required>
+
+          <!-- IMPORTANTE: nickname -->
+          <input class="form-control-pill" type="text" name="nickname" placeholder="Nombre de Usuario" required>
+
+          <input class="form-control-pill" type="date" name="fecha_nacimiento" required>
+
+          <input class="form-control-pill" type="email" name="correo" placeholder="Dirección correo" required>
+
+          <!-- IMPORTANTE: contrasena (mínimo 8) -->
+          <input class="form-control-pill" type="password" name="contrasena" placeholder="Contraseña (mín. 8)" required>
+
+          <input class="form-control-pill" type="text" name="descripcion" placeholder="Descripción">
+        </div>
+
+        <div class="register-actions">
+          <button class="menu-btn" type="submit" style="width: 200px; border: none;">
+            Crear Cuenta
+          </button>
+        </div>
+      </form>
+
+    </div>
+  </div>
+</div>
+
+<!-- ========================= -->
+<!-- ========== MODAL ========= -->
+<!-- ========================= -->
+<div id="avatarModal" class="avatar-modal-overlay" aria-hidden="true">
+  <div class="avatar-modal">
+    <div class="avatar-modal-header">
+      <div class="avatar-modal-title">Elige tu avatar</div>
+      <button type="button" id="closeAvatarModal" class="avatar-modal-close">×</button>
+    </div>
+
+    <div class="avatar-grid">
+      {% set lista_avatares = [
+          'user1.png',
+          'user2.1.png', 'user2.2.png',
+          'user3.1.png', 'user3.2.png',
+          'user4.1.png', 'user4.2.png',
+          'user5.1.png', 'user5.2.png',
+          'user6.1.png', 'user6.2.png',
+          'user7.1.png', 'user7.2.png',
+          'user8.1.png', 'user8.2.png',
+          'user9.1.png', 'user9.2.png'
+      ] %}
+
+      {% for img_name in lista_avatares %}
+        <button
+          type="button"
+          class="avatar-option"
+          data-avatar="{{ url_for('static', filename='img/usuario/' ~ img_name) }}"
+          style="background: white; border: 1px solid #ddd; border-radius: 10px; padding: 5px;"
+        >
+          <img
+            src="{{ url_for('static', filename='img/usuario/' ~ img_name) }}"
+            alt="Avatar"
+            style="width: 100%; height: 80px; object-fit: contain;"
+          >
+        </button>
+      {% endfor %}
+    </div>
+  </div>
+</div>
+
+<!-- ========================= -->
+<!-- ========== JS ============ -->
+<!-- ========================= -->
+<script>
+  (function () {
+    const modal = document.getElementById("avatarModal");
+    const openBtn = document.getElementById("openAvatarModal");
+    const closeBtn = document.getElementById("closeAvatarModal");
+    const preview = document.getElementById("avatarPreview");
+    const fotoInput = document.getElementById("fotoInput");
+
+    function openModal() {
+      modal.classList.add("active");
+      modal.setAttribute("aria-hidden", "false");
+    }
+
+    function closeModal() {
+      modal.classList.remove("active");
+      modal.setAttribute("aria-hidden", "true");
+    }
+
+    openBtn.addEventListener("click", openModal);
+    closeBtn.addEventListener("click", closeModal);
+
+    // Cerrar si click fuera de la caja
+    modal.addEventListener("click", (e) => {
+      if (e.target === modal) closeModal();
+    });
+
+    // Elegir avatar
+    document.querySelectorAll(".avatar-option").forEach(btn => {
+      btn.addEventListener("click", () => {
+        const avatarUrl = btn.getAttribute("data-avatar");
+        preview.src = avatarUrl;
+        fotoInput.value = avatarUrl; // ✅ se enviará al backend
+        closeModal();
+      });
+    });
+
+    // ESC cierra modal
+    document.addEventListener("keydown", (e) => {
+      if (e.key === "Escape" && modal.classList.contains("active")) {
+        closeModal();
+      }
+    });
+  })();
+</script>
+{% endblock %}

@@ -1,16 +1,25 @@
-# Biblioteca MVC con Flask y SQLite
+# Pokedex MVC con Flask y SQLite
 
-Un pequeño ejemplo sobre como aplicar el patrón MVC tal y como se ha visto en clase. 
-El ejemplo consiste en un sistema simple de biblioteca que permite:
+Pokedex para la asignatura de Análisis y Diseño de Sistemas de Información elaborado por el grupo **PokeGatas**, compuesto por:
 
-- Gestionar usuarios y libros
-- Crear y devolver préstamos
-- Controlar el stock de libros dinámicamente
+* Daniel Talmaci
+* June Castro
+* Ivan Herrera
+* Lou Marine Gomez
+* David Miguez
 
-Para el proyecto es necesario utilizar la versión 3.12 de Python y la libreria sqlite3.
+## 📋 Descripción
+Este proyecto implementa una aplicación web basada en el patrón de arquitectura **MVC (Modelo-Vista-Controlador)** utilizando Python, Flask y SQLite. Permite la gestión de usuarios, visualización de Pokémon, creación de equipos y administración del sistema.
 
-Algunas webs que os pueden ayudar:
-- https://www.jetbrains.com/help/pycharm/quick-start-with-database-functionality.html
-- https://plataforma.josedomingo.org/pledin/cursos/flask/curso/u05/index.html
-- https://blog.miguelgrinberg.com/post/the-flask-mega-tutorial-part-i-hello-world
-- https://www.desarrollolibre.net/blog/flask/sesion-en-flask
+Al iniciarla, se inicia automáticamente el volcado de la Pokedex a la base de datos, pero hemos subido los datos pre-cargados para poder usarla inmediatamente. Si se quiere revisar esa opción, borrar archivo *database.sqlite* y re-lanzar la Pokedex.
+
+Requisitos: Python 3.12+, Flask y sqlite3.
+
+##  Usuarios de Prueba
+
+Para facilitar la corrección, se proporcionan los siguientes usuarios pre-cargados en la base de datos:
+
+| Rol | Usuario | Contraseña |
+| :--- | :--- | :--- |
+| **Administrador** | `admin_jefe` | *admin123* |
+| **Entrenador** | `ash_ketchum` | *pikachu* |

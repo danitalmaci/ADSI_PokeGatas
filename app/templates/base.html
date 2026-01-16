@@ -2,30 +2,90 @@
 <html lang="es">
 <head>
     <meta charset="UTF-8">
-    <title>Biblioteca</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}PokeGatas App{% endblock %}</title>
     <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
 </head>
 <body>
-    <h1>Sistema de Préstamos de Biblioteca</h1>
 
-    <nav>
-        <a href="/users">Usuarios</a>
-        <a href="/books">Libros</a>
-        <a href="loans">Préstamos</a>
-    </nav>
 
-    {% with messages = get_flashed_messages(with_categories=true) %}
-        {% if messages %}
-            <ul class="messages">
-                {% for category, message in messages %}
-                    <li class="{{ category }}">{{ message }}</li>
-                {% endfor %}
-            </ul>
+    {# MENÚ LATERAL    #}
+    {% block menu_lateral_btn %}
+        {% if session.get('nickname') %}
+            <button class="hamburger-btn" id="menuToggle">
+                <img src="{{ url_for('static', filename='img/iconos/simbolo_Tres_Rayas.png') }}" alt="Menu">
+            </button>
         {% endif %}
-    {% endwith %}
+    {% endblock %}
+    <aside class="side-menu" id="sidebar">
+        <button class="close-btn" id="menuClose">×</button>
 
-    <hr>
 
-    {% block content %}{% endblock %}
+        <div class="menu-buttons">
+            <a href="{{ url_for('pokedex.mostrarPokedex') }}" class="menu-btn">Pokedex</a>
+            <a href="{{ url_for('chatbot.chatbot') }}" class="menu-btn">Service-Ball</a>
+           
+            <a href="{{ url_for('perfil.perfil') }}" class="menu-btn">Perfil</a>
+           
+            <a href="{{ url_for('team_bp.consultar_equipos') }}" class="menu-btn">Equipos</a>
+            <a href="{{ url_for('users.mostrarNotificaciones') }}" class="menu-btn">Notificaciones</a>
+           
+            {% if session.get('rol') == 2 %}
+            <a href="{{ url_for('admin.admin_users') }}" class="menu-btn admin">Admin</a>
+            {% endif %}
+           
+            <a href="{{ url_for('home.logout') }}" class="menu-btn">Cerrar Sesión</a>
+        </div>
+    </aside>
+
+
+
+
+    {# CONTENIDO PRINCIPAL#}
+
+
+   
+    <main class="main-content main-viewport {% block page_class %}{% endblock %}" id="mainContent">
+
+
+        {% with messages = get_flashed_messages(with_categories=true) %}
+          {% if messages %}
+            <div class="toast-container">
+                {% for category, message in messages %}
+                    <div class="toast-box {{ category }}" id="toast-{{ loop.index }}">
+                        <span class="toast-text">{{ message }}</span>
+                        <button class="toast-close" onclick="cerrarToast('toast-{{ loop.index }}')">✖</button>
+                    </div>
+                {% endfor %}
+            </div>
+
+
+            <script>
+                function cerrarToast(id) {
+                    const el = document.getElementById(id);
+                    if (el) {
+                        el.style.opacity = '0';
+                        setTimeout(() => el.remove(), 300);
+                    }
+                }
+                // Auto-cierre a los 4 segundos
+                setTimeout(() => {
+                    document.querySelectorAll('.toast-box').forEach(t => {
+                        t.style.transition = 'opacity 0.5s ease';
+                        t.style.opacity = '0';
+                        setTimeout(() => t.remove(), 500);
+                    });
+                }, 4000);
+            </script>
+          {% endif %}
+        {% endwith %}
+
+
+        {% block content %}{% endblock %}
+
+
+    </main>
+   
+    <script src="{{ url_for('static', filename='js/main.js') }}"></script>
 </body>
 </html>

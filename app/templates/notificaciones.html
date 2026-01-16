@@ -1,0 +1,237 @@
+{% extends 'base.html' %}
+
+{% block content %}
+
+<style>
+    /* ====== RESET Y BODY ====== */
+    body, .main-viewport {
+        background-color: transparent !important;
+        background-image: none !important;
+        min-height: 100vh;
+        margin: 0; padding: 0;
+        font-family: 'Arial', sans-serif;
+    }
+
+    body::before {
+        content: "";
+        position: fixed;
+        top: 0; left: 0;
+        width: 100%; height: 100%;
+        z-index: -1; 
+        background-image: url("{{ url_for('static', filename='img/fondos/fondo_5.png') }}");
+        background-size: cover;
+        background-position: center;
+        background-repeat: no-repeat;
+    }
+
+    /* ====== PANEL PRINCIPAL ====== */
+    .main-panel {
+        background-color: rgba(255, 158, 181, 0.95);
+        border-radius: 40px;
+        padding: 30px 40px;
+        width: 90%; 
+        max-width: 1000px;
+        height: 85vh;
+        margin: 30px auto;
+        box-shadow: 0 15px 35px rgba(0,0,0,0.2);
+        display: flex;
+        flex-direction: column;
+        box-sizing: border-box;
+        position: relative;
+    }
+
+    /* ====== TOP BAR ====== */
+    .top-bar {
+        display: flex;
+        align-items: center;
+        gap: 20px;
+        margin-bottom: 20px;
+    }
+
+    .filtrar1 {
+        background-color: white;
+        color: #ff9eb5;
+        border-radius: 50px;
+        padding: 12px 28px;
+        font-weight: bold;
+        font-size: 1.6rem;
+        box-shadow: 0 4px 6px rgba(0,0,0,0.08);
+        text-align: center;
+        flex-shrink: 0;
+    }
+
+    .filters-form {
+        display: flex;             
+        align-items: center;
+        gap: 15px;
+        width: 100%;
+    }
+
+    .filter-input {
+        background-color: rgba(255, 255, 255, 0.9);
+        border: 2px solid #ff9eb5;
+        border-radius: 50px;
+        padding: 12px 20px;
+        font-weight: bold;
+        font-size: 1.2rem;
+        text-align: center;
+        flex: 1;
+        min-width: 150px;
+        color: #ff9eb5;
+    }
+
+    .filter-input::placeholder {
+        color: #ff9eb5;
+        opacity: 0.7;
+    }
+
+    .filter-input:focus {
+        outline: none;
+        background-color: rgba(255, 255, 255, 1);
+        border-color: #ff6b95;
+    }
+
+    .btn-filtrar {
+        background-color: #ff9eb5;
+        color: white;
+        border: none;
+        border-radius: 50px;
+        padding: 12px 28px;
+        font-weight: bold;
+        font-size: 1.2rem;
+        cursor: pointer;
+        box-shadow: 0 4px 6px rgba(0,0,0,0.08);
+        transition: transform 0.2s, background-color 0.2s;
+        flex-shrink: 0;
+    }
+
+    .btn-filtrar:hover {
+        transform: scale(1.05);
+        background-color: #ff6b95;
+    }
+
+    /* ====== NOTIFICACIONES ====== */
+    .notifications-list {
+        flex-grow: 1;
+        overflow-y: auto;
+        padding-right: 10px;
+        display: flex;
+        flex-direction: column;
+        gap: 15px;
+    }
+
+    .notification-row {
+        background-color: white;
+        border-radius: 15px;
+        padding: 15px 20px;
+        box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+    }
+
+    .notif-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 8px;
+        font-weight: bold;
+    }
+
+    .notif-user {
+        color: #ff9eb5;
+        font-size: 1.2rem;
+    }
+
+    .notif-date {
+        color: #999;
+        font-size: 1rem;
+    }
+
+    .notif-info {
+        font-size: 1rem;
+        color: #333;
+        margin-top: 5px;
+    }
+
+    /* ====== BOTÓN VOLVER ====== */
+    .btn-back-home {
+        position: absolute;
+        bottom: 20px;
+        left: 20px;
+        background: white;
+        color: #ff9eb5;
+        width: 60px;
+        height: 60px;
+        border-radius: 50%;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        font-size: 3rem;
+        text-decoration: none;
+        box-shadow: 0 5px 15px rgba(0,0,0,0.3);
+        transition: transform 0.2s;
+        z-index: 9999;
+        padding: 18px;
+        box-sizing: border-box;
+    }
+
+    .btn-back-home img {
+        width: 100%;
+        height: 100%;
+        object-fit: contain;
+    }
+
+    .btn-back-home:hover {
+        transform: scale(1.1);
+    }
+</style>
+
+
+<div class="main-panel">
+
+    <div class="top-bar">
+    <div class="filtrar1">Notificaciones</div>
+
+        <form method="GET" class="filters-form">
+            <input  
+                type="text"
+                name="usuario"
+                class="filter-input"
+                placeholder="Nombre del seguidor"
+                value="{{ request.args.get('usuario', '') }}"
+            >
+
+            <input
+                type="date"
+                name="fecha"
+                class="filter-input"
+                value="{{ request.args.get('fecha', '') }}"
+            >
+
+            <button type="submit" class="btn-filtrar">Buscar</button>
+        </form>
+    </div>
+
+
+    <div class="notifications-list">
+    {% for notif in notificaciones %}
+    <div class="notification-row">
+        <div class="notif-header">
+            <span class="notif-user">{{ notif.nombreUsuario }}</span>
+            <span class="notif-date">{{ notif.fecha }}</span>
+        </div>
+        <div class="notif-info">
+            {{ notif.info_notificacion }}
+        </div>
+    </div>
+    {% else %}
+    <div style="text-align: center; margin-top: 100px;">
+        <h2 style="font-size: 2rem; color: white;">No hay notificaciones nuevas.</h2>
+    </div>
+    {% endfor %}
+</div>
+</div>
+
+<a href="{{ url_for('pokedex.mostrarPokedex') }}" class="btn-back-fixed">
+    <img src="{{ url_for('static', filename='img/iconos/simbolo_Volver.png') }}" alt="Volver">
+</a>
+
+{% endblock %}

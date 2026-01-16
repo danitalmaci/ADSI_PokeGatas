@@ -1,0 +1,83 @@
+{% extends 'base.html' %}
+
+{% block content %}
+
+<style>
+    body, .main-viewport { background-color: transparent !important; min-height: 100vh; overflow: hidden; font-family: 'Verdana', sans-serif; }
+    .create-team-bg { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background-image: url("{{ url_for('static', filename='img/fondos/fondo_4.png') }}"); background-size: cover; z-index: -1; }
+    
+    .pokedex-wrapper { display: flex; flex-direction: column; align-items: center; height: 100vh; padding: 20px; box-sizing: border-box; gap: 15px; }
+    .title-box { background-color: rgba(255, 158, 181, 0.6); padding: 10px 60px; border-radius: 20px; color: white; font-weight: 900; font-size: 2rem; border: 2px solid rgba(255, 255, 255, 0.4); text-align: center; }
+    
+    .pokedex-card { background-color: rgba(255, 158, 181, 0.95); width: 100%; max-width: 860px; height: 75vh; border-radius: 35px; padding: 30px 40px; display: flex; flex-direction: column; position: relative; }
+    
+    .inputs-row { display: flex; justify-content: center; margin-bottom: 25px; width: 100%; }
+    .custom-input { background-color: rgba(255, 255, 255, 0.45); border: none; border-radius: 50px; padding: 10px 20px; color: white; font-weight: bold; width: 60%; outline: none; }
+    .custom-input::placeholder { color: white; opacity: 0.9; }
+
+    .pokemon-grid-container { background-color: rgba(255, 255, 255, 0.15); border-radius: 25px; padding: 20px; flex-grow: 1; overflow-y: auto; display: grid; grid-template-columns: repeat(5, 1fr); gap: 15px; }
+    .pokemon-grid-container::-webkit-scrollbar { width: 12px; }
+    .pokemon-grid-container::-webkit-scrollbar-thumb { background: white; border-radius: 10px; border: 3px solid rgba(255, 158, 181, 1); }
+
+    /* ESTILO TARJETA SELECCIONABLE */
+    .poke-card-link {
+        display: block; text-decoration: none; position: relative;
+        background-color: rgba(255, 255, 255, 0.35); border-radius: 15px;
+        aspect-ratio: 1 / 1; cursor: pointer; transition: transform 0.2s, background-color 0.2s;
+        display: flex; justify-content: center; align-items: center;
+    }
+    .poke-card-link:hover { transform: scale(1.05); background-color: rgba(255, 255, 255, 0.85); }
+    
+    .card-content { width: 100%; height: 100%; display: flex; justify-content: center; align-items: center; }
+    .poke-sprite { width: 80%; height: 80%; object-fit: contain; }
+    
+    .btn-floating { position: fixed; bottom: 20px; width: 60px; height: 60px; border-radius: 50%; display: flex; justify-content: center; align-items: center; box-shadow: 0 4px 15px rgba(0,0,0,0.2); z-index: 100; background: white; }
+    .btn-floating img { width: 100%; height: 100%; object-fit: contain; }
+    .btn-back-fixed {position: absolute; left: 20px; padding: 15px; }
+
+</style>
+
+<div class="create-team-bg"></div>
+
+<div class="pokedex-wrapper">
+    <div class="title-box">SELECCIONAR POKEMON</div>
+
+    <div class="pokedex-card">
+        <div class="inputs-row">
+            <input type="text" id="pokeSearch" class="custom-input" placeholder="Buscar Pokémon..." onkeyup="filterPokemons()">
+        </div>
+
+        <div class="pokemon-grid-container" id="pokeGrid">
+            {% for poke in pokemons %}
+            <a href="{{ url_for('team_bp.agregar_pokemon_seleccionado', id_equipo=id_equipo, pokedex_id=poke.pokedexID) }}" 
+               class="poke-card-link" 
+               title="Añadir {{ poke.nombrePokemon }}">
+                
+                <div class="card-content">
+                    <img src="{{ poke.imagen }}" class="poke-sprite" alt="{{ poke.nombrePokemon }}">
+                </div>
+                
+                <span style="display:none;" class="poke-name-hidden">{{ poke.nombrePokemon|lower }}</span>
+            </a>
+            {% endfor %}
+        </div>
+    </div>
+</div>
+
+<a href="{{ url_for('team_bp.modificar_equipo', id_equipo=id_equipo) }}" class="btn-floating btn-back-fixed">
+    <img src="{{ url_for('static', filename='img/iconos/simbolo_Volver.png') }}" alt="Volver">
+</a>
+
+<script>
+    function filterPokemons() {
+        let input = document.getElementById('pokeSearch').value.toLowerCase();
+        let cards = document.getElementsByClassName('poke-card-link');
+        for (let i = 0; i < cards.length; i++) {
+            let nameSpan = cards[i].getElementsByClassName('poke-name-hidden')[0];
+            if (nameSpan.textContent.includes(input)) cards[i].style.display = "flex";
+            else cards[i].style.display = "none";
+        }
+    }
+</script>
+
+{% endblock %}

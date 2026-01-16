@@ -1,22 +1,33 @@
 import os.path
 import sqlite3
 
+
 from flask import Flask
 
-from app.controller.ui.book_controller import book_blueprint
-from app.controller.ui.loan_controller import loan_blueprint
-from app.controller.ui.user_controlller import user_blueprint
+from app.controller.ui.gestor_usuarios import user_blueprint
+from app.controller.ui.home_controller import home_blueprint
+from app.controller.ui.chatbot_controller import chatbot_blueprint
+from app.controller.ui.gestor_admin import admin_blueprint
+from app.controller.ui.gestor_Pokemon import pokedex_blueprint
+from app.controller.ui.gestor_equipos import team_blueprint
+from app.controller.ui.gestor_perfil import perfil_blueprint
+from app.controller.ui.gestor_menu_logged import menu_logged_blueprint
+
 from app.database.connection import Connection
 from config import Config
 
 
 def init_db():
     print("Iniciando la base de datos")
-    if os.path.exists(Config.DB_PATH):
-        conn = sqlite3.connect(Config.DB_PATH)
-        with open('app/database/schema.sql') as f:
-            conn.executescript(f.read())
-        conn.close()
+
+    base_dir = os.path.dirname(os.path.abspath(__file__))
+    schema_path = os.path.join(base_dir, "database", "schema.sql")
+
+    conn = sqlite3.connect(Config.DB_PATH)
+    with open(schema_path, "r", encoding="utf-8") as f:
+        conn.executescript(f.read())
+    conn.close()
+
 
 def create_app():
     app = Flask(__name__)
@@ -28,8 +39,14 @@ def create_app():
     # Crear conexión a la base de datos
     db = Connection()
 
+    # Blueprints
+    app.register_blueprint(home_blueprint())
     app.register_blueprint(user_blueprint(db))
-    app.register_blueprint(book_blueprint(db))
-    app.register_blueprint(loan_blueprint(db))
+    app.register_blueprint(menu_logged_blueprint(db)) 
+    app.register_blueprint(perfil_blueprint(db))
+    app.register_blueprint(admin_blueprint(db))
+    app.register_blueprint(chatbot_blueprint())
+    app.register_blueprint(pokedex_blueprint(db))
+    app.register_blueprint(team_blueprint)
 
     return app

@@ -1,0 +1,197 @@
+{% extends 'base.html' %}
+{% block menu_lateral_btn %}{% endblock %}
+{% block content %}
+
+<style>
+    body, .main-viewport {
+        background-color: transparent !important;
+        background-image: none !important;
+        min-height: 100vh;
+        font-family: 'Verdana', sans-serif;
+        overflow: hidden;
+    }
+
+    .view-team-bg {
+        position: fixed;
+        top: 0; left: 0; width: 100%; height: 100%;
+        background-image: url("{{ url_for('static', filename='img/fondos/fondo_5.png') }}"); 
+        background-size: cover; background-position: center; z-index: -1;
+    }
+
+    .edit-card {
+        background-color: rgba(255, 158, 181, 0.95);
+        width: 90%;
+        max-width: 950px;
+        height: 80vh;
+        border-radius: 35px;
+        box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+        display: flex; flex-direction: column; align-items: center;
+        margin: 0 auto; position: absolute; top: 50%; left: 50%;
+        transform: translate(-50%, -50%);
+        padding: 30px 40px; box-sizing: border-box;
+    }
+
+    .header-row {
+        display: flex; justify-content: space-between; align-items: center;
+        width: 100%; margin-bottom: 30px; padding: 0 20px;
+    }
+
+    .team-name-pill {
+        background-color: white; color: #ff9eb5;
+        padding: 10px 40px; border-radius: 30px;
+        font-weight: 900; font-size: 1.5rem;
+        box-shadow: 0 4px 6px rgba(0,0,0,0.05);
+    }
+
+    .add-link {
+        color: white; font-weight: bold; text-decoration: underline;
+        font-size: 1.1rem; cursor: pointer; display: flex; align-items: center; gap: 8px;
+        background: none; border: none;
+    }
+
+    .save-text {
+        color: white; font-weight: bold; font-size: 1rem; text-decoration: underline;
+    }
+
+    .pokemon-list-grid {
+        display: grid; grid-template-columns: 1fr 1fr;
+        column-gap: 40px; row-gap: 20px;
+        width: 100%; overflow-y: auto; padding: 10px;
+    }
+    
+    .pokemon-list-grid::-webkit-scrollbar { width: 8px; }
+    .pokemon-list-grid::-webkit-scrollbar-thumb { background: white; border-radius: 10px; }
+
+    .pokemon-row-white {
+        background-color: white;
+        border-radius: 25px;
+        display: flex; align-items: center;
+        padding: 10px 15px;
+        box-shadow: 0 4px 6px rgba(0,0,0,0.05);
+        gap: 15px;
+    }
+
+    .poke-img { width: 70px; height: 70px; object-fit: contain; }
+
+    .poke-name {
+        color: #ff9eb5;
+        font-weight: bold; font-size: 1.3rem; flex-grow: 1;
+    }
+
+    .actions-container {
+        display: flex; flex-direction: column; gap: 8px;
+    }
+    
+    .action-btn {
+        background-color: #ffc2d1;
+        width: 35px; height: 35px; border-radius: 50%;
+        display: flex; justify-content: center; align-items: center;
+        text-decoration: none; border: none; cursor: pointer;
+    }
+    .action-btn:hover { background-color: #ff9eb5; }
+    .action-btn img { width: 60%; height: 60%; object-fit: contain; filter: brightness(0) invert(1); }
+
+    .add-modal {
+        display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+        background: rgba(0,0,0,0.5); justify-content: center; align-items: center; z-index: 1000;
+    }
+    .add-box {
+        background: white; padding: 30px; border-radius: 20px; text-align: center;
+    }
+
+    .input-name-pill {
+        background-color: white; color: #ff9eb5;
+        padding: 10px 30px; border-radius: 30px;
+        font-weight: 900; font-size: 1.5rem;
+        box-shadow: 0 4px 6px rgba(0,0,0,0.05);
+        border: 2px solid transparent;
+        text-align: center; width: 300px;
+    }
+    .input-name-pill:focus { outline: none; border-color: #ff9eb5; }
+
+    .save-btn {
+        background: none; border: none;
+        color: white; font-weight: bold; font-size: 1rem; text-decoration: underline;
+        cursor: pointer;
+    }
+
+    .empty-slot {
+        cursor: pointer;
+        border: 2px dashed #ff9eb5; 
+        background-color: rgba(255, 255, 255, 0.5); 
+        transition: transform 0.2s, background-color 0.2s;
+    }
+    .empty-slot:hover {
+        transform: scale(1.02);
+        background-color: white;
+    }
+
+    .poke-img-placeholder {
+        width: 70px; height: 70px; 
+        border-radius: 50%;
+        background-color: #fff(255, 158, 181, 0.15);
+        border: 2px solid #fff;
+        display: flex; justify-content: center; align-items: center;
+        flex-shrink: 0;
+    }
+
+    .poke-img-placeholder img {
+        width: 45%; height: 45%;
+        object-fit: contain;
+    }
+
+</style>
+
+<div class="view-team-bg"></div>
+
+<div class="edit-card">
+    
+    <form class="header-row" action="{{ url_for('team_bp.guardar_cambios_equipo', id_equipo=equipo.id) }}" method="POST">
+        
+        <input type="text" name="nuevoNombre" value="{{ equipo.nombreEquipo }}" class="input-name-pill" required>
+        
+        <div style="flex-grow: 1;"></div>
+
+        <button type="submit" class="save-btn">Guardar</button>
+    </form>
+
+    <div class="pokemon-list-grid">
+        {% for i in range(6) %}
+        
+            {% if i < equipo.pokemons|length %}
+                {% set poke = equipo.pokemons[i] %}
+                <div class="pokemon-row-white">
+                    <img src="{{ poke.imagen }}" class="poke-img" alt="{{ poke.nombrePokemon }}">
+                    <div class="poke-name">{{ poke.nombrePokemon }}</div>
+                    
+                    <div class="actions-container">
+                        <a href="{{ url_for('team_bp.eliminar_pokemon', id_equipo=equipo.id, id_unico=poke.id_unico) }}" 
+                           class="action-btn" onclick="return confirm('¿Eliminar?');">
+                            <img src="{{ url_for('static', filename='img/iconos/simbolo_Eliminar_Rosa.png') }}">
+                        </a>
+                    </div>
+                </div>
+
+            {% else %}
+                <a href="{{ url_for('team_bp.seleccionar_pokemon_view', id_equipo=equipo.id) }}" 
+                    class="pokemon-row-white empty-slot" 
+                    style="text-decoration: none;"> 
+                    <div class="poke-img-placeholder">
+                        <img src="{{ url_for('static', filename='img/iconos/simbolo_Añadir.png') }}" alt="Añadir">
+                    </div>
+                    
+                    <div class="poke-name" style="color: #fff; opacity: 0.8;">Añadir</div>
+                </a>
+            {% endif %}
+
+        {% endfor %}
+    </div>
+
+</div>
+
+<script>
+    function openModal() { document.getElementById('modalAdd').style.display = 'flex'; }
+    function closeModal() { document.getElementById('modalAdd').style.display = 'none'; }
+</script>
+
+{% endblock %}

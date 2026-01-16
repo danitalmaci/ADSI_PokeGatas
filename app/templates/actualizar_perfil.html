@@ -1,0 +1,212 @@
+{% extends 'base.html' %}
+
+
+{% block page_class %}bg-perfil{% endblock %}
+
+
+{% block content %}
+<div class="perfil-container">
+  <div class="perfil-card">
+
+
+    <div class="perfil-body">
+      <!-- Izquierda: avatar + cambiar foto + volver -->
+      <div class="perfil-left">
+        <div class="perfil-avatar" style="overflow: hidden; display: flex; align-items: center; justify-content: center; background: rgba(255,255,255,0.5); border-radius: 20px;">
+          {% if data.foto %}
+            <img
+              id="avatarPreview"
+              class="perfil-avatar-img"
+              src="{{ url_for('static', filename=data.foto.replace('static/', '')) }}"
+              alt="Avatar"
+              style="width: 100%; height: 100%; object-fit: contain;"
+            >
+          {% else %}
+            <img
+              id="avatarPreview"
+              class="perfil-avatar-img"
+              src="{{ url_for('static', filename='img/usuario/user1.png') }}"
+              alt="Avatar"
+              style="width: 100%; height: 100%; object-fit: contain;"
+            >
+          {% endif %}
+        </div>
+
+
+        <!-- ✅ Botón: abre modal (igual que register) -->
+        <button type="button" id="openAvatarModal" class="perfil-link" style="border:none; background:transparent;">
+          Cambiar foto
+        </button>
+
+
+        <a class="perfil-link" href="{{ url_for('perfil.perfil') }}">← Volver</a>
+      </div>
+
+
+      <!-- Derecha: formulario -->
+      <div class="perfil-right" style="width:100%;">
+        <div class="perfil-favs">
+          <div class="perfil-favs-title">Actualizar Perfil</div>
+
+
+          <form id="form-actualizar-perfil" method="POST" action="{{ url_for('perfil.actualizar_perfil') }}">
+            <!-- ✅ Hidden con la foto seleccionada -->
+            <input
+              type="hidden"
+              name="foto"
+              id="fotoInput"
+              value="{% if data.foto %}{{ url_for('static', filename=data.foto.replace('static/', '')) }}{% else %}{{ url_for('static', filename='img/usuario/user3.png') }}{% endif %}"
+            >
+
+
+            <div style="display:grid; grid-template-columns: 1fr 1fr 1fr; gap: 12px; margin-top: 14px;">
+              <input class="login-input-pill" type="text" name="nombre"
+                     value="{{ data.nombre or '' }}" placeholder="Nombre" required>
+
+
+              <input class="login-input-pill" type="text" name="apellido1"
+                     value="{{ data.apellido1 or '' }}" placeholder="1er Apellido" required>
+
+
+              <input class="login-input-pill" type="text" name="apellido2"
+                     value="{{ data.apellido2 or '' }}" placeholder="2º Apellido" required>
+            </div>
+
+
+            <div style="display:grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-top: 12px;">
+              <input class="login-input-pill" type="text" name="nuevo_nickname"
+                     value="{{ data.nickname or '' }}" placeholder="Nombre de Usuario" required>
+
+
+              <input class="login-input-pill" type="date" name="fecha_nacimiento"
+                     value="{{ data.fecha_nacimiento or '' }}" placeholder="Fecha de Nacimiento" required>
+            </div>
+
+
+            <div style="display:grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-top: 12px;">
+              <input class="login-input-pill" type="email" name="correo"
+                     value="{{ data.correo or '' }}" placeholder="Dirección correo" required>
+
+
+              <input class="login-input-pill" type="text" name="descripcion"
+                     value="{{ data.descripcion or '' }}" placeholder="Descripción">
+            </div>
+
+
+            <div style="margin-top: 14px; display:flex; justify-content:flex-end;">
+              <button class="login-action-pill" type="submit">Guardar</button>
+            </div>
+          </form>
+
+
+        </div>
+      </div>
+    </div>
+
+
+  </div>
+</div>
+
+
+<!-- ========================= -->
+<!-- ========== MODAL ========= -->
+<!-- ========================= -->
+<div id="avatarModal" class="avatar-modal-overlay" aria-hidden="true">
+  <div class="avatar-modal">
+    <div class="avatar-modal-header">
+      <div class="avatar-modal-title">Elige tu avatar</div>
+      <button type="button" id="closeAvatarModal" class="avatar-modal-close">×</button>
+    </div>
+
+
+    <div class="avatar-grid">
+      {# 1. Lista MANUAL con los nombres exactos de tus archivos #}
+      {% set lista_avatares = [
+          'user1.png',
+          'user2.1.png', 'user2.2.png',
+          'user3.1.png', 'user3.2.png',
+          'user4.1.png', 'user4.2.png',
+          'user5.1.png', 'user5.2.png',
+          'user6.1.png', 'user6.2.png',
+          'user7.1.png', 'user7.2.png',
+          'user8.1.png', 'user8.2.png',
+          'user9.1.png', 'user9.2.png'
+      ] %}
+
+
+      {# 2. Creamos los botones usando esa lista #}
+      {% for img_name in lista_avatares %}
+        <button
+          type="button"
+          class="avatar-option"
+          data-avatar="{{ url_for('static', filename='img/usuario/' ~ img_name) }}"
+          style="padding: 5px; border: 1px solid #ccc; border-radius: 10px; background: white;"
+        >
+          <img
+            src="{{ url_for('static', filename='img/usuario/' ~ img_name) }}"
+            alt="Avatar"
+            style="width: 100%; height: 80px; object-fit: contain;"
+          >
+        </button>
+      {% endfor %}
+    </div>
+  </div>
+</div>
+
+
+<!-- ========================= -->
+<!-- ========== JS ============ -->
+<!-- ========================= -->
+<script>
+  (function () {
+    const modal = document.getElementById("avatarModal");
+    const openBtn = document.getElementById("openAvatarModal");
+    const closeBtn = document.getElementById("closeAvatarModal");
+    const preview = document.getElementById("avatarPreview");
+    const fotoInput = document.getElementById("fotoInput");
+
+
+    function openModal() {
+      modal.classList.add("active");
+      modal.setAttribute("aria-hidden", "false");
+    }
+
+
+    function closeModal() {
+      modal.classList.remove("active");
+      modal.setAttribute("aria-hidden", "true");
+    }
+
+
+    openBtn.addEventListener("click", openModal);
+    closeBtn.addEventListener("click", closeModal);
+
+
+    // Cerrar si click fuera de la caja
+    modal.addEventListener("click", (e) => {
+      if (e.target === modal) closeModal();
+    });
+
+
+    // Elegir avatar
+    document.querySelectorAll(".avatar-option").forEach(btn => {
+      btn.addEventListener("click", () => {
+        const avatarUrl = btn.getAttribute("data-avatar");
+        preview.src = avatarUrl;
+        fotoInput.value = avatarUrl; // ✅ se enviará al backend
+        closeModal();
+      });
+    });
+
+
+    // ESC cierra modal
+    document.addEventListener("keydown", (e) => {
+      if (e.key === "Escape" && modal.classList.contains("active")) {
+        closeModal();
+      }
+    });
+  })();
+</script>
+{% endblock %}
+
+

@@ -1,0 +1,257 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<style>
+  body, .main-viewport {
+    background-color: transparent !important;
+    background-image: none !important;
+    min-height: 100vh;
+  }
+
+  body::before {
+    content: "";
+    position: fixed;
+    top: 0; left: 0;
+    width: 100%; height: 100%;
+    z-index: -1;
+    background-image: url("{{ url_for('static', filename='img/fondos/fondo_5.png') }}");
+    background-size: cover;
+    background-position: center;
+    background-repeat: no-repeat;
+  }
+
+  .main-panel {
+    background-color: rgba(255, 158, 181, 0.95);
+    border-radius: 40px;
+    padding: 24px 28px;
+    width: 90%;
+    max-width: 950px;
+    height: 75vh;
+    margin: 40px auto;
+    box-shadow: 0 15px 35px rgba(0,0,0,0.2);
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    box-sizing: border-box;
+  }
+
+  .top-bar {
+    display: grid;
+    grid-template-columns: 170px 1fr;
+    gap: 20px;
+    align-items: center;
+    margin-bottom: 18px;
+    flex-shrink: 0;
+  }
+
+  .pill-label {
+    background-color: white;
+    color: #ff9eb5;
+    padding: 10px 0;
+    border-radius: 50px;
+    font-weight: bold;
+    font-size: 1.2rem;
+    text-align: center;
+    box-shadow: 0 4px 6px rgba(0,0,0,0.05);
+    text-decoration: none;
+    display: block;
+  }
+
+  .search-bar {
+    background-color: rgba(255, 255, 255, 0.4);
+    border: none;
+    border-radius: 50px;
+    padding: 10px 18px;
+    color: white;
+    font-weight: bold;
+    font-size: 1.2rem;
+    text-align: center;
+    width: 100%;
+    box-sizing: border-box;
+  }
+  .search-bar::placeholder { color: white; opacity: 0.9; }
+  .search-bar:focus { outline: none; background-color: rgba(255, 255, 255, 0.6); }
+
+  .followers-list {
+    flex-grow: 1;
+    overflow-y: auto;
+    padding-right: 12px;
+    padding-left: 6px;
+  }
+
+  .followers-list::-webkit-scrollbar { width: 10px; }
+  .followers-list::-webkit-scrollbar-track {
+    background: rgba(255, 255, 255, 0.1);
+    border-radius: 10px;
+  }
+  .followers-list::-webkit-scrollbar-thumb {
+    background-color: rgba(255, 255, 255, 0.85);
+    border-radius: 10px;
+  }
+
+  .follower-row {
+    display: grid;
+    grid-template-columns: 90px 1fr 70px;
+    gap: 18px;
+    align-items: center;
+    background: rgba(255,255,255,0.35);
+    border-radius: 26px;
+    padding: 14px 18px;
+    margin-bottom: 16px;
+  }
+
+  .avatar-box {
+    width: 78px;
+    height: 78px;
+    border-radius: 18px;
+    background: rgba(255,255,255,0.85);
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    overflow:hidden;
+  }
+  .avatar-box img {
+    width: 72px;
+    height: 72px;
+    object-fit: cover;
+  }
+
+  .follower-card {
+    background: rgba(255,255,255,0.75);
+    border-radius: 24px;
+    padding: 18px 22px;
+    display: flex;
+    align-items: center;
+    gap: 26px;
+    flex-wrap: wrap;
+    min-height: 60px;
+  }
+
+  /* ✅ Ahora el nick es enlace */
+  .follower-nick a{
+    color: #ff6ea0;
+    font-weight: 800;
+    font-size: 1.2rem;
+    min-width: 120px;
+    text-decoration: none;
+  }
+  .follower-nick a:hover{
+    text-decoration: underline;
+  }
+
+  .follower-stat {
+    color: #ff6ea0;
+    font-weight: 700;
+    font-size: 1.05rem;
+  }
+
+  .btn-trash {
+    background-color: #ff6ea0;
+    border: none;
+    border-radius: 18px;
+    width: 58px;
+    height: 58px;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    cursor: pointer;
+    box-shadow: 0 4px 10px rgba(0,0,0,0.08);
+    transition: transform 0.15s;
+  }
+  .btn-trash:hover { transform: scale(1.06); }
+
+  .btn-back-home {
+    position: absolute;
+    bottom: 18px;
+    left: 18px;
+    background: white;
+    color: #ff9eb5;
+    width: 58px;
+    height: 58px;
+    border-radius: 50%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    font-size: 2.2rem;
+    text-decoration: none;
+    box-shadow: 0 5px 15px rgba(0,0,0,0.25);
+    transition: transform 0.2s;
+    z-index: 9999;
+  }
+  .btn-back-home:hover { transform: scale(1.08); }
+</style>
+
+<div class="main-panel">
+
+  <div class="top-bar">
+    <div class="pill-label">Seguidores</div>
+
+    <!-- ✅ Buscador real (GET /seguidores?q=...) -->
+    <form method="GET" action="{{ url_for('perfil.ver_seguidores') }}" style="margin:0;">
+      <input
+        class="search-bar"
+        type="text"
+        name="q"
+        placeholder="Buscar Seguidor"
+        value="{{ q|default('') }}"
+        autocomplete="off"
+      >
+    </form>
+  </div>
+
+  <div class="followers-list">
+    {% if data and data|length > 0 %}
+      {% for s in data %}
+        <div class="follower-row">
+
+          <!-- Avatar -->
+          <div class="avatar-box">
+            {% if s.fotoSeguidor %}
+              {% set ruta = s.fotoSeguidor.replace('/static/', '').replace('static/', '') %}
+              <img src="{{ url_for('static', filename=ruta) }}" alt="avatar">
+            {% else %}
+              <img src="{{ url_for('static', filename='img/usuario/user3.png') }}" alt="avatar">
+            {% endif %}
+          </div>
+
+          <!-- Tarjeta blanca con info -->
+          <div class="follower-card">
+            <div class="follower-nick">
+              <a href="{{ url_for('perfil.ver_perfil_usuario', nickname=s.nombreUsuarioSeguidor) }}">
+                {{ s.nombreUsuarioSeguidor }}
+              </a>
+            </div>
+
+            <div class="follower-stat">Seguidores: {{ s.numSeguidoresDelSeguidor }}</div>
+            <div class="follower-stat">Seguidos: {{ s.numSeguidosDelSeguidor }}</div>
+          </div>
+
+          <!-- Botón eliminar -->
+          <form method="POST" action="{{ url_for('perfil.eliminar_seguidor') }}" style="margin:0;">
+            <input type="hidden" name="seguidor" value="{{ s.nombreUsuarioSeguidor }}">
+            <button type="submit" class="btn-trash" title="Eliminar seguidor">
+              <img
+                src="{{ url_for('static', filename='img/iconos/simbolo_Eliminar_Blanco.png') }}"
+                alt="Eliminar"
+                style="width: 28px; height: 28px;"
+              >
+            </button>
+          </form>
+
+        </div>
+      {% endfor %}
+    {% else %}
+      <div style="color:white; font-weight:800; font-size:1.2rem; padding: 10px 6px;">
+        {% if q %}
+          No hay resultados para "{{ q }}".
+        {% else %}
+          No tienes seguidores todavía.
+        {% endif %}
+      </div>
+    {% endif %}
+  </div>
+
+  <a class="btn-back-home" href="{{ url_for('perfil.perfil') }}" aria-label="Volver">←</a>
+</div>
+
+{% endblock %}

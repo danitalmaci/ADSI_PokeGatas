@@ -1,0 +1,422 @@
+{% extends 'base.html' %}
+
+{% block content %}
+
+<style>
+
+    body, .main-viewport {
+        background-color: transparent !important;
+        background-image: none !important;
+        min-height: 100vh;
+    }
+
+    body::before {
+        content: "";
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        z-index: -1; 
+        background-image: url("{{ url_for('static', filename='img/fondos/fondo_5.png') }}"); 
+        background-size: cover;
+        background-position: center;
+        background-repeat: no-repeat;
+    }
+
+    body {
+        font-family: 'Arial', sans-serif;
+        margin: 0; padding: 0;
+        background-color: transparent;
+        min-height: 100vh;
+    }
+
+    .main-panel {
+        background-color: rgba(255, 158, 181, 0.95);
+        border-radius: 40px;
+        padding: 30px 40px;
+        width: 90%; 
+        max-width: 1000px;
+        height: 85vh;
+        margin: 30px auto;
+        box-shadow: 0 15px 35px rgba(0,0,0,0.2);
+        position: relative;
+        display: flex;
+        flex-direction: column;
+        box-sizing: border-box;
+    }
+
+    .top-bar {
+        display: grid;
+        grid-template-columns: 1fr 2fr 1fr;
+        gap: 20px;
+        align-items: center;
+        margin-bottom: 20px;
+        flex-shrink: 0;
+    }
+
+    .pill-label, .btn-crear {
+        background-color: white;
+        color: #ff9eb5;
+        padding: 12px 0;
+        border-radius: 50px;
+        font-weight: bold;
+        font-size: 1.3rem;
+        text-align: center;
+        box-shadow: 0 4px 6px rgba(0,0,0,0.05);
+        text-decoration: none;
+        display: block;
+    }
+
+    .search-bar {
+        background-color: rgba(255, 255, 255, 0.4);
+        border: none;
+        border-radius: 50px;
+        padding: 12px 20px;
+        color: white;
+        font-weight: bold;
+        font-size: 1.3rem;
+        text-align: center;
+        width: 100%;
+        box-sizing: border-box;
+    }
+    .search-bar::placeholder { color: white; opacity: 0.9; }
+    .search-bar:focus { outline: none; background-color: rgba(255, 255, 255, 0.6); }
+
+    .btn-crear:hover { transform: scale(1.05); color: #ff6b95; }
+
+    .teams-list {
+        flex-grow: 1;
+        overflow-y: auto;
+        padding-right: 15px;
+        padding-left: 10px;
+    }
+
+    .teams-list::-webkit-scrollbar {
+        width: 10px;
+    }
+    .teams-list::-webkit-scrollbar-track {
+        background: rgba(255, 255, 255, 0.1); 
+        border-radius: 10px;
+    }
+    .teams-list::-webkit-scrollbar-thumb {
+        background-color: rgba(255, 255, 255, 0.8); 
+        border-radius: 10px;
+    }
+
+    .team-row {
+        margin-bottom: 35px;
+    }
+
+    .team-container {
+        display: flex;
+        align-items: center; 
+        gap: 25px;
+        width: 100%;
+    }
+
+    .pokemon-box {
+        background-color: white;
+        border-radius: 45px;
+        padding: 30px; 
+        /* Flex-grow asegura que llene el espacio horizontal disponible */
+        flex-grow: 1;
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        align-items: center; /* Centra el contenido (las bolas) en la caja grande */
+        box-shadow: 0 5px 10px rgba(0,0,0,0.05);
+        min-height: 280px; /* Un poco más alto para acomodar las bolas grandes */
+    }
+
+    .rows-wrapper {
+        display: flex;
+        flex-direction: column;
+        gap: 15px; /* Espacio vertical entre filas */
+    }
+
+    .poke-row {
+        display: flex;
+        gap: 90px; /* HUECOS MUCHO MÁS GRANDES */
+    }
+
+    .poke-row.bottom {
+        /* Para el zig-zag perfecto con gap 50 y ancho 125: (125+50)/2 = 87.5px */
+        margin-left: 88px; 
+    }
+
+    .poke-circle {
+        width: 125px; /* BOLAS MÁS GRANDES */
+        height: 125px; 
+        border-radius: 50%;
+        background-color: #ff9eb5;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        overflow: hidden;
+        border: none;
+        box-shadow: inset 0 0 0 0 transparent; 
+        flex-shrink: 0;
+    }
+    
+    .poke-img {
+        width: 100%;
+        height: 100%;
+        object-fit: contain;
+        background: white;
+        border-radius: 50%;
+        border: 4px solid #ff9eb5;
+    }
+
+    .actions-col {
+        display: flex;
+        flex-direction: column;
+        gap: 50px;
+        justify-content: center;
+        justify-content: flex-start;
+        padding-top: 10px;
+    }
+
+    .btn-icon {
+        background-color: white;
+        border: none;
+        border-radius: 50%;
+        width: 60px; 
+        height: 60px;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        text-decoration: none;
+        font-size: 1.8rem;
+        color: #ff9eb5;
+        box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+        transition: all 0.2s;
+        padding: 12px;
+        box-sizing: border-box;
+    }
+
+    .btn-icon img {
+        width: 100%;
+        height: 100%;
+        object-fit: contain;
+    }
+
+    .btn-icon:hover { transform: scale(1.1); background-color: #fff0f5; }
+
+    .btn-back-fixed {
+        position: absolute; bottom: 20px; left: 20px;
+        background: white; width: 60px; height: 60px; border-radius: 50%;
+        display: flex; justify-content: center; align-items: center;
+        box-shadow: 0 5px 15px rgba(0,0,0,0.3); z-index: 9999;
+    }
+    .btn-back-fixed img { width: 60%; height: 60%; object-fit: contain}
+
+    .modal-overlay {
+        position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+        background-color: rgba(0, 0, 0, 0.4); 
+        z-index: 9999;
+        display: flex; justify-content: center; align-items: center;
+    }
+    .notification-box {
+        background-color: white;
+        border-radius: 25px;
+        padding: 40px;
+        width: 500px;
+        text-align: center;
+        position: relative;
+        box-shadow: 0 20px 50px rgba(0,0,0,0.2);
+    }
+    .notification-text { color: #ff9eb5; font-size: 1.4rem; font-weight: bold; margin: 10px 0; }
+    .close-modal-btn { position: absolute; top: 15px; right: 20px; background: none; border: none; font-size: 1.5rem; color: #aaa; cursor: pointer; }
+    .hidden { display: none !important; }
+
+    .team-name-label {
+        color: white; font-weight: bold; font-size: 1.8rem; margin-bottom: 10px; margin-left: 20px;
+    }
+
+</style>
+
+<div class="main-panel">
+
+    {% with messages = get_flashed_messages(with_categories=true) %}
+        {% if messages %}
+        <div class="toast-container">
+            {% for category, message in messages %}
+                <div class="toast-box" id="toast-{{ loop.index }}">
+                    <span class="toast-text">{{ message }}</span>
+                    <button class="toast-close" onclick="cerrarToast('toast-{{ loop.index }}')">✖</button>
+                </div>
+            {% endfor %}
+        </div>
+        {% endif %}
+    {% endwith %}
+
+    <div class="top-bar">
+        <div class="pill-label">Mis Equipos</div>
+        <input type="text" class="search-bar" placeholder="Buscar Equipo">
+        <a href="{{ url_for('team_bp.crear_equipo') }}" class="btn-crear">Crear equipo</a>
+    </div>
+
+    <div class="teams-list">
+        {% for team in teams %}
+        <div class="team-row">
+            <div class="team-name-label">{{ team.nombre_equipo }}</div>
+
+            <div class="team-container">
+                <div class="pokemon-box">
+                    <div class="rows-wrapper">
+                        
+                        <div class="poke-row top">
+                            {% for i in range(0, 3) %} 
+                                {% if team.imagenes and i < team.imagenes|length %}
+                                    <div class="poke-circle">
+                                        <img src="{{ team.imagenes[i] }}" class="poke-img">
+                                    </div>
+                                {% else %}
+                                    <div class="poke-circle"></div>
+                                {% endif %}
+                            {% endfor %}
+                        </div>
+
+                        <div class="poke-row bottom">
+                            {% for i in range(3, 6) %}
+                                {% if team.imagenes and i < team.imagenes|length %}
+                                    <div class="poke-circle">
+                                        <img src="{{ team.imagenes[i] }}" class="poke-img">
+                                    </div>
+                                {% else %}
+                                    <div class="poke-circle"></div>
+                                {% endif %}
+                            {% endfor %}
+                        </div>
+
+                    </div>
+                </div>
+
+                <div class="actions-col">
+                    <a href="{{ url_for('team_bp.ver_detalle_equipo', nombre_equipo=team.nombre_equipo) }}" class="btn-icon">
+                        <img src="{{ url_for('static', filename='img/iconos/simbolo_ver.png') }}" alt="Ver">
+                    </a>
+                    
+                    <a href="{{ url_for('team_bp.modificar_equipo', id_equipo=team.id) }}" class="btn-icon">
+                        <img src="{{ url_for('static', filename='img/iconos/simbolo_Editar.png') }}" alt="Editar">
+                    </a>
+                    
+                    <a href="{{ url_for('team_bp.eliminar_equipo', id_equipo=team['id']) }}" 
+                        class="btn-icon" 
+                        onclick="return confirm('¿Borrar este equipo?');">
+                            <img src="{{ url_for('static', filename='img/iconos/simbolo_Eliminar_Rosa.png') }}" alt="Borrar">
+                    </a>
+                </div>
+            </div>
+        </div>
+        {% else %}
+        <div style="text-align: center; color: white; margin-top: 100px;">
+            <h2 style="font-size: 2rem;">No tienes equipos todavía.</h2>
+        </div>
+        {% endfor %}
+    </div>
+
+</div>
+
+<a href="{{ url_for('pokedex.mostrarPokedex') }}" class="btn-back-fixed">
+    <img src="{{ url_for('static', filename='img/iconos/simbolo_Volver.png') }}" alt="Volver">
+</a>
+
+<script>
+    function cerrarToast(id) {
+        const el = document.getElementById(id);
+        if (el) {
+            el.style.opacity = '0';
+            setTimeout(() => el.remove(), 300);
+        }
+    }
+
+    // Auto-cierre a los 4 segundos
+    setTimeout(() => {
+        const toasts = document.querySelectorAll('.toast-box');
+        toasts.forEach(t => {
+            t.style.transition = 'opacity 0.5s ease';
+            t.style.opacity = '0';
+            setTimeout(() => t.remove(), 500);
+        });
+    }, 4000); 
+</script>
+
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        const searchInput = document.querySelector('.search-bar');
+        
+        searchInput.addEventListener('keyup', function(e) {
+            const nombre = e.target.value;
+
+            fetch(`/equipos/buscar?q=${nombre}`)
+                .then(response => response.json())
+                .then(jsonResultadoBusqueda => {
+                    mostrarResultado(jsonResultadoBusqueda);
+                })
+                .catch(error => console.error(error));
+        });
+    });
+
+    function mostrarResultado(equipos) {
+        const container = document.querySelector('.teams-list');
+        container.innerHTML = '';
+
+        if (equipos.length === 0) {
+            container.innerHTML = '<div style="text-align: center; color: white; margin-top: 100px;"><h2 style="font-size: 2rem;">No se encontraron equipos.</h2></div>';
+            return;
+        }
+
+        equipos.forEach(team => {
+            let topRowHTML = '<div class="poke-row top">';
+            for (let i = 0; i < 3; i++) {
+                if (team.imagenes && i < team.imagenes.length) {
+                    topRowHTML += `<div class="poke-circle"><img src="${team.imagenes[i]}" class="poke-img"></div>`;
+                } else {
+                    topRowHTML += `<div class="poke-circle"></div>`;
+                }
+            }
+            topRowHTML += '</div>';
+
+            let bottomRowHTML = '<div class="poke-row bottom">';
+            for (let i = 3; i < 6; i++) {
+                if (team.imagenes && i < team.imagenes.length) {
+                    bottomRowHTML += `<div class="poke-circle"><img src="${team.imagenes[i]}" class="poke-img"></div>`;
+                } else {
+                    bottomRowHTML += `<div class="poke-circle"></div>`;
+                }
+            }
+            bottomRowHTML += '</div>';
+
+            const staticPath = "/static/img/iconos"; 
+            
+            const html = `
+            <div class="team-row">
+                <div class="team-name-label">${team.nombre_equipo}</div>
+                <div class="team-container">
+                    <div class="pokemon-box">
+                        <div class="rows-wrapper">
+                            ${topRowHTML}
+                            ${bottomRowHTML}
+                        </div>
+                    </div>
+                    <div class="actions-col">
+                        <a href="/equipos/ver_equipo/${team.nombre_equipo}" class="btn-icon">
+                            <img src="${staticPath}/simbolo_ver.png" alt="Ver">
+                        </a>
+                        <a href="/equipos/modificar/${team.id}" class="btn-icon">
+                            <img src="${staticPath}/simbolo_Editar.png" alt="Editar">
+                        </a>
+                        <a href="/equipos/eliminar/${team.id}" class="btn-icon" onclick="return confirm('¿Borrar este equipo?');">
+                            <img src="${staticPath}/simbolo_Eliminar_Rosa.png" alt="Borrar">
+                        </a>
+                    </div>
+                </div>
+            </div>`;
+            
+            container.innerHTML += html;
+        });
+    }
+</script>
+{% endblock %}
